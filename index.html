@@ -50,31 +50,48 @@ nav button.active{color:var(--accent);background:var(--accent-light);font-weight
 .config-banner p{font-size:.82rem;color:#9a7010;line-height:1.6;}
 .config-banner code{background:#fef0b0;border-radius:3px;padding:1px 5px;font-family:var(--font-mono);font-size:.8rem;}
 
-.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.5rem;}
-.hero-card{background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);padding:1.1rem 1.4rem;box-shadow:var(--shadow);}
-.hc-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:6px;}
-.hc-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--ink);margin-bottom:2px;}
-.hc-val{font-family:var(--font-mono);font-size:1.5rem;font-weight:500;color:var(--accent);}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.hero-card{
+  background:var(--white);border:1px solid var(--sand2);
+  border-radius:var(--radius-lg);padding:1.1rem 1.4rem;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.hero-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),#4CAF82);
+}
+.hc-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:5px;}
+.hc-name{font-family:var(--font-serif);font-size:1.05rem;color:var(--ink);margin-bottom:3px;}
+.hc-val{font-family:var(--font-mono);font-size:1.6rem;font-weight:500;color:var(--accent);letter-spacing:-.02em;}
 
 .cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
 .cat-tab{background:var(--white);border:1px solid var(--sand3);color:var(--ink2);font-size:.8rem;font-weight:500;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .12s;}
 .cat-tab:hover{border-color:var(--accent);color:var(--accent);}
 .cat-tab.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
 
-.table-wrap{border-radius:var(--radius);overflow:hidden;border:1px solid var(--sand3);background:var(--white);box-shadow:var(--shadow);overflow-x:auto;}
+.table-wrap{
+  border-radius:var(--radius-lg);overflow:hidden;
+  border:1px solid var(--sand2);background:var(--white);
+  box-shadow:var(--shadow);overflow-x:auto;
+}
 table{width:100%;border-collapse:collapse;}
-thead th{background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);padding:8px 12px;text-align:right;border-bottom:1px solid var(--sand3);cursor:pointer;white-space:nowrap;user-select:none;}
+thead th{
+  background:#faf9f7;font-size:.65rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);
+  padding:9px 12px;text-align:right;
+  border-bottom:2px solid var(--sand2);cursor:pointer;white-space:nowrap;user-select:none;
+}
 thead th.left{text-align:left;}
 thead th:hover{color:var(--ink);}
 thead th.sorted{color:var(--accent);}
-tbody tr{border-bottom:1px solid var(--sand2);transition:background .1s;}
+tbody tr{border-bottom:1px solid var(--sand2);transition:background .08s;}
 tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:var(--sand);}
-tbody td{padding:8px 12px;font-family:var(--font-mono);font-size:.8rem;text-align:right;color:var(--ink2);}
+tbody tr:hover{background:#faf9f7;}
+tbody td{padding:9px 12px;font-family:var(--font-mono);font-size:.8rem;text-align:right;color:var(--ink2);}
 tbody td.left{text-align:left;font-family:var(--font);color:var(--ink3);}
 tbody td.name-col{text-align:left;font-family:var(--font);font-weight:600;color:var(--ink);font-size:.875rem;}
-tbody td.hi{color:var(--accent);font-weight:600;}
-.rank-1{color:var(--accent2)!important;font-weight:700!important;}
+tbody td.hi{color:var(--accent);font-weight:700;}
+.rank-1{color:#b5621e!important;font-weight:700!important;}
 .rank-2{color:var(--ink)!important;font-weight:600!important;}
 
 .player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;}
@@ -445,23 +462,38 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .live-header-actions button:hover { border-color:var(--accent); color:var(--accent); }
 
 /* Scoreboard */
-.scoreboard { background:#fff; border-bottom:2px solid var(--sand2); padding:.875rem 1rem; overflow-x:auto; }
-.sb-inner { min-width:480px; }
-.sb-row { display:flex; align-items:stretch; }
-.sb-team { font-weight:700; font-size:.85rem; width:80px; flex-shrink:0;
-  padding:6px 8px; display:flex; align-items:center; }
-.sb-inn { width:38px; flex-shrink:0; text-align:center; font-family:var(--font-mono);
-  font-size:.9rem; padding:6px 4px; border-left:1px solid var(--sand2);
-  display:flex; align-items:center; justify-content:center; }
-.sb-inn.hdr { font-size:.68rem; font-weight:700; color:var(--ink3);
-  text-transform:uppercase; letter-spacing:.04em; }
-.sb-inn.cur { background:var(--accent-light); font-weight:700; color:var(--accent); }
-.sb-divider { width:2px; background:var(--sand3); flex-shrink:0; }
-.sb-tot { width:42px; flex-shrink:0; text-align:center; font-family:var(--font-mono);
-  font-size:.95rem; font-weight:700; padding:6px 4px; border-left:1px solid var(--sand2);
-  display:flex; align-items:center; justify-content:center; }
-.sb-tot.hdr { font-size:.68rem; font-weight:700; color:var(--ink3); }
-.sb-row.us .sb-team { color:var(--accent); }
+/* Compact score strip */
+.scoreboard {
+  background:var(--accent); color:#fff;
+  padding:6px 1rem; display:flex; align-items:center;
+  gap:0; overflow-x:auto; flex-shrink:0;
+}
+.sb-strip {
+  display:flex; align-items:center; gap:0;
+  min-width:0; flex:1; font-family:var(--font-mono);
+}
+.sb-team-lbl {
+  font-size:.72rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.05em; width:32px; flex-shrink:0; opacity:.85;
+}
+.sb-score-big {
+  font-size:1.1rem; font-weight:700; padding:0 6px;
+}
+.sb-vs { font-size:.8rem; opacity:.7; padding:0 4px; }
+.sb-innings-strip {
+  display:flex; gap:0; flex:1; overflow-x:auto;
+  margin-left:8px; padding-left:8px; border-left:1px solid rgba(255,255,255,.3);
+}
+.sb-inn-cell {
+  display:flex; flex-direction:column; align-items:center;
+  min-width:28px; padding:0 3px; border-right:1px solid rgba(255,255,255,.15);
+}
+.sb-inn-num { font-size:.58rem; opacity:.7; line-height:1.2; }
+.sb-inn-runs { font-size:.82rem; font-weight:600; line-height:1.3; }
+.sb-inn-cell.active-inn .sb-inn-num { opacity:1; }
+.sb-inn-cell.active-inn .sb-inn-runs { color:#fffd; }
+.sb-hits { font-size:.72rem; opacity:.8; margin-left:8px; padding-left:8px;
+  border-left:1px solid rgba(255,255,255,.3); white-space:nowrap; }
 
 /* Inning bar */
 .inning-bar {
@@ -1136,249 +1168,289 @@ function renderPDetail(){
   const s = playerStats(selP);
   const pg = games.filter(g=>g.player_name===selP).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
 
-  // ── Percentile rank against all teammates with data ──
   const teamStats = allStats().filter(x=>x.gp>0);
-  function pctRank(key, val, higherBetter=true) {
-    const vals = teamStats.map(x=>parseFloat(x[key])||0).filter(v=>isFinite(v));
-    if(vals.length<2) return 50;
-    const below = vals.filter(v=> higherBetter ? v<val : v>val).length;
+  function pct(key,val,hi=true){
+    const vals=teamStats.map(x=>parseFloat(x[key])||0).filter(v=>isFinite(v));
+    if(vals.length<2)return 50;
+    const below=vals.filter(v=>hi?v<val:v>val).length;
     return Math.round((below/(vals.length-1))*100);
   }
-  function pctColor(p) {
-    if(p>=80) return '#c0392b';
-    if(p>=60) return '#e07040';
-    if(p>=40) return '#7a7368';
-    if(p>=20) return '#4a7fa5';
-    return '#3a5f8a';
-  }
 
-  // ── Extra computed stats ──
-  const ab=s.ab||0, h=s.h||0, hr=s.hr||0, bb=s.bb||0, k=s.k||0;
-  const hbp=s.hbp||0, sf=s.sf||0, sb=s.sb||0, sba=s.sba||0;
-  const d2=s['2b']||0, d3=s['3b']||0, tb=s.tb||0, pa=s.pa||ab+bb+hbp+sf, gp=s.gp||0;
+  const ab=s.ab||0,h=s.h||0,hr=s.hr||0,bb=s.bb||0,k=s.k||0;
+  const hbp=s.hbp||0,sf=s.sf||0,sb=s.sb||0,sba=s.sba||0;
+  const d2=s['2b']||0,d3=s['3b']||0,tb=s.tb||0,pa=s.pa||ab+bb+hbp+sf,gp=s.gp||0;
   const sin=h-hr-d2-d3;
-  const obp=parseFloat(s.OBP)||0, slg=parseFloat(s['SLG%'])||0, ba=parseFloat(s.BA)||0;
-  const woba=parseFloat(s.wOBA)||0, iso=parseFloat(s.ISO)||0;
+  const obp=parseFloat(s.OBP)||0,slg=parseFloat(s['SLG%'])||0,ba=parseFloat(s.BA)||0;
+  const woba=parseFloat(s.wOBA)||0,iso=parseFloat(s.ISO)||0;
+  const xbh=d2+d3+hr;
 
-  // OPS+ (100 = team average, >100 better; using team avg OBP+SLG as baseline)
-  const teamAvgOPS = teamStats.length>0 ? teamStats.reduce((a,x)=>a+(parseFloat(x.OPS)||0),0)/teamStats.length : 0.700;
-  const opsPlus = teamAvgOPS>0 ? Math.round(((obp+slg)/teamAvgOPS)*100) : 100;
+  const teamAvgOPS=teamStats.length>0?teamStats.reduce((a,x)=>a+(parseFloat(x.OPS)||0),0)/teamStats.length:.700;
+  const opsPlus=teamAvgOPS>0?Math.round(((obp+slg)/teamAvgOPS)*100):100;
+  const teamAvgWOBA=teamStats.length>0?teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/teamStats.length:.320;
+  const wrcPlus=teamAvgWOBA>0?Math.round((woba/teamAvgWOBA)*100):100;
 
-  // wRC+ (simplified: wOBA / team avg wOBA * 100)
-  const teamAvgWOBA = teamStats.length>0 ? teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/teamStats.length : 0.320;
-  const wrcPlus = teamAvgWOBA>0 ? Math.round((woba/teamAvgWOBA)*100) : 100;
-
-  // XBH (extra base hits)
-  const xbh = d2+d3+hr;
-  // 1B
-  const s1b = sin;
-  // HR/PA
-  const hrPa = pa>0 ? (hr/pa*100).toFixed(1)+'%' : '—';
-  // P/PA (proxy: not available but we can show AB/G)
-  const abPerG = gp>0 ? (ab/gp).toFixed(1) : '—';
-  // Clutch proxy: RBI/H
-  const rbiPerH = h>0 ? (s.rbi/h).toFixed(2) : '—';
-  // Secondary avg: (XBH + BB + SB) / AB
-  const secAvg = ab>0 ? f3((xbh+bb+sb)/ab) : '.000';
-  // GPA: (1.8*obp + slg) / 4
-  const gpa = f3((1.8*obp+slg)/4);
-  // Contact rate proxy: (AB-K)/AB
-  const contactPct = ab>0 ? ((ab-k)/ab*100).toFixed(1)+'%' : '—';
-  // Extra base rate: XBH/H
-  const xbRate = h>0 ? (xbh/h*100).toFixed(1)+'%' : '—';
-  // Run production: R+RBI-HR
-  const runProd = (s.r||0)+(s.rbi||0)-hr;
-  // Power speed number: 2*(HR*SB)/(HR+SB) if >0
-  const psn = (hr+sb)>0 ? (2*hr*sb/(hr+sb)).toFixed(1) : '0.0';
-  // Plate discipline: BB/(BB+K)
-  const bbPerBBK = (bb+k)>0 ? (bb/(bb+k)*100).toFixed(1)+'%' : '—';
-
-  // ── Game-by-game cumulative trend ──
-  let cumAB=0,cumH=0,cumBB=0,cumHBP=0,cumSF=0,cumTB=0;
-  const trendData = pg.map(g=>{
-    cumAB+=Number(g.ab)||0; cumH+=Number(g.h)||0; cumBB+=Number(g.bb)||0;
-    cumHBP+=Number(g.hbp)||0; cumSF+=Number(g.sf)||0;
-    const s2b=Number(g['2b'])||0, s3b=Number(g['3b'])||0, shr=Number(g.hr)||0;
-    const ssin=(Number(g.h)||0)-shr-s2b-s3b;
-    cumTB+=ssin+2*s2b+3*s3b+4*shr;
-    const bOBP=(cumAB+cumBB+cumHBP+cumSF)>0?(cumH+cumBB+cumHBP)/(cumAB+cumBB+cumHBP+cumSF):0;
-    const bSLG=cumAB>0?cumTB/cumAB:0;
-    return {
-      date:g.date||'',
-      ba:cumAB>0?cumH/cumAB:0,
-      obp:bOBP, ops:bOBP+bSLG,
-    };
+  // Trend data
+  let cAB=0,cH=0,cBB=0,cHBP=0,cSF=0,cTB=0;
+  const trend=pg.map(g=>{
+    cAB+=Number(g.ab)||0;cH+=Number(g.h)||0;cBB+=Number(g.bb)||0;
+    cHBP+=Number(g.hbp)||0;cSF+=Number(g.sf)||0;
+    const g2b=Number(g['2b'])||0,g3b=Number(g['3b'])||0,ghr=Number(g.hr)||0;
+    cTB+=(Number(g.h)||0)-ghr-g2b-g3b+2*g2b+3*g3b+4*ghr;
+    const bOBP=(cAB+cBB+cHBP+cSF)>0?(cH+cBB+cHBP)/(cAB+cBB+cHBP+cSF):0;
+    const bSLG=cAB>0?cTB/cAB:0;
+    return{date:g.date||'',ba:cAB>0?cH/cAB:0,obp:bOBP,ops:bOBP+bSLG,
+      gba:Number(g.ab)>0?Number(g.h)/Number(g.ab):0};
   });
 
-  // ── Percentile bar data ──
-  const pctBars = [
-    {label:'wOBA',    val:s.wOBA,  pct:pctRank('wOBA',woba),    raw:s.wOBA},
-    {label:'OPS',     val:s.OPS,   pct:pctRank('OPS',parseFloat(s.OPS)||0),   raw:s.OPS},
-    {label:'OBP',     val:s.OBP,   pct:pctRank('OBP',obp),      raw:s.OBP},
-    {label:'SLG%',    val:s['SLG%'],pct:pctRank('SLG%',slg),    raw:s['SLG%']},
-    {label:'BA',      val:s.BA,    pct:pctRank('BA',ba),         raw:s.BA},
-    {label:'ISO',     val:s.ISO,   pct:pctRank('ISO',iso),       raw:s.ISO},
-    {label:'BB%',     val:s['BB%'],pct:pctRank('BB%',parseFloat(s['BB%'])||0),raw:s['BB%']},
-    {label:'K%',      val:s['K%'], pct:pctRank('K%',parseFloat(s['K%'])||0,false), raw:s['K%']},
+  // Hit breakdown for donut
+  const hitBreakdown=[
+    {label:'1B',val:sin,color:'#2d6a4f'},
+    {label:'2B',val:d2,color:'#4CAF82'},
+    {label:'3B',val:d3,color:'#c9782b'},
+    {label:'HR',val:hr,color:'#c0392b'},
+  ].filter(x=>x.val>0);
+
+  // Percentile bars (Savant-style)
+  const pctBars=[
+    {label:'wOBA',  p:pct('wOBA',woba),   raw:s.wOBA,  note:'Overall offensive value'},
+    {label:'OPS',   p:pct('OPS',parseFloat(s.OPS)||0), raw:s.OPS, note:'On-base + Slugging'},
+    {label:'OBP',   p:pct('OBP',obp),     raw:s.OBP,   note:'On-base percentage'},
+    {label:'SLG%',  p:pct('SLG%',slg),    raw:s['SLG%'],note:'Slugging percentage'},
+    {label:'BA',    p:pct('BA',ba),        raw:s.BA,    note:'Batting average'},
+    {label:'ISO',   p:pct('ISO',iso),      raw:s.ISO,   note:'Isolated power'},
+    {label:'BB%',   p:pct('BB%',parseFloat(s['BB%'])||0), raw:s['BB%'], note:'Walk rate'},
+    {label:'K%',    p:pct('K%',parseFloat(s['K%'])||0,false), raw:s['K%'], note:'Strikeout rate (lower=better)'},
   ];
 
-  // ── Game log HTML ──
-  const grRows = pg.slice().reverse().map(g=>`<tr>
-    <td class="left">${g.date||'—'}</td>
-    <td class="name-col">${g.opp||'—'}</td>
-    ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
-    <td><button class="btn-del" onclick="confirmDel('game','${esc(g.id)}')">Delete</button></td>
-  </tr>`).join('');
-  const grHTML = !pg.length ? '<div class="empty" style="padding:1.5rem">No games logged yet.</div>' :
-    `<div class="table-wrap"><table>
-      <thead><tr><th class="left">Date</th><th class="left">Opp</th>${RF.map(f=>`<th>${f.l}</th>`).join('')}<th></th></tr></thead>
-      <tbody>${grRows}</tbody>
+  function pctColor(p){
+    if(p>=80)return'#c0392b';
+    if(p>=60)return'#d4813a';
+    if(p>=40)return'#7a7368';
+    if(p>=20)return'#2563a8';
+    return'#1a4a7a';
+  }
+
+  // Game-by-game table
+  const playerGames=games.filter(g=>g.player_name===selP).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const gbyg=!playerGames.length?'<div style="color:var(--ink3);font-size:.85rem;padding:.5rem">No games yet.</div>':
+    `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <thead><tr style="background:#faf9f7">${['Date','Opp','AB','H','2B','3B','HR','RBI','R','BB','K','SB','BA'].map(h2=>
+        `<th style="padding:6px 8px;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--sand2);text-align:${h2==='Date'||h2==='Opp'?'left':'center'}">${h2}</th>`
+      ).join('')}</tr></thead>
+      <tbody>${playerGames.map(g=>{
+        const gBA=Number(g.ab)>0?(Number(g.h)/Number(g.ab)).toFixed(3).replace(/^0/,''):'—';
+        const isGood=Number(g.h)>0;
+        return `<tr style="border-bottom:1px solid var(--sand2)">
+          <td style="padding:6px 8px;color:var(--ink3);white-space:nowrap;font-size:.78rem">${g.date||'—'}</td>
+          <td style="padding:6px 8px;font-weight:600;font-size:.82rem">${g.opp||'—'}</td>
+          ${[g.ab||0,g.h||0,g['2b']||0,g['3b']||0,g.hr||0,g.rbi||0,g.r||0,g.bb||0,g.k||0,g.sb||0].map(v=>
+            `<td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);font-size:.8rem">${v}</td>`
+          ).join('')}
+          <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);font-weight:700;color:${isGood?'var(--accent)':'var(--ink3)'};font-size:.8rem">${gBA}</td>
+        </tr>`;
+      }).join('')}</tbody>
     </table></div>`;
 
-  el.innerHTML = `<div class="profile-wrap">
+  // Raw game log
+  const grHTML=!pg.length?'<div style="color:var(--ink3);padding:1rem;font-size:.85rem">No games logged yet.</div>':
+    `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem">
+      <thead><tr style="background:#faf9f7"><th style="text-align:left;padding:6px 10px;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--sand2)">Date</th>
+      <th style="text-align:left;padding:6px 10px;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--sand2)">Opp</th>
+      ${RF.map(f=>`<th style="text-align:center;padding:6px 8px;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--sand2)">${f.l}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${pg.slice().reverse().map(g=>`<tr style="border-bottom:1px solid var(--sand2)">
+        <td style="padding:6px 10px;color:var(--ink3)">${g.date||'—'}</td>
+        <td style="padding:6px 10px;font-weight:600">${g.opp||'—'}</td>
+        ${RF.map(f=>`<td style="padding:6px 8px;text-align:center;font-family:var(--font-mono)">${g[f.id]??0}</td>`).join('')}
+        <td style="padding:6px 8px"><button class="btn-del" onclick="confirmDel('game','${esc(g.id)}')">Del</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
 
-    <!-- Header -->
-    <div class="profile-header">
-      <div>
-        <div class="profile-name">${selP}</div>
-        <div class="profile-meta">${gp} games &nbsp;·&nbsp; ${ab} AB &nbsp;·&nbsp; 2025 Season</div>
-      </div>
-      <div class="profile-headline">
-        <div class="phl-item"><div class="phl-val">${s.BA}</div><div class="phl-lbl">AVG</div></div>
-        <div class="phl-item"><div class="phl-val">${s.OBP}</div><div class="phl-lbl">OBP</div></div>
-        <div class="phl-item"><div class="phl-val">${s['SLG%']}</div><div class="phl-lbl">SLG</div></div>
-        <div class="phl-item"><div class="phl-val">${s.OPS}</div><div class="phl-lbl">OPS</div></div>
-        <div class="phl-item"><div class="phl-val">${opsPlus}</div><div class="phl-lbl">OPS+</div></div>
-        <div class="phl-item"><div class="phl-val">${wrcPlus}</div><div class="phl-lbl">wRC+</div></div>
+  el.innerHTML=`
+  <!-- ══ PLAYER PROFILE ══ -->
+  <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem">
+
+    <!-- Header card -->
+    <div style="background:var(--ink);border-radius:var(--radius-lg);padding:1.5rem;color:#fff;box-shadow:var(--shadow-lg);position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a3a2a 0%,#111 60%);opacity:.8"></div>
+      <div style="position:relative;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-family:var(--font-serif);font-size:2rem;font-weight:400;letter-spacing:-.02em;margin-bottom:3px">${selP}</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,.55)">${gp} games &nbsp;·&nbsp; ${ab} AB &nbsp;·&nbsp; 2025 Season</div>
+        </div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+          ${[['AVG',s.BA],['OBP',s.OBP],['SLG',s['SLG%']],['OPS',s.OPS],['OPS+',opsPlus],['wRC+',wrcPlus]].map(([l,v])=>
+            `<div style="text-align:center">
+              <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:600;color:#7dd4a8">${v}</div>
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-top:2px">${l}</div>
+            </div>`
+          ).join('')}
+        </div>
       </div>
     </div>
 
-    <!-- Two-col: percentiles + trend -->
-    <div class="profile-cols">
+    <!-- Two-col: percentile + hit chart -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
 
-      <!-- Percentile Rankings -->
-      <div class="panel">
-        <div class="panel-title">Percentile Rankings <span style="font-weight:400;font-size:.65rem;letter-spacing:0;text-transform:none;color:var(--ink3)">(vs. teammates)</span></div>
+      <!-- Percentile Rankings (Savant-style) -->
+      <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow)">
+        <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:1rem;display:flex;align-items:center;gap:8px">
+          Percentile Rankings
+          <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.68rem;color:var(--ink3)">vs. teammates</span>
+        </div>
         ${pctBars.map(b=>{
-          const col=pctColor(b.pct);
-          return `<div class="pct-row">
-            <div class="pct-label">${b.label}</div>
-            <div class="pct-track">
-              <div class="pct-fill" style="width:${b.pct}%;background:${col}">
-                <div class="pct-bubble" style="background:${col}">${b.pct}</div>
+          const col=pctColor(b.p);
+          return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px" title="${b.note}">
+            <div style="font-size:.72rem;color:var(--ink2);width:44px;flex-shrink:0;text-align:right;font-weight:500">${b.label}</div>
+            <div style="flex:1;height:8px;background:var(--sand2);border-radius:4px;position:relative;overflow:visible">
+              <div style="height:100%;width:${b.p}%;background:${col};border-radius:4px;transition:width .6s ease;position:relative">
+                <div style="position:absolute;right:-13px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.58rem;font-weight:700;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)">${b.p}</div>
               </div>
             </div>
-            <div class="pct-val-right">${b.raw}</div>
+            <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--ink3);width:36px;flex-shrink:0">${b.raw}</div>
           </div>`;
         }).join('')}
-        <div style="font-size:.68rem;color:var(--ink3);margin-top:.75rem;line-height:1.5">
-          Red = top of team · Blue = bottom · Grey = middle.<br>Based on ${teamStats.length} player${teamStats.length!==1?'s':''} with data.
+        <div style="font-size:.63rem;color:var(--ink3);margin-top:.75rem;line-height:1.6">
+          🔴 Top of team &nbsp;·&nbsp; 🔵 Bottom &nbsp;·&nbsp; Based on ${teamStats.length} player${teamStats.length!==1?'s':''} with data
         </div>
       </div>
 
-      <!-- Trend Chart -->
-      <div class="panel">
-        <div class="panel-title">Season Trend</div>
-        ${trendData.length<2
-          ? '<div class="empty" style="padding:2rem 0">Need 2+ games for trend chart.</div>'
-          : `<canvas id="trendChart" class="trend-chart"></canvas>
-             <div style="display:flex;gap:16px;margin-top:.5rem;flex-wrap:wrap">
-               <span style="font-size:.7rem;color:#2d6a4f;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:24px;height:2px;background:#2d6a4f;border-radius:1px"></span>BA</span>
-               <span style="font-size:.7rem;color:#c9782b;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:24px;height:2px;background:#c9782b;border-radius:1px"></span>OBP</span>
-               <span style="font-size:.7rem;color:#4a7fa5;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:24px;height:2px;background:#4a7fa5;border-radius:1px"></span>OPS</span>
-             </div>`
-        }
+      <!-- Hit distribution donut + season trend -->
+      <div style="display:flex;flex-direction:column;gap:1rem">
+
+        <!-- Hit breakdown -->
+        <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow)">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.875rem">Hit Breakdown</div>
+          <div style="display:flex;align-items:center;gap:1rem">
+            <canvas id="hitDonut" width="90" height="90" style="flex-shrink:0"></canvas>
+            <div style="flex:1">
+              ${hitBreakdown.length?hitBreakdown.map(hb=>`
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+                  <div style="width:10px;height:10px;border-radius:2px;background:${hb.color};flex-shrink:0"></div>
+                  <span style="font-size:.78rem;font-weight:600;flex:1">${hb.label}</span>
+                  <span style="font-family:var(--font-mono);font-size:.78rem;color:var(--ink3)">${hb.val}</span>
+                  <span style="font-family:var(--font-mono);font-size:.72rem;color:var(--ink3);width:38px;text-align:right">${h>0?(hb.val/h*100).toFixed(0)+'%':'—'}</span>
+                </div>`).join('')
+              :'<div style="color:var(--ink3);font-size:.82rem">No hits yet.</div>'}
+              ${h>0?`<div style="font-size:.7rem;color:var(--ink3);margin-top:6px;padding-top:6px;border-top:1px solid var(--sand2)">${h} total hits · XBH rate: ${h>0?(xbh/h*100).toFixed(0)+'%':'—'}</div>`:''}
+            </div>
+          </div>
+        </div>
+
+        <!-- K% vs BB% discipline -->
+        <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow);flex:1">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.875rem">Plate Discipline</div>
+          ${[
+            {l:'Contact Rate',v:ab>0?(ab-k)/ab*100:0,fmt:ab>0?((ab-k)/ab*100).toFixed(1)+'%':'—',col:'#2563a8'},
+            {l:'Walk Rate',v:pa>0?bb/pa*100:0,fmt:pa>0?(bb/pa*100).toFixed(1)+'%':'—',col:'#1e5c3a'},
+            {l:'K Rate',v:pa>0?k/pa*100:0,fmt:pa>0?(k/pa*100).toFixed(1)+'%':'—',col:'#c0392b'},
+            {l:'HR Rate',v:pa>0?hr/pa*100:0,fmt:pa>0?(hr/pa*100).toFixed(1)+'%':'—',col:'#b5621e'},
+          ].map(d=>`<div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:.75rem;font-weight:500;color:var(--ink2)">${d.l}</span>
+              <span style="font-family:var(--font-mono);font-size:.72rem;color:var(--ink3)">${d.fmt}</span>
+            </div>
+            <div style="height:6px;background:var(--sand2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${Math.min(d.v,100)}%;background:${d.col};border-radius:3px;transition:width .5s"></div>
+            </div>
+          </div>`).join('')}
+        </div>
       </div>
     </div>
 
-    <!-- Discipline Panel -->
-    <div class="panel">
-      <div class="panel-title">Plate Discipline &amp; Contact</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
-        <div>
-          ${[
-            {l:'K Rate',v:parseFloat(s['K%'])||0,col:'#c0392b',fmt:s['K%']},
-            {l:'BB Rate',v:parseFloat(s['BB%'])||0,col:'#2d6a4f',fmt:s['BB%']},
-            {l:'Contact Rate',v:ab>0?(ab-k)/ab*100:0,col:'#4a7fa5',fmt:contactPct},
-          ].map(d=>`<div class="disc-row">
-            <div class="disc-label"><span>${d.l}</span><span>${d.fmt}</span></div>
-            <div class="disc-track"><div class="disc-fill" style="width:${Math.min(d.v,100)}%;background:${d.col}"></div></div>
-          </div>`).join('')}
-        </div>
-        <div>
-          ${[
-            {l:'HR Rate',v:pa>0?hr/pa*100:0,col:'#c9782b',fmt:hrPa},
-            {l:'XBH Rate',v:h>0?xbh/h*100:0,col:'#7a5fa0',fmt:xbRate},
-            {l:'SB Success',v:sba>0?sb/sba*100:0,col:'#2d6a4f',fmt:s['SB%']},
-          ].map(d=>`<div class="disc-row">
-            <div class="disc-label"><span>${d.l}</span><span>${d.fmt}</span></div>
-            <div class="disc-track"><div class="disc-fill" style="width:${Math.min(d.v,100)}%;background:${d.col}"></div></div>
-          </div>`).join('')}
-        </div>
-      </div>
+    <!-- Season trend chart -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow)">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.875rem">Season Trend — Cumulative</div>
+      ${trend.length<2?'<div style="color:var(--ink3);font-size:.85rem;padding:.5rem">Need 2+ games for trend chart.</div>':
+        `<canvas id="trendChart" style="width:100%;height:130px"></canvas>
+         <div style="display:flex;gap:16px;margin-top:.625rem;flex-wrap:wrap">
+           ${[['#1e5c3a','BA'],['#b5621e','OBP'],['#2563a8','OPS (÷2)']].map(([col,lbl])=>
+             `<span style="font-size:.7rem;color:${col};display:flex;align-items:center;gap:4px">
+               <span style="display:inline-block;width:20px;height:2px;background:${col};border-radius:1px"></span>${lbl}
+             </span>`).join('')}
+         </div>`}
     </div>
 
-    <!-- Advanced Stats Grid -->
-    <div class="panel">
-      <div class="panel-title">Advanced Stats</div>
-      <div class="mini-stat-grid">
+    <!-- Advanced stats grid -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow)">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.875rem">Advanced Stats</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px">
         ${[
-          {l:'wOBA',  v:s.wOBA,  good:woba>=.340},
-          {l:'OPS+',  v:opsPlus, good:opsPlus>=100, warn:opsPlus<75},
-          {l:'wRC+',  v:wrcPlus, good:wrcPlus>=100, warn:wrcPlus<75},
-          {l:'ISO',   v:s.ISO,   good:iso>=.150},
-          {l:'BABIP', v:s.BABIP},
-          {l:'RC',    v:s.RC,    good:parseFloat(s.RC)>=5},
-          {l:'RC/27', v:s['RC/27'], good:parseFloat(s['RC/27'])>=5},
-          {l:'GPA',   v:gpa,     good:parseFloat(gpa)>=.300},
-          {l:'Sec Avg',v:secAvg, good:parseFloat(secAvg)>=.200},
-          {l:'PSN',   v:psn,     good:parseFloat(psn)>=3},
-          {l:'XBH',   v:xbh},
-          {l:'TB',    v:tb,      good:tb>=20},
-          {l:'BB/K',  v:bbPerBBK},
-          {l:'RBI/H', v:rbiPerH},
-          {l:'Run Prod',v:runProd,good:runProd>=10},
-          {l:'AB/G',  v:abPerG},
-        ].map(x=>`<div class="msc">
-          <div class="msc-lbl">${x.l}</div>
-          <div class="msc-val${x.good?' good':x.warn?' warn':''}">${x.v??'—'}</div>
+          {l:'wOBA',v:s.wOBA,g:woba>=.340},{l:'BABIP',v:s.BABIP},{l:'ISO',v:s.ISO,g:iso>=.150},
+          {l:'RC',v:s.RC,g:parseFloat(s.RC)>=5},{l:'RC/27',v:s['RC/27'],g:parseFloat(s['RC/27'])>=5},
+          {l:'wRC+',v:wrcPlus,g:wrcPlus>=110,w:wrcPlus<75},
+          {l:'GPA',v:f3((1.8*obp+slg)/4),g:(1.8*obp+slg)/4>=.3},
+          {l:'XBH',v:xbh},{l:'TB',v:tb},{l:'BB/K',v:(bb+k)>0?(bb/(bb+k)).toFixed(2):'—'},
+          {l:'SB%',v:s['SB%']},{l:'Run Prod',v:(s.r||0)+(s.rbi||0)-hr},
+        ].map(x=>`<div style="background:#faf9f7;border:1px solid var(--sand2);border-radius:7px;padding:9px 6px;text-align:center">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:3px">${x.l}</div>
+          <div style="font-family:var(--font-mono);font-size:.95rem;font-weight:600;color:${x.g?'var(--accent)':x.w?'var(--red)':'var(--ink)'}">${x.v??'—'}</div>
         </div>`).join('')}
       </div>
-      <div style="font-size:.68rem;color:var(--ink3);margin-top:.875rem;line-height:1.6">
-        <strong>OPS+/wRC+:</strong> 100 = team avg. Higher is better.
-        &nbsp;<strong>GPA:</strong> Gross Production Average — (1.8×OBP+SLG)/4.
-        &nbsp;<strong>Sec Avg:</strong> Secondary Average — power/walks/speed per AB.
-        &nbsp;<strong>PSN:</strong> Power-Speed Number.
-        &nbsp;<strong>RC/27:</strong> Runs this player would create in a 27-out game.
+      <div style="font-size:.65rem;color:var(--ink3);margin-top:.875rem;line-height:1.7">
+        <strong>wRC+:</strong> 100 = team avg, higher is better &nbsp;·&nbsp;
+        <strong>BABIP:</strong> Batting avg on balls in play &nbsp;·&nbsp;
+        <strong>GPA:</strong> (1.8×OBP+SLG)÷4 &nbsp;·&nbsp;
+        <strong>RC/27:</strong> Runs created in a 27-out game
       </div>
     </div>
 
-    <!-- Raw Counting Stats -->
-    <div class="panel">
-      <div class="panel-title">Counting Stats</div>
-      <div class="mini-stat-grid">
-        ${[
-          {l:'GP',v:gp},{l:'PA',v:pa},{l:'AB',v:ab},{l:'H',v:h},
-          {l:'1B',v:s1b},{l:'2B',v:d2},{l:'3B',v:d3},{l:'HR',v:hr},
-          {l:'RBI',v:s.rbi},{l:'R',v:s.r},{l:'BB',v:bb},{l:'K',v:k},
-          {l:'SB',v:sb},{l:'SBA',v:sba},{l:'HBP',v:hbp},{l:'SF',v:sf},
-        ].map(x=>`<div class="msc"><div class="msc-lbl">${x.l}</div><div class="msc-val">${x.v??0}</div></div>`).join('')}
-      </div>
+    <!-- Game by game -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow)">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.875rem">Game by Game</div>
+      ${gbyg}
     </div>
 
-    <!-- Game Log (collapsible) -->
-    <div>
-      <div class="log-toggle" id="logToggle" onclick="toggleGameLog()">
-        <span style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)">Game Log <span style="font-weight:400;text-transform:none;letter-spacing:0">(${pg.length} games)</span></span>
+    <!-- Raw log collapsible -->
+    <div style="border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--sand2);box-shadow:var(--shadow)">
+      <div class="log-toggle" id="logToggle" onclick="toggleGameLog()" style="border-radius:0">
+        <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)">Raw Game Log <span style="font-weight:400;text-transform:none;letter-spacing:0">(${pg.length} entries)</span></span>
         <span class="log-toggle-arrow">▼</span>
       </div>
-      <div class="log-body" id="logBody">${grHTML}</div>
+      <div class="log-body" id="logBody" style="background:var(--white)">${grHTML}</div>
     </div>
 
   </div>`;
 
-  // Draw trend chart after DOM insert
-  if(trendData.length>=2) requestAnimationFrame(()=>drawTrend(trendData));
+  // Draw charts after DOM
+  requestAnimationFrame(()=>{
+    drawHitDonut();
+    if(trend.length>=2) drawTrend(trend);
+  });
+}
+
+function drawHitDonut(){
+  const canvas=document.getElementById('hitDonut');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const s=playerStats(selP);
+  const h=s.h||0,hr=s.hr||0,d2=s['2b']||0,d3=s['3b']||0;
+  const sin=h-hr-d2-d3;
+  const segments=[
+    {val:sin,color:'#2d6a4f'},{val:d2,color:'#4CAF82'},
+    {val:d3,color:'#c9782b'},{val:hr,color:'#c0392b'},
+  ].filter(x=>x.val>0);
+  const total=segments.reduce((a,s2)=>a+s2.val,0);
+  if(!total){
+    ctx.fillStyle='#e8e4de'; ctx.beginPath();
+    ctx.arc(45,45,36,0,Math.PI*2); ctx.fill();
+    return;
+  }
+  let angle=-Math.PI/2;
+  segments.forEach(seg=>{
+    const slice=(seg.val/total)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(45,45);
+    ctx.arc(45,45,38,angle,angle+slice);
+    ctx.closePath(); ctx.fillStyle=seg.color; ctx.fill();
+    angle+=slice;
+  });
+  // Center hole
+  ctx.beginPath(); ctx.arc(45,45,24,0,Math.PI*2);
+  ctx.fillStyle='#fff'; ctx.fill();
+  // Center text
+  ctx.fillStyle='#1a160f'; ctx.font='bold 13px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(String(total),45,45);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
 }
 
 function toggleGameLog(){
@@ -2028,118 +2100,171 @@ function openGameDetail(id) {
 
 async function showGameReview(gameId) {
   let game = scheduledGames.find(x=>x.id===gameId);
-  // Only reload from DB if we genuinely don't have this game
   if (!game) {
     await loadScheduledGames();
     game = scheduledGames.find(x=>x.id===gameId) || {id:gameId,opponent:'?',game_date:'',our_score:0,opp_score:0};
   }
-  // Load at-bats for this game
   const gameId2 = game.id || gameId;
   let abs = [];
   try { abs = await sbGet('live_atbats', `game_id=eq.${gameId2}&order=created_at.asc`); } catch(e){}
   let meta = null;
   try { const m = await sbGet('live_game_meta', `game_id=eq.${gameId2}&select=*`); meta = m&&m.length?m[0]:null; } catch(e){}
 
-  const lineup = meta ? JSON.parse(meta.lineup_json||'[]') : [];
-  const ourScore = meta?.our_score||0;
-  const oppScore = meta?.opp_score||0;
-  const dateStr = game.game_date ? new Date(game.game_date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}) : '—';
+  const ourScore = meta?.our_score || game.our_score || 0;
+  const oppScore = meta?.opp_score || game.opp_score || 0;
+  const innings  = JSON.parse(meta?.innings_json||'{}');
+  const dateStr  = game.game_date
+    ? new Date(game.game_date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})
+    : '—';
+  const won = ourScore > oppScore;
 
-  // Switch to schedule page so review renders in the right place
+  // Group at-bats by inning
+  const maxInn = Math.max(7, ...abs.map(a=>a.inning||1), 1);
+  const byInning = {};
+  for (let i=1;i<=maxInn;i++) byInning[i]=abs.filter(a=>a.inning===i);
+
+  // Switch page
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-schedule').classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',i===5));
 
   const el = document.getElementById('scheduleList');
-  el.innerHTML = `<div style="text-align:center;padding:2rem"><span class="spinner"></span> Loading game data…</div>`;
-  await new Promise(r=>setTimeout(r,50)); // let spinner render
+
+  function chipStyle(result){
+    const isHit=['1B','2B','3B','HR'].includes(result);
+    const isOut=['K','FO','GO','LO','FC','DP'].includes(result);
+    const col=isHit?'#2d6a4f':isOut?'#c0392b':'#c9782b';
+    return `background:${col}18;color:${col};border:1px solid ${col}40;border-radius:3px;padding:1px 7px;font-family:var(--font-mono);font-size:.72rem;font-weight:700`;
+  }
+
+  // Build inning-by-inning play-by-play HTML
+  const playByPlay = Object.entries(byInning).filter(([_,plays])=>plays.length>0).map(([inn,plays])=>{
+    const innRuns = innings[inn]?.us ?? '';
+    return `<div style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:.4rem">
+        <div style="background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;
+          text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:4px">
+          Inning ${inn}
+        </div>
+        ${innRuns!==''?`<div style="font-size:.78rem;color:var(--ink3)">${innRuns} run${innRuns!==1?'s':''} scored</div>`:''}
+      </div>
+      <div style="background:var(--white);border:1px solid var(--sand2);border-radius:8px;overflow:hidden">
+        ${plays.map((ab,pi)=>{
+          const sbNote = ab.stolen_bases>0 ? `<span style="font-size:.72rem;color:#b07000;margin-left:6px">+${ab.stolen_bases}SB</span>` : '';
+          return `<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;
+            ${pi>0?'border-top:1px solid var(--sand2)':''};transition:background .1s"
+            onmouseover="this.style.background='var(--sand)'" onmouseout="this.style.background=''">
+            <span style="font-size:.72rem;color:var(--ink3);width:18px;font-family:var(--font-mono)">${pi+1}</span>
+            <span style="font-weight:600;font-size:.875rem;flex:1">${ab.batter_name}</span>
+            ${ab.rbis?`<span style="font-size:.72rem;color:var(--ink3)">${ab.rbis}RBI</span>`:''}
+            ${sbNote}
+            ${ab.notes?`<span style="font-size:.72rem;color:var(--ink3);max-width:100px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${ab.notes}</span>`:''}
+            <span style="${chipStyle(ab.result)}">${ab.result}</span>
+            <button onclick="editReviewAB('${ab.id}','${gameId2}')"
+              style="background:none;border:1px solid var(--sand3);border-radius:4px;
+              padding:2px 8px;font-size:.68rem;cursor:pointer;color:var(--ink3);flex-shrink:0">Edit</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('') || '<div style="color:var(--ink3);font-size:.875rem;padding:.5rem 0">No plays recorded.</div>';
+
+  // Box score per inning
+  const innsArr = Array.from({length:maxInn},(_,i)=>i+1);
+  const boxScore = `<div style="overflow-x:auto;margin-bottom:.75rem">
+    <table style="border-collapse:collapse;font-size:.82rem;min-width:400px">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:5px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);border:1px solid var(--sand3)">Team</th>
+          ${innsArr.map(i=>`<th style="padding:5px 8px;background:var(--sand);font-size:.68rem;font-weight:600;color:var(--ink3);border:1px solid var(--sand3);text-align:center">${i}</th>`).join('')}
+          <th style="padding:5px 8px;background:var(--accent);font-size:.72rem;font-weight:700;color:#fff;border:1px solid var(--accent);text-align:center">R</th>
+          <th style="padding:5px 8px;background:var(--accent);font-size:.72rem;font-weight:700;color:#fff;border:1px solid var(--accent);text-align:center">H</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px 8px;font-weight:700;color:var(--accent);border:1px solid var(--sand3)">Us</td>
+          ${innsArr.map(i=>`<td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);border:1px solid var(--sand3)">${innings[i]?.us??''}</td>`).join('')}
+          <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);font-weight:700;background:var(--accent-light);color:var(--accent);border:1px solid var(--sand3)">${ourScore}</td>
+          <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);background:var(--accent-light);border:1px solid var(--sand3)">${abs.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 8px;font-weight:600;border:1px solid var(--sand3)">Them</td>
+          ${innsArr.map(i=>`<td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);border:1px solid var(--sand3)">${innings[i]?.them??''}</td>`).join('')}
+          <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);font-weight:700;border:1px solid var(--sand3)">${oppScore}</td>
+          <td style="padding:6px 8px;text-align:center;border:1px solid var(--sand3)">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`;
 
   el.innerHTML = `<div style="max-width:700px">
+    <!-- Header -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap">
-      <button class="btn-ghost" style="font-size:.8rem;padding:6px 12px" onclick="loadScheduledGames().then(renderSchedulePage)">← Back</button>
-      <span style="font-family:var(--font-serif);font-size:1.2rem;flex:1">vs. ${game.opponent}</span>
-      <button class="btn-ghost" style="font-size:.8rem;padding:6px 12px;color:#c0392b;border-color:#e8d8d8" onclick="deleteGame('${game.id}')">🗑 Delete Game</button>
+      <button class="btn-ghost" style="font-size:.8rem;padding:6px 12px"
+        onclick="loadScheduledGames().then(renderSchedulePage)">← Back</button>
+      <div style="flex:1">
+        <div style="font-family:var(--font-serif);font-size:1.2rem">vs. ${game.opponent}</div>
+        <div style="font-size:.75rem;color:var(--ink3)">${dateStr}</div>
+      </div>
+      <button class="btn-ghost" style="font-size:.78rem;padding:6px 12px" onclick="openScoresheetForGame('${game.id}')">📋 Scoresheet</button>
+      <button class="btn-ghost" style="font-size:.78rem;padding:6px 12px;color:#c0392b;border-color:#e8d8d8"
+        onclick="deleteGame('${game.id}')">🗑 Delete</button>
     </div>
 
-    <!-- Score card -->
-    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);padding:1.25rem 1.5rem;box-shadow:var(--shadow);margin-bottom:1rem">
-      <div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:.75rem">${dateStr}</div>
-      <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
-        <div style="text-align:center">
-          <div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:600;color:var(--accent)">${ourScore}</div>
-          <div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)">Us</div>
-        </div>
-        <div style="font-family:var(--font-serif);font-size:1.5rem;color:var(--ink3)">–</div>
-        <div style="text-align:center">
-          <div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:600;color:var(--ink2)">${oppScore}</div>
-          <div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)">Them</div>
-        </div>
-        <div style="flex:1;min-width:140px">
-          <div style="font-size:.8rem;color:var(--ink3)">${abs.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length} hits · ${abs.filter(a=>a.result==='BB').length} walks · ${abs.filter(a=>['K','FO','GO','LO','DP'].includes(a.result)).length} outs</div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" style="font-size:.8rem;padding:7px 14px" onclick="openLiveTrackerForEdit('${game.id}')">✏️ Edit / Continue</button>
-          <button class="btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="openScoresheetForGame('${game.id}')">📋 Scoresheet</button>
-        </div>
+    <!-- Final score -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);
+      padding:1rem 1.25rem;box-shadow:var(--shadow);margin-bottom:1rem;
+      display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+      <div style="display:flex;align-items:baseline;gap:.75rem">
+        <span style="font-family:var(--font-mono);font-size:2.2rem;font-weight:700;color:${won?'var(--accent)':'#c0392b'}">${ourScore}</span>
+        <span style="font-size:1.2rem;color:var(--ink3)">–</span>
+        <span style="font-family:var(--font-mono);font-size:2.2rem;font-weight:600;color:var(--ink2)">${oppScore}</span>
+      </div>
+      <div>
+        <div style="font-size:.9rem;font-weight:700;color:${won?'var(--accent)':'#c0392b'}">${won?'Win':'Loss'}</div>
+        <div style="font-size:.78rem;color:var(--ink3)">${abs.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length}H · ${abs.filter(a=>a.result==='BB').length}BB · ${abs.reduce((s,a)=>s+(a.stolen_bases||0),0)}SB</div>
+      </div>
+      <div style="margin-left:auto">
+        <button class="btn" style="font-size:.78rem;padding:7px 14px"
+          onclick="openLiveTrackerForEdit('${game.id}')">✏️ Edit Game</button>
       </div>
     </div>
 
-    <!-- At-bat log -->
-    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);padding:1.25rem 1.5rem;box-shadow:var(--shadow)">
-      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:.875rem">At-Bat Log</div>
-      ${abs.length===0 ? '<div class="empty" style="padding:1rem">No at-bats recorded.</div>' :
-        `<div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:.82rem">
-            <thead><tr>
-              <th style="text-align:left;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)">Inn</th>
-              <th style="text-align:left;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)">Batter</th>
-              <th style="text-align:center;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)">Result</th>
-              <th style="text-align:center;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)">RBI</th>
-              <th style="text-align:left;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)">Notes</th>
-              <th style="text-align:center;padding:6px 8px;background:var(--sand);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--sand3)"></th>
-            </tr></thead>
-            <tbody>
-              ${abs.map(ab => {
-                const isHit=['1B','2B','3B','HR'].includes(ab.result);
-                const isOut=['K','FO','GO','LO','FC','DP'].includes(ab.result);
-                const col=isHit?'#2d6a4f':isOut?'#c0392b':'#c9782b';
-                return `<tr style="border-bottom:1px solid var(--sand2)">
-                  <td style="padding:7px 8px;font-family:var(--font-mono);color:var(--ink3)">${ab.inning}</td>
-                  <td style="padding:7px 8px;font-weight:600">${ab.batter_name}</td>
-                  <td style="padding:7px 8px;text-align:center">
-                    <span style="background:${col}22;color:${col};border:1px solid ${col}44;border-radius:4px;padding:2px 8px;font-family:var(--font-mono);font-size:.75rem;font-weight:700">${ab.result}</span>
-                  </td>
-                  <td style="padding:7px 8px;text-align:center;font-family:var(--font-mono)">${ab.rbis||0}</td>
-                  <td style="padding:7px 8px;color:var(--ink3);font-size:.78rem">${ab.notes||''}</td>
-                  <td style="padding:7px 8px;text-align:center">
-                    <button onclick="editReviewAB('${ab.id}')" style="background:none;border:1px solid var(--sand3);border-radius:4px;padding:2px 8px;font-size:.72rem;cursor:pointer;color:var(--ink3)">Edit</button>
-                  </td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>`}
+    <!-- Box score -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);
+      padding:1rem 1.25rem;box-shadow:var(--shadow);margin-bottom:1rem">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+        color:var(--ink3);margin-bottom:.625rem">Box Score</div>
+      ${boxScore}
+    </div>
+
+    <!-- Play by play -->
+    <div style="background:var(--white);border:1px solid var(--sand2);border-radius:var(--radius);
+      padding:1rem 1.25rem;box-shadow:var(--shadow)">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+        color:var(--ink3);margin-bottom:.875rem">Play-by-Play <span style="font-weight:400;text-transform:none;letter-spacing:0">(tap Edit to fix any play)</span></div>
+      ${playByPlay}
     </div>
   </div>`;
 }
 
-async function editReviewAB(id) {
+async function editReviewAB(id, gameId) {
   const results = ['1B','2B','3B','HR','BB','HBP','K','FO','GO','LO','SF','FC','E','DP','SKIP'];
-  // Fetch current
   let current;
   try { const r=await sbGet('live_atbats',`id=eq.${id}&select=*`); current=r&&r[0]; } catch(e){return;}
   if(!current) return;
-  const newResult = prompt(`Result for ${current.batter_name}
-Options: ${results.join(', ')}`, current.result);
+  const newResult = prompt(`Edit result for ${current.batter_name}\nOptions: ${results.join(', ')}`, current.result);
   if(!newResult||!results.includes(newResult.toUpperCase())) return;
-  const newRBI = parseInt(prompt('RBIs:',current.rbis||0))||0;
-  const newNotes = prompt('Notes:',current.notes||'')||'';
+  const newRBI   = parseInt(prompt('RBIs:', current.rbis||0))||0;
+  const newSB    = parseInt(prompt('Stolen bases:', current.stolen_bases||0))||0;
+  const newNotes = prompt('Notes:', current.notes||'')||'';
   try {
-    await sbPatch('live_atbats',`id=eq.${id}`,{result:newResult.toUpperCase(),rbis:newRBI,notes:newNotes});
+    await sbPatch('live_atbats',`id=eq.${id}`,{
+      result:newResult.toUpperCase(), rbis:newRBI, stolen_bases:newSB, notes:newNotes
+    });
     showToast('Updated!');
-    // Reload review
-    const g = scheduledGames.find(x=>x.id===current.game_id);
-    if(g) showGameReview(g);
+    showGameReview(gameId||current.game_id);
   } catch(e){showToast('Error: '+e.message,true);}
 }
 
@@ -2532,7 +2657,7 @@ function selectResult(code, btn) {
 
 async function goBackToBatter() {
   if (!LG.atbats.length) return;
-  if (!confirm('Undo the last at-bat and go back to that batter?')) return;
+  if (!confirm('Undo the last recorded play?')) return;
 
   const last = LG.atbats[LG.atbats.length - 1];
 
@@ -2543,19 +2668,15 @@ async function goBackToBatter() {
   LG.atbats.pop();
   if (LG.batterIdx > 0) LG.batterIdx--;
 
-  // Reverse outs if it was an out
+  // Reverse outs
   const wasOut = ['K','FO','GO','LO','FC','DP','SF'].includes(last.result);
   const wasDP  = last.result === 'DP';
   if (wasOut) {
     LG.outs = Math.max(0, LG.outs - (wasDP ? 2 : 1));
-    // If outs went below 0 it means we crossed an inning — go back an inning
-    if (LG.outs < 0) {
-      LG.inning = Math.max(1, LG.inning - 1);
-      LG.outs = 2;
-    }
+    if (LG.outs < 0) { LG.inning = Math.max(1, LG.inning-1); LG.outs = 2; }
   }
 
-  // Reverse RBI / run
+  // Reverse RBIs / runs
   if (last.rbis > 0) {
     LG.ourScore = Math.max(0, LG.ourScore - last.rbis);
     if (LG.innings[last.inning]) {
@@ -2563,8 +2684,19 @@ async function goBackToBatter() {
     }
   }
 
+  // Reverse stolen bases — remove runner from advanced position, put back where they were
+  if (last.stolen_bases > 0) {
+    // Find that player in runners and move them back
+    const reached = last.result==='1B'||last.result==='BB'||last.result==='HBP'||last.result==='E' ? 1
+                  : last.result==='2B' ? 2 : last.result==='3B' ? 3 : 0;
+    if (reached > 0) {
+      const runner = LG.runners.find(r=>r.name===last.batter_name);
+      if (runner) runner.base = Math.max(reached, runner.base - last.stolen_bases);
+    }
+  }
+
   await saveLiveGameMeta();
-  showToast('Last at-bat undone');
+  showToast('Last play undone');
   showAtBatUI();
 }
 
@@ -2745,38 +2877,26 @@ function updateOppScore() {
 
 function updateScoreboard() {
   const el = document.getElementById('liveScoreboard');
-  const maxInnings = Math.max(7, LG.inning);
-  const inns = Array.from({length:maxInnings},(_,i)=>i+1);
-  const ourRuns  = inns.map(i => LG.innings[i]?.us ?? '');
-  const theirRuns = inns.map(i => LG.innings[i]?.them ?? '');
+  const maxInns = Math.max(7, LG.inning);
+  const inns = Array.from({length:maxInns},(_,i)=>i+1);
+  const hits = (LG.atbats||[]).filter(a=>['1B','2B','3B','HR'].includes(a.result)).length;
 
-  el.innerHTML = `<div class="sb-inner">
-    <div class="sb-row">
-      <div class="sb-team" style="font-size:.7rem;color:var(--ink3)">TEAM</div>
-      ${inns.map(i=>`<div class="sb-inn header ${i===LG.inning?'current':''}">${i}</div>`).join('')}
-      <div class="sb-totals">
-        <div class="sb-tot header">R</div>
-        <div class="sb-tot header">H</div>
-      </div>
+  el.innerHTML = `<div class="sb-strip">
+    <span class="sb-team-lbl" style="color:rgba(255,255,255,.85)">Us</span>
+    <span class="sb-score-big">${LG.ourScore}</span>
+    <span class="sb-vs">–</span>
+    <span class="sb-score-big" style="opacity:.85">${LG.oppScore}</span>
+    <span class="sb-team-lbl" style="margin-left:4px;opacity:.75">Them</span>
+    <div class="sb-innings-strip">
+      ${inns.map(i=>`<div class="sb-inn-cell${i===LG.inning?' active-inn':''}">
+        <span class="sb-inn-num">${i}</span>
+        <span class="sb-inn-runs">${LG.innings[i]?.us??''}</span>
+      </div>`).join('')}
     </div>
-    <div class="sb-row us">
-      <div class="sb-team">Us</div>
-      ${inns.map((inn,i)=>`<div class="sb-inn ${inn===LG.inning?'current':''}">${ourRuns[i]!==''?ourRuns[i]:''}</div>`).join('')}
-      <div class="sb-totals">
-        <div class="sb-tot">${LG.ourScore}</div>
-        <div class="sb-tot">${LG.atbats.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length}</div>
-      </div>
-    </div>
-    <div class="sb-row">
-      <div class="sb-team">Them</div>
-      ${inns.map((inn,i)=>`<div class="sb-inn ${inn===LG.inning?'current':''}">${theirRuns[i]!==''?theirRuns[i]:''}</div>`).join('')}
-      <div class="sb-totals">
-        <div class="sb-tot">${LG.oppScore}</div>
-        <div class="sb-tot">—</div>
-      </div>
-    </div>
+    <span class="sb-hits">${hits}H</span>
   </div>`;
-  document.getElementById('oppScoreInput').value = LG.oppScore || '';
+  const inp = document.getElementById('oppScoreInput');
+  if(inp) inp.value = LG.oppScore || '';
 }
 
 function updateInningBar() {
@@ -3040,444 +3160,483 @@ function downloadScoresheet() {
 
 function renderScoresheet() {
   const canvas = document.getElementById('scoresheetCanvas');
-  const dpr = Math.min(window.devicePixelRatio||1, 2);
-  const W = 1100, H = 1500;
-  canvas.width  = W*dpr; canvas.height = H*dpr;
-  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const DPR = Math.min(window.devicePixelRatio||1, 2);
+  // Sheet size — wide enough for all columns
+  const SW = 1080, SH = 1480;
+  canvas.width  = SW * DPR;
+  canvas.height = SH * DPR;
+  canvas.style.width  = SW + 'px';
+  canvas.style.height = SH + 'px';
   const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
+  ctx.scale(DPR, DPR);
 
-  // ── Reference colors ──
-  const PURPLE   = '#b3a6d4';
-  const PURPLELT = '#ddd8ef';
-  const CELLFILL = '#f0edf8';
-  const BLACK    = '#111';
-  const DKGRAY   = '#333';
-  const WHITE    = '#fff';
-  const GRIDLINE = '#888';
+  // ── Colors ──
+  const C_PURPLE   = '#b3a6d4';
+  const C_PURPLELT = '#d4cde8';
+  const C_CELLFILL = '#ede8f7';
+  const C_BLACK    = '#1a1a1a';
+  const C_GRAY     = '#555';
+  const C_GRIDLINE = '#888';
+  const C_WHITE    = '#ffffff';
 
-  const pad  = 22;
+  // ── Data ──
   const game    = LG?.game || {};
   const atbats  = (LG?.atbats||[]).filter(a=>a.result!=='SKIP');
   const lineup  = LG?.lineup||[];
   const innings = LG?.innings||{};
   const ourScore= LG?.ourScore||0;
   const oppScore= LG?.oppScore||0;
-  const maxInns = 7;
-  const nRows   = 15;
+  const NINNINGS = 7;
+  const NROWS    = 15;
+  const PAD      = 18;
 
-  // ── Build per-player per-inning map ──
+  // ── Per-player at-bat map ──
   const pABs = {};
-  lineup.forEach(p=>{pABs[p.name]={}; for(let i=1;i<=maxInns;i++)pABs[p.name][i]=[];});
-  atbats.forEach(ab=>{
-    if(!pABs[ab.batter_name])pABs[ab.batter_name]={};
-    if(!pABs[ab.batter_name][ab.inning])pABs[ab.batter_name][ab.inning]=[];
+  lineup.forEach(p => {
+    pABs[p.name] = {};
+    for (let i=1;i<=NINNINGS;i++) pABs[p.name][i] = [];
+  });
+  atbats.forEach(ab => {
+    if (!pABs[ab.batter_name]) pABs[ab.batter_name] = {};
+    if (!pABs[ab.batter_name][ab.inning]) pABs[ab.batter_name][ab.inning] = [];
     pABs[ab.batter_name][ab.inning].push(ab);
   });
 
-  function totals(name){
-    const abs=atbats.filter(a=>a.batter_name===name);
-    const notAB=['BB','HBP','SF'];
-    return{
-      ab: abs.filter(a=>!notAB.includes(a.result)).length,
-      bb: abs.filter(a=>a.result==='BB').length,
-      r:  abs.filter(a=>a.result==='HR').length + abs.filter(a=>a.reached_base&&['1B','2B','3B'].includes(a.result)).length,
-      rbi:abs.reduce((s,a)=>s+(a.rbis||0),0),
-      h:  abs.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length,
+  function playerTotals(name) {
+    const abs = atbats.filter(a=>a.batter_name===name);
+    const noAB = ['BB','HBP','SF'];
+    return {
+      ab:  abs.filter(a=>!noAB.includes(a.result)).length,
+      bb:  abs.filter(a=>a.result==='BB').length,
+      r:   abs.filter(a=>a.result==='HR').length + abs.filter(a=>a.reached_base&&['1B','2B','3B'].includes(a.result)).length,
+      rbi: abs.reduce((s,a)=>s+(a.rbis||0),0),
+      h:   abs.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length,
+      sb:  abs.reduce((s,a)=>s+(a.stolen_bases||0),0),
     };
   }
 
-  // ── Drawing helpers ──
-  function box(x,y,w,h,fill,sw=0.8,sc=GRIDLINE){
-    if(fill){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);}
-    ctx.strokeStyle=sc; ctx.lineWidth=sw; ctx.strokeRect(x,y,w,h);
+  // ── Drawing primitives ──
+  function fillRect(x,y,w,h,fill) { ctx.fillStyle=fill; ctx.fillRect(x,y,w,h); }
+  function strokeRect(x,y,w,h,color,lw) { ctx.strokeStyle=color; ctx.lineWidth=lw||1; ctx.strokeRect(x,y,w,h); }
+  function cell(x,y,w,h,fill,strokeColor,strokeW) {
+    if(fill){ ctx.fillStyle=fill; ctx.fillRect(x,y,w,h); }
+    ctx.strokeStyle=strokeColor||C_BLACK; ctx.lineWidth=strokeW||1;
+    ctx.strokeRect(x,y,w,h);
   }
-  function label(text,x,y,font,color=BLACK,align='left'){
-    ctx.fillStyle=color; ctx.font=font; ctx.textAlign=align;
-    ctx.fillText(String(text),x,y); ctx.textAlign='left';
+  function text(t,x,y,font,color,align) {
+    ctx.fillStyle=color||C_BLACK; ctx.font=font; ctx.textAlign=align||'left';
+    ctx.fillText(String(t),x,y); ctx.textAlign='left';
   }
-  function centered(text,x,y,w,h,font,color=BLACK){
-    label(text,x+w/2,y+h/2+4,font,color,'center');
+  function ctext(t,x,y,w,h,font,color) { // centered in cell
+    ctx.fillStyle=color||C_BLACK; ctx.font=font;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(String(t),x+w/2,y+h/2);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
   }
+
+  // White background
+  fillRect(0,0,SW,SH,C_WHITE);
 
   // ════════════════════════════════════
-  // HEADER — match reference exactly
+  // HEADER
   // ════════════════════════════════════
-  ctx.fillStyle=WHITE; ctx.fillRect(0,0,W,H);
 
-  // SOFTBALL text
-  ctx.font='bold 70px "Arial Black", Arial, sans-serif';
-  ctx.fillStyle=BLACK; ctx.fillText('SOFTBALL',pad,76);
+  // "SOFTBALL" — big bold, top left
+  ctx.font = 'bold 68px "Arial Black", Arial, sans-serif';
+  ctx.fillStyle = C_BLACK;
+  ctx.fillText('S', PAD, 72);
+  ctx.fillText('FTBALL', PAD+115, 72);
 
-  // Ball over the O (positioned correctly)
-  const bx=pad+172, by=46, br=26;
-  ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2);
-  ctx.fillStyle=WHITE; ctx.fill();
-  ctx.strokeStyle=BLACK; ctx.lineWidth=3; ctx.stroke();
-  // Stitching lines
+  // Ball replacing the O (measure S width first)
+  ctx.font = 'bold 68px "Arial Black", Arial, sans-serif';
+  const sW = ctx.measureText('S').width;
+  const ballCX = PAD + sW + 33;
+  const ballCY = 46;
+  const ballR  = 26;
+  ctx.beginPath(); ctx.arc(ballCX, ballCY, ballR, 0, Math.PI*2);
+  ctx.fillStyle=C_WHITE; ctx.fill();
+  ctx.strokeStyle=C_BLACK; ctx.lineWidth=3; ctx.stroke();
+  // Stitching
   ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.arc(bx,by,br*0.5,0.5,Math.PI-0.5); ctx.stroke();
-  ctx.beginPath(); ctx.arc(bx,by,br*0.5,Math.PI+0.5,2*Math.PI-0.5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ballCX,ballCY,ballR*0.52, 0.45, Math.PI-0.45); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ballCX,ballCY,ballR*0.52, Math.PI+0.45, 2*Math.PI-0.45); ctx.stroke();
 
-  // Score Sheet — italic serif, below SOFTBALL
-  ctx.font = 'italic bold 38px Georgia, "Times New Roman", serif';
-  ctx.fillStyle = BLACK;
-  ctx.fillText('Score Sheet', pad+2, 122);
+  // "Score Sheet" — italic, below SOFTBALL
+  ctx.font = 'italic bold 36px Georgia, "Times New Roman", serif';
+  ctx.fillStyle = C_BLACK;
+  ctx.fillText('Score Sheet', PAD, 118);
 
-  // Team boxes — top right, matching reference layout
-  const tbx=680, tby=12, tbw=W-tbx-pad, tbh=38;
-  ctx.fillStyle=PURPLE; ctx.fillRect(tbx,tby,tbw,tbh);
-  ctx.strokeStyle=BLACK; ctx.lineWidth=1.5; ctx.strokeRect(tbx,tby,tbw,tbh);
-  ctx.font='bold 10px Arial'; ctx.fillStyle=BLACK;
-  ctx.fillText('AWAY TEAM:',tbx+8,tby+15);
-  ctx.font='italic bold 18px Georgia,serif'; ctx.fillStyle=BLACK;
+  // Team boxes — top right
+  const TBX = 660, TBY = 10, TBW = SW-TBX-PAD, TBH = 38;
+  // Away
+  fillRect(TBX,TBY,TBW,TBH,C_PURPLE);
+  strokeRect(TBX,TBY,TBW,TBH,C_BLACK,1.5);
+  text('AWAY TEAM:', TBX+8, TBY+14, 'bold 10px Arial', C_BLACK);
+  text('AWAY TEAM:', TBX+8, TBY+26, 'bold 10px Arial', C_BLACK);
+  // Clear and redo properly
+  fillRect(TBX,TBY,TBW,TBH,C_PURPLE);
+  strokeRect(TBX,TBY,TBW,TBH,C_BLACK,1.5);
+  ctx.font='bold 10px Arial'; ctx.fillStyle=C_BLACK;
+  ctx.fillText('AWAY TEAM:', TBX+8, TBY+16);
+  ctx.font='italic bold 17px Georgia,serif';
   const awayName = game.home_away==='home'?(game.opponent||'Opponent'):'Us';
-  ctx.fillText(awayName,tbx+95,tby+24);
+  ctx.fillText(awayName, TBX+98, TBY+25);
 
-  ctx.font='11px Arial'; ctx.fillStyle=DKGRAY; ctx.textAlign='center';
-  ctx.fillText('vs',tbx+tbw/2,tby+tbh+16); ctx.textAlign='left';
+  // vs
+  ctx.font='11px Arial'; ctx.fillStyle=C_GRAY; ctx.textAlign='center';
+  ctx.fillText('vs', TBX+TBW/2, TBY+TBH+15); ctx.textAlign='left';
 
-  ctx.fillStyle=PURPLE; ctx.fillRect(tbx,tby+tbh+22,tbw,tbh);
-  ctx.strokeStyle=BLACK; ctx.lineWidth=1.5; ctx.strokeRect(tbx,tby+tbh+22,tbw,tbh);
-  ctx.font='bold 10px Arial'; ctx.fillStyle=BLACK;
-  ctx.fillText('HOME TEAM:',tbx+8,tby+tbh+37);
-  ctx.font='italic bold 18px Georgia,serif';
+  // Home
+  fillRect(TBX, TBY+TBH+22, TBW, TBH, C_PURPLE);
+  strokeRect(TBX, TBY+TBH+22, TBW, TBH, C_BLACK, 1.5);
+  ctx.font='bold 10px Arial'; ctx.fillStyle=C_BLACK;
+  ctx.fillText('HOME TEAM:', TBX+8, TBY+TBH+38);
+  ctx.font='italic bold 17px Georgia,serif';
   const homeName = game.home_away==='home'?'Us':(game.opponent||'Opponent');
-  ctx.fillText(homeName,tbx+95,tby+tbh+46);
+  ctx.fillText(homeName, TBX+98, TBY+TBH+47);
 
-  // Info block
-  const infoX=340, infoY=70;
-  const dateStr = game.game_date ? new Date(game.game_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '___';
-  const timeStr = game.game_time||'___';
-  ctx.font='bold 11px Arial'; ctx.fillStyle=BLACK;
-  ctx.fillText('DATE: '+dateStr,        infoX,      infoY);
-  ctx.fillText('START TIME: '+timeStr,  infoX+185,  infoY);
-  ctx.fillText('UMPIRE: ___',           infoX+350,  infoY);
-  ctx.fillText('SCORER NAME: ___',      infoX,      infoY+22);
-  ctx.fillText('END TIME: ___',         infoX+185,  infoY+22);
-  ctx.fillText('WEATHER: ___',          infoX+350,  infoY+22);
+  // Info fields — between title and team boxes, two rows
+  const IX = 330, IY1 = 70, IY2 = 90;
+  const dateStr = game.game_date
+    ? new Date(game.game_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'})
+    : '______';
+  const timeStr = game.game_time||'______';
+  ctx.font='bold 10.5px Arial'; ctx.fillStyle=C_BLACK;
+  ctx.fillText('DATE: '+dateStr,       IX,       IY1);
+  ctx.fillText('START TIME: '+timeStr, IX+165,   IY1);
+  ctx.fillText('UMPIRE: ______',       IX+330,   IY1);
+  ctx.fillText('SCORER NAME: ______',  IX,       IY2);
+  ctx.fillText('END TIME: ______',     IX+165,   IY2);
+  ctx.fillText('WEATHER: ______',      IX+330,   IY2);
 
   // ════════════════════════════════════
-  // MAIN GRID
+  // MAIN GRID — exact column layout
   // ════════════════════════════════════
-  const GT  = 138;  // grid top
-  const RH  = 62;   // row height — tall like reference
-  const HDR = 26;   // header height
+  const GT  = 132;  // grid top y
+  const HDR = 24;   // header row height
+  const RH  = 58;   // player row height
 
-  // Column layout
-  const cNum  = {x:pad,       w:28};
-  const cPlay = {x:pad+28,    w:142};
-  const cPos  = {x:pad+170,   w:36};
-  const cDP   = {x:pad+206,   w:54};
-  const innW  = 72;
-  const innX  = pad+260;
-  const totX  = innX + maxInns*innW + 8;
-  const totW  = 42;
-  const cAB   = {x:totX,          w:totW};
-  const cBB   = {x:totX+totW,     w:totW};
-  const cR    = {x:totX+totW*2,   w:totW};
-  const cRBI  = {x:totX+totW*3,   w:totW};
+  // Column x positions and widths
+  const C_NUM  = {x:PAD,       w:26};
+  const C_PLAY = {x:PAD+26,    w:138};
+  const C_POS  = {x:PAD+164,   w:34};
+  const C_DP   = {x:PAD+198,   w:52};
+  const INN_W  = 68;
+  const INN_X0 = PAD+250;
+  const TOT_X  = INN_X0 + NINNINGS*INN_W + 6;
+  const TOT_W  = 42;
+  // Totals cols: AB BB R RBI
+  const TCOLS = [
+    {x:TOT_X,          w:TOT_W, label:'AB'},
+    {x:TOT_X+TOT_W,    w:TOT_W, label:'BB'},
+    {x:TOT_X+TOT_W*2,  w:TOT_W, label:'R'},
+    {x:TOT_X+TOT_W*3,  w:TOT_W, label:'RBI'},
+  ];
 
   // ── Header row ──
-  [cNum,cPlay,cPos,cDP].forEach(c2=>box(c2.x,GT,c2.w,HDR,PURPLELT,1.5,BLACK));
-  centered('PLAYERS',cPlay.x,GT,cPlay.w,HDR,'bold 9px Arial');
-  centered('POS',    cPos.x, GT,cPos.w, HDR,'bold 9px Arial');
-  centered('DP/FLEX',cDP.x,  GT,cDP.w,  HDR,'bold 9px Arial');
+  // Left cols header — light purple
+  [C_NUM,C_PLAY,C_POS,C_DP].forEach(col=>{
+    cell(col.x, GT, col.w, HDR, C_PURPLELT, C_BLACK, 1.2);
+  });
+  ctext('PLAYERS', C_PLAY.x, GT, C_PLAY.w, HDR, 'bold 9px Arial');
+  ctext('POS',     C_POS.x,  GT, C_POS.w,  HDR, 'bold 9px Arial');
+  ctext('DP/FLEX', C_DP.x,   GT, C_DP.w,   HDR, 'bold 9px Arial');
 
-  for(let i=1;i<=maxInns;i++){
-    box(innX+(i-1)*innW, GT, innW, HDR, PURPLELT, 1.5, BLACK);
-    centered(String(i), innX+(i-1)*innW, GT, innW, HDR, 'bold 10px Arial');
+  // Inning number headers — light purple
+  for (let i=0;i<NINNINGS;i++) {
+    const ix = INN_X0+i*INN_W;
+    cell(ix, GT, INN_W, HDR, C_PURPLELT, C_BLACK, 1.2);
+    ctext(String(i+1), ix, GT, INN_W, HDR, 'bold 10px Arial');
   }
 
-  [cAB,cBB,cR,cRBI].forEach((c2,i)=>{
-    box(c2.x,GT,c2.w,HDR,PURPLE,1.5,BLACK);
-    centered(['AB','BB','R','RBI'][i],c2.x,GT,c2.w,HDR,'bold 10px Arial');
+  // Totals headers — dark purple
+  TCOLS.forEach(tc => {
+    cell(tc.x, GT, tc.w, HDR, C_PURPLE, C_BLACK, 1.5);
+    ctext(tc.label, tc.x, GT, tc.w, HDR, 'bold 10px Arial');
   });
 
   // ── Player rows ──
-  for(let ri=0;ri<nRows;ri++){
-    const p   = lineup[ri];
-    const ry  = GT+HDR+ri*RH;
+  for (let ri=0; ri<NROWS; ri++) {
+    const p  = lineup[ri];
+    const ry = GT + HDR + ri*RH;
 
-    // Fixed columns
-    box(cNum.x,  ry, cNum.w,  RH, WHITE, 1.2, BLACK);
-    box(cPlay.x, ry, cPlay.w, RH, WHITE, 1.2, BLACK);
-    box(cPos.x,  ry, cPos.w,  RH, WHITE, 1.2, BLACK);
-    box(cDP.x,   ry, cDP.w,   RH, WHITE, 1.2, BLACK);
+    // Fixed cols — white bg
+    cell(C_NUM.x,  ry, C_NUM.w,  RH, C_WHITE, C_BLACK, 1.2);
+    cell(C_PLAY.x, ry, C_PLAY.w, RH, C_WHITE, C_BLACK, 1.2);
+    cell(C_POS.x,  ry, C_POS.w,  RH, C_WHITE, C_BLACK, 1.2);
+    cell(C_DP.x,   ry, C_DP.w,   RH, C_WHITE, C_BLACK, 1.2);
 
-    if(p){
-      // Purple number circle
-      ctx.beginPath(); ctx.arc(cNum.x+cNum.w/2, ry+RH/2, 11, 0, Math.PI*2);
-      ctx.fillStyle=PURPLE; ctx.fill();
-      label(String(ri+1), cNum.x+cNum.w/2, ry+RH/2+4, 'bold 10px Arial', WHITE, 'center');
-      // Player name
-      label(p.name, cPlay.x+7, ry+RH*0.55+4, 'bold 13px Arial', BLACK);
+    if (p) {
+      // Number circle
+      ctx.beginPath();
+      ctx.arc(C_NUM.x+C_NUM.w/2, ry+RH/2, 10, 0, Math.PI*2);
+      ctx.fillStyle=C_PURPLE; ctx.fill();
+      ctext(String(ri+1), C_NUM.x, ry, C_NUM.w, RH, 'bold 10px Arial', C_WHITE);
+
+      // Player name — left-aligned, vertically centered
+      ctx.font='bold 13px Arial,sans-serif'; ctx.fillStyle=C_BLACK;
+      ctx.textBaseline='middle';
+      ctx.fillText(p.name, C_PLAY.x+6, ry+RH/2);
+      ctx.textBaseline='alphabetic';
+
       // Position
-      centered(p.pos||'', cPos.x, ry, cPos.w, RH, '10px Arial');
+      ctext(p.pos||'', C_POS.x, ry, C_POS.w, RH, '10px Arial');
     }
 
     // Inning cells
-    for(let inn=1;inn<=maxInns;inn++){
-      const cx = innX+(inn-1)*innW;
-      box(cx, ry, innW, RH, CELLFILL, 1.2, BLACK);
+    for (let inn=1; inn<=NINNINGS; inn++) {
+      const ix = INN_X0+(inn-1)*INN_W;
+      cell(ix, ry, INN_W, RH, C_CELLFILL, C_BLACK, 1.2);
 
-      // 4 corner base-tracking boxes (small)
-      const bs=11, bp=4;
-      [[cx+bp,ry+bp],[cx+innW-bs-bp,ry+bp],[cx+bp,ry+RH-bs-bp],[cx+innW-bs-bp,ry+RH-bs-bp]]
-        .forEach(([bx2,by2])=>{ ctx.strokeStyle='#aaa'; ctx.lineWidth=0.8; ctx.strokeRect(bx2,by2,bs,bs); });
+      // 4 corner tracking squares — small, like reference
+      const BS=10, BP=3;
+      const corners=[
+        [ix+BP,       ry+BP],
+        [ix+INN_W-BS-BP, ry+BP],
+        [ix+BP,       ry+RH-BS-BP],
+        [ix+INN_W-BS-BP, ry+RH-BS-BP],
+      ];
+      corners.forEach(([cx2,cy2])=>{
+        strokeRect(cx2,cy2,BS,BS,C_GRIDLINE,0.7);
+      });
 
-      if(p){
+      // Draw at-bat diamond notation
+      if (p) {
         const abs = pABs[p.name]?.[inn]||[];
-        // Draw first at-bat as proper scorecard notation
-        if(abs.length>0) drawScorecardAB(ctx, cx, ry, innW, RH, abs[0]);
-        // If >1 AB in same inning, show small stacked indicators
-        if(abs.length>1){
-          for(let ai=1;ai<abs.length;ai++){
-            const sx=cx+innW-20, sy=ry+4+(ai-1)*14;
-            ctx.font='bold 7px Arial'; ctx.fillStyle=DKGRAY; ctx.textAlign='center';
-            ctx.fillText(abs[ai].result||'?',sx,sy+8); ctx.textAlign='left';
-          }
+        if (abs.length>0) drawScoreCell(ctx, ix, ry, INN_W, RH, abs[0]);
+        // Extra ATs in same inning — small badge top-right
+        for (let ai=1; ai<Math.min(abs.length,3); ai++) {
+          const bx = ix+INN_W-14;
+          const by = ry+8+(ai-1)*13;
+          ctx.font='bold 7px Arial'; ctx.fillStyle=C_GRAY; ctx.textAlign='center';
+          ctx.fillText(abs[ai].result, bx, by+6); ctx.textAlign='left';
         }
       }
     }
 
-    // Totals
-    [cAB,cBB,cR,cRBI].forEach((c2,ci)=>{
-      box(c2.x, ry, c2.w, RH, WHITE, 1.5, BLACK);
-      if(p){
-        const t=totals(p.name);
-        const v=[t.ab,t.bb,t.r,t.rbi][ci];
-        // Large bold marker-pen style numbers like reference
-        ctx.font='bold 22px "Arial Black",Arial,sans-serif';
-        ctx.fillStyle=BLACK; ctx.textAlign='center';
-        ctx.fillText(String(v), c2.x+c2.w/2, ry+RH/2+8);
-        ctx.textAlign='left';
+    // Totals cols
+    TCOLS.forEach((tc,ci)=>{
+      cell(tc.x, ry, tc.w, RH, C_WHITE, C_BLACK, 1.5);
+      if (p) {
+        const t = playerTotals(p.name);
+        const v = [t.ab, t.bb, t.r, t.rbi][ci];
+        // Large bold like handwritten reference
+        ctx.font='bold 24px "Arial Black",Arial,sans-serif';
+        ctx.fillStyle=C_BLACK; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(String(v), tc.x+tc.w/2, ry+RH/2);
+        ctx.textAlign='left'; ctx.textBaseline='alphabetic';
       }
     });
   }
 
   // ── RUNS PER INNING row ──
-  const rpiY=GT+HDR+nRows*RH;
-  const rpiH=32;
+  const RPI_Y = GT + HDR + NROWS*RH;
+  const RPI_H = 32;
 
-  // Label cell spanning fixed cols
-  const labelW = innX-pad;
-  box(pad,rpiY,labelW,rpiH,PURPLELT,1.5,BLACK);
-  ctx.font='bold 10px Arial'; ctx.fillStyle=BLACK; ctx.textAlign='center';
-  ctx.fillText('RUNS PER INNINGS',pad+labelW/2,rpiY+rpiH/2+4); ctx.textAlign='left';
+  // Label cell
+  const labelW = INN_X0-PAD;
+  cell(PAD, RPI_Y, labelW, RPI_H, C_PURPLELT, C_BLACK, 1.5);
+  ctext('RUNS PER INNINGS', PAD, RPI_Y, labelW, RPI_H, 'bold 9.5px Arial');
 
-  for(let i=1;i<=maxInns;i++){
-    const ix=innX+(i-1)*innW;
-    box(ix,rpiY,innW,rpiH,PURPLE,1.5,BLACK);
-    const runs=innings[i]?.us;
-    if(runs!=null){
+  // Inning totals — dark purple
+  for (let i=1; i<=NINNINGS; i++) {
+    const ix=INN_X0+(i-1)*INN_W;
+    cell(ix, RPI_Y, INN_W, RPI_H, C_PURPLE, C_BLACK, 1.5);
+    const runs = innings[i]?.us;
+    if (runs != null) {
       ctx.font='bold 22px "Arial Black",Arial,sans-serif';
-      ctx.fillStyle=BLACK; ctx.textAlign='center';
-      ctx.fillText(String(runs),ix+innW/2,rpiY+rpiH/2+8); ctx.textAlign='left';
+      ctx.fillStyle=C_BLACK; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(String(runs), ix+INN_W/2, RPI_Y+RPI_H/2);
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
     }
   }
 
-  // Totals in RPI row
-  [cAB,cBB,cR,cRBI].forEach((c2,ci)=>{
-    box(c2.x,rpiY,c2.w,rpiH,PURPLE,1.5,BLACK);
-    const vals=[
-      atbats.filter(a=>!['BB','HBP','SF'].includes(a.result)).length,
-      atbats.filter(a=>a.result==='BB').length,
-      ourScore,
-      atbats.reduce((s,a)=>s+(a.rbis||0),0)
-    ];
-    ctx.font='bold 20px "Arial Black",Arial,sans-serif';
-    ctx.fillStyle=BLACK; ctx.textAlign='center';
-    ctx.fillText(String(vals[ci]),c2.x+c2.w/2,rpiY+rpiH/2+8); ctx.textAlign='left';
+  // Grand totals
+  const totVals = [
+    atbats.filter(a=>!['BB','HBP','SF'].includes(a.result)).length,
+    atbats.filter(a=>a.result==='BB').length,
+    ourScore,
+    atbats.reduce((s,a)=>s+(a.rbis||0),0),
+  ];
+  TCOLS.forEach((tc,ci)=>{
+    cell(tc.x, RPI_Y, tc.w, RPI_H, C_PURPLE, C_BLACK, 1.5);
+    ctx.font='bold 22px "Arial Black",Arial,sans-serif';
+    ctx.fillStyle=C_BLACK; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(String(totVals[ci]), tc.x+tc.w/2, RPI_Y+RPI_H/2);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
   });
 
   // ════════════════════════════════════
-  // BOTTOM SUMMARY
+  // BOTTOM SECTION
   // ════════════════════════════════════
-  const btmY=rpiY+rpiH+20;
-  const sH=22, sCW=34, sLW=110;
+  const BTM_Y  = RPI_Y + RPI_H + 18;
+  const S_RH   = 22;
+  const S_CW   = 34;
+  const S_LW   = 108;
 
-  [
-    {code:'H',  label:'HITS',         val:atbats.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length},
-    {code:'W',  label:'WALK',         val:atbats.filter(a=>a.result==='BB').length},
-    {code:'R',  label:'RUNS',         val:ourScore},
-    {code:'E',  label:'ERRORS',       val:0},
-    {code:'LOB',label:'LEFT ON BASE', val:''},
-  ].forEach((row,ri)=>{
-    const ry2=btmY+ri*sH;
-    const bg=ri===0?PURPLELT:WHITE;
-    box(pad,ry2,sCW,sH,bg,0.8,BLACK);
-    box(pad+sCW,ry2,sLW,sH,bg,0.8,BLACK);
-    ctx.font='bold 10px Arial'; ctx.fillStyle=BLACK; ctx.textAlign='center';
-    ctx.fillText(row.code,pad+sCW/2,ry2+sH/2+4); ctx.textAlign='left';
-    ctx.font='10px Arial'; ctx.fillText(row.label,pad+sCW+5,ry2+sH/2+4);
-    // Inning-by-inning boxes
-    for(let i=1;i<=maxInns;i++){
-      box(innX+(i-1)*innW,ry2,innW,sH,WHITE,0.7,GRIDLINE);
+  const summRows = [
+    {code:'H',   label:'HITS',         val: atbats.filter(a=>['1B','2B','3B','HR'].includes(a.result)).length},
+    {code:'W',   label:'WALK',         val: atbats.filter(a=>a.result==='BB').length},
+    {code:'R',   label:'RUNS',         val: ourScore},
+    {code:'E',   label:'ERRORS',       val: 0},
+    {code:'LOB', label:'LEFT ON BASE', val: ''},
+  ];
+
+  summRows.forEach((row,ri)=>{
+    const ry2 = BTM_Y+ri*S_RH;
+    const bg  = ri===0 ? C_PURPLELT : C_WHITE;
+    cell(PAD,         ry2, S_CW, S_RH, bg, C_BLACK, 0.8);
+    cell(PAD+S_CW,    ry2, S_LW, S_RH, bg, C_BLACK, 0.8);
+    ctext(row.code,  PAD,      ry2, S_CW, S_RH, 'bold 9px Arial');
+    ctx.font='9px Arial'; ctx.fillStyle=C_BLACK;
+    ctx.textBaseline='middle'; ctx.fillText(row.label, PAD+S_CW+5, ry2+S_RH/2);
+    ctx.textBaseline='alphabetic';
+    // Per-inning boxes
+    for(let i=0;i<NINNINGS;i++){
+      cell(INN_X0+i*INN_W, ry2, INN_W, S_RH, C_WHITE, C_GRIDLINE, 0.7);
     }
-    box(totX,ry2,totW,sH,WHITE,0.8,BLACK);
+    // Total box
+    cell(TOT_X, ry2, TOT_W, S_RH, C_WHITE, C_BLACK, 0.8);
     if(row.val!==''){
-      ctx.font='bold 13px Arial'; ctx.textAlign='center';
-      ctx.fillText(String(row.val),totX+totW/2,ry2+sH/2+4); ctx.textAlign='left';
+      ctext(String(row.val), TOT_X, ry2, TOT_W, S_RH, 'bold 12px Arial');
     }
   });
 
-  // ── PITCHER TABLE ──
-  const ptY=btmY+5*sH+18;
-  const ptCols=['#','PITCHER','W/L','IP','H','R','ER','BB','SO','HB','BK','WP','TBF','PC'];
-  const ptW   =[22,110,52,36,30,30,30,30,30,28,28,28,36,34];
-  let px2=pad;
-  ptCols.forEach((pc,i)=>{
-    box(px2,ptY,ptW[i],20,PURPLE,1,BLACK);
-    ctx.font='bold 8px Arial'; ctx.textAlign='center';
-    ctx.fillStyle=BLACK; ctx.fillText(pc,px2+ptW[i]/2,ptY+13); ctx.textAlign='left';
-    px2+=ptW[i];
+  // ── Pitcher table ──
+  const PT_Y = BTM_Y + summRows.length*S_RH + 16;
+  const ptCols = [
+    {l:'#',w:22},{l:'PITCHER',w:110},{l:'W/L',w:48},{l:'IP',w:36},
+    {l:'H',w:28},{l:'R',w:28},{l:'ER',w:28},{l:'BB',w:28},
+    {l:'SO',w:28},{l:'HB',w:28},{l:'BK',w:28},{l:'WP',w:28},{l:'TBF',w:34},{l:'PC',w:34},
+  ];
+  let ptx = PAD;
+  ptCols.forEach(pc=>{
+    cell(ptx, PT_Y, pc.w, 20, C_PURPLE, C_BLACK, 1);
+    ctext(pc.l, ptx, PT_Y, pc.w, 20, 'bold 8px Arial');
+    ptx+=pc.w;
   });
   for(let r2=0;r2<4;r2++){
-    px2=pad;
-    ptCols.forEach((_,i)=>{
-      box(px2,ptY+20+r2*22,ptW[i],22,WHITE,0.8,BLACK);
-      px2+=ptW[i];
+    ptx=PAD;
+    ptCols.forEach(pc=>{
+      cell(ptx, PT_Y+20+r2*22, pc.w, 22, C_WHITE, C_GRIDLINE, 0.8);
+      ptx+=pc.w;
     });
   }
 
-  // ── UMPIRES / CATCHER ──
-  const ux0=640, uy0=btmY;
-  const umCols=[{l:'#',w:24},{l:'UMPIRES',w:130},{l:'HP',w:44},{l:'1B',w:44},{l:'2B',w:44},{l:'3B',w:44}];
-  let ux3=ux0;
+  // ── Umpires / Catcher (right side) ──
+  const UM_X = 630, UM_Y = BTM_Y;
+  const umCols=[
+    {l:'#',w:24},{l:'UMPIRES',w:128},{l:'HP',w:44},{l:'1B',w:44},{l:'2B',w:44},{l:'3B',w:44},
+  ];
+  let umx = UM_X;
   umCols.forEach(uc=>{
-    box(ux3,uy0,uc.w,20,PURPLE,1,BLACK); centered(uc.l,ux3,uy0,uc.w,20,'bold 9px Arial'); ux3+=uc.w;
+    cell(umx, UM_Y, uc.w, 20, C_PURPLE, C_BLACK, 1);
+    ctext(uc.l, umx, UM_Y, uc.w, 20, 'bold 9px Arial');
+    umx+=uc.w;
   });
-  const umTW=umCols.reduce((s,u)=>s+u.w,0);
+  const UM_TW = umCols.reduce((s,u)=>s+u.w,0);
   for(let r2=0;r2<3;r2++){
-    ux3=ux0; umCols.forEach(uc=>{box(ux3,uy0+20+r2*22,uc.w,22,WHITE,0.8,BLACK);ux3+=uc.w;});
+    umx=UM_X;
+    umCols.forEach(uc=>{
+      cell(umx, UM_Y+20+r2*22, uc.w, 22, C_WHITE, C_GRIDLINE, 0.8);
+      umx+=uc.w;
+    });
   }
+  // Catcher box
+  const CC_Y = UM_Y + 90;
+  cell(UM_X,          CC_Y, UM_TW/2, 20, C_PURPLE,  C_BLACK, 1);
+  cell(UM_X+UM_TW/2,  CC_Y, UM_TW/2, 20, C_WHITE,   C_BLACK, 1);
+  ctx.font='bold 9px Arial'; ctx.fillStyle=C_BLACK;
+  ctx.textBaseline='middle';
+  ctx.fillText('#  CATCHER', UM_X+6, CC_Y+10);
+  ctx.fillText('PB', UM_X+UM_TW*0.75, CC_Y+10);
+  ctx.textBaseline='alphabetic';
+  cell(UM_X, CC_Y+20, UM_TW, 24, C_WHITE, C_GRIDLINE, 0.8);
 
-  const cchy=uy0+86;
-  box(ux0,cchy,umTW/2,20,PURPLE,1,BLACK);
-  ctx.font='bold 9px Arial'; ctx.fillText('#  CATCHER',ux0+6,cchy+13);
-  box(ux0+umTW/2,cchy,umTW/2,20,WHITE,1,BLACK);
-  ctx.fillText('PB',ux0+umTW*0.75,cchy+13);
-  box(ux0,cchy+20,umTW,24,WHITE,0.8,BLACK);
-
-  // ── FINAL SCORE ──
-  const fsX=W-165, fsY=H-100;
-  ctx.fillStyle=PURPLE; ctx.fillRect(fsX,fsY,145,72);
-  ctx.strokeStyle=BLACK; ctx.lineWidth=2; ctx.strokeRect(fsX,fsY,145,72);
-  ctx.font='bold 11px Arial'; ctx.textAlign='center'; ctx.fillStyle=BLACK;
-  ctx.fillText('FINAL SCORE',fsX+72,fsY+17);
-  ctx.font='bold 32px "Arial Black",Arial,sans-serif';
-  ctx.fillStyle=(ourScore>oppScore)?'#2d6a4f':'#c0392b';
-  ctx.fillText(ourScore+' – '+oppScore,fsX+72,fsY+56);
-  ctx.textAlign='left';
+  // ── Final score box ──
+  const FS_X=SW-165, FS_Y=SH-96;
+  cell(FS_X, FS_Y, 147, 76, C_PURPLE, C_BLACK, 2);
+  ctext('FINAL SCORE', FS_X, FS_Y, 147, 24, 'bold 11px Arial');
+  const won = ourScore > oppScore;
+  ctx.font='bold 30px "Arial Black",Arial,sans-serif';
+  ctx.fillStyle = won ? '#2d6a4f' : '#c0392b';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(ourScore+' – '+oppScore, FS_X+73, FS_Y+52);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
 }
 
-// ── Proper scorecard at-bat cell drawing ──
-// Draws a baseball diamond outline with the result notated correctly
-// like a real handwritten scorebook
-function drawScorecardAB(ctx, cellX, cellY, cellW, cellH, ab) {
-  const result = ab.result||'';
+// ── Scorecard cell drawing — proper baseball notation ──
+function drawScoreCell(ctx, cellX, cellY, cellW, cellH, ab) {
+  const result   = ab.result||'';
+  const hits     = ['1B','2B','3B','HR'];
+  const outs     = ['K','FO','GO','LO','FC','DP','SF'];
+  const walks    = ['BB','HBP'];
+  const isHit    = hits.includes(result);
+  const isOut    = outs.includes(result);
+  const isWalk   = walks.includes(result);
+
+  // Center of the diamond inside the cell
+  // Diamond should be centered, leaving room for corner boxes
   const cx = cellX + cellW/2;
-  const cy = cellY + cellH/2 + 4;
-  const ds = Math.min(cellW, cellH)*0.28; // diamond half-size
+  const cy = cellY + cellH/2 + 2;
+  const DS = Math.min(cellW, cellH) * 0.27; // half-size of diamond
 
-  const hits    = ['1B','2B','3B','HR'];
-  const outs    = ['K','FO','GO','LO','FC','DP','SF','E'];
-  const walks   = ['BB','HBP'];
-  const isHit   = hits.includes(result);
-  const isOut   = outs.includes(result);
-  const isWalk  = walks.includes(result);
+  // ── Draw diamond outline ──
+  // Color: green for hits, dark for outs, amber for walks, gray for other
+  const dColor = isHit ? '#2d6a4f' : isOut ? '#222' : isWalk ? '#b07000' : '#666';
+  const dWidth = isHit ? 2 : 1.5;
 
-  // ── Draw the diamond outline (like a real scorebook) ──
   ctx.beginPath();
-  ctx.moveTo(cx,     cy-ds);  // top (home plate area)
-  ctx.lineTo(cx+ds,  cy);     // right (1B side)
-  ctx.lineTo(cx,     cy+ds);  // bottom
-  ctx.lineTo(cx-ds,  cy);     // left (3B side)
+  ctx.moveTo(cx,    cy-DS); // top
+  ctx.lineTo(cx+DS, cy);    // right (1B)
+  ctx.lineTo(cx,    cy+DS); // bottom (home)
+  ctx.lineTo(cx-DS, cy);    // left (3B)
   ctx.closePath();
 
-  // Fill portions of diamond based on how far batter reached
-  if(result==='HR'){
-    // Full diamond filled — scored a run
-    ctx.fillStyle='rgba(45,106,79,0.25)'; ctx.fill();
-  } else if(result==='3B'){
-    // 3/4 diamond: home→1B→2B→3B
-    ctx.fillStyle='rgba(45,106,79,0.15)'; ctx.fill();
-  } else if(result==='2B'){
-    ctx.fillStyle='rgba(45,106,79,0.1)'; ctx.fill();
-  } else if(isHit||isWalk){
-    // Reached first: bottom triangle filled lightly
-    ctx.fillStyle='rgba(45,106,79,0.07)'; ctx.fill();
-  } else {
-    ctx.fillStyle='rgba(0,0,0,0)';
+  // Light fill showing bases reached
+  if (result==='HR') {
+    ctx.fillStyle='rgba(45,106,79,0.18)'; ctx.fill();
+  } else if (result==='3B') {
+    ctx.fillStyle='rgba(45,106,79,0.12)'; ctx.fill();
+  } else if (result==='2B') {
+    ctx.fillStyle='rgba(45,106,79,0.08)'; ctx.fill();
+  } else if (isHit || isWalk) {
+    ctx.fillStyle='rgba(45,106,79,0.05)'; ctx.fill();
   }
 
-  // Diamond outline
-  ctx.strokeStyle = isHit?'#2d6a4f' : isOut?'#333' : isWalk?'#c9782b' : '#555';
-  ctx.lineWidth = isHit ? 2 : 1.5;
-  ctx.beginPath();
-  ctx.moveTo(cx,cy-ds); ctx.lineTo(cx+ds,cy); ctx.lineTo(cx,cy+ds); ctx.lineTo(cx-ds,cy); ctx.closePath();
-  ctx.stroke();
+  ctx.strokeStyle=dColor; ctx.lineWidth=dWidth; ctx.stroke();
 
-  // For HR: draw the full circle around the diamond to indicate run scored
-  if(result==='HR'){
-    ctx.beginPath(); ctx.arc(cx,cy,ds*1.3,0,Math.PI*2);
-    ctx.strokeStyle='#2d6a4f'; ctx.lineWidth=2; ctx.stroke();
+  // Circle around diamond for HR (indicates scored)
+  if (result==='HR') {
+    ctx.beginPath(); ctx.arc(cx, cy, DS*1.35, 0, Math.PI*2);
+    ctx.strokeStyle='#2d6a4f'; ctx.lineWidth=1.8; ctx.stroke();
   }
 
-  // ── Result text ──
-  // In a real scorebook: result written at top of cell, fielder numbers at bottom for outs
-  // For hits: "1B", "2B" etc at top-left of cell
-  // For outs: fielder number combo (e.g. "6-3") at top, K for strikeout
-  // For walks: "BB" at top
+  // ── Result label — top-left of diamond, clear of corner boxes ──
+  const LX = cellX + 14;
+  const LY = cellY + 18;
+  ctx.font = result.length>2 ? 'bold 8px Arial' : 'bold 10px Arial';
+  ctx.fillStyle = dColor;
+  ctx.textBaseline='alphabetic';
+  ctx.fillText(result, LX, LY);
 
-  const textX = cellX + 6;
-  const textY = cellY + 14;
-
-  ctx.font = 'bold 10px Arial';
-  ctx.fillStyle = isHit?'#2d6a4f' : isOut?'#111' : isWalk?'#c9782b' : '#555';
-
-  // What to show: result code + fielder notation for outs
-  let displayText = result;
-  // Map common results to scorecard notation
-  const notation = {
-    'K':   'K',
-    'FO':  'F',
-    'GO':  'G',
-    'LO':  'L',
-    'FC':  'FC',
-    'DP':  'DP',
-    'SF':  'SF',
-    'E':   'E',
-    'BB':  'BB',
-    'HBP': 'HBP',
-    '1B':  '1B',
-    '2B':  '2B',
-    '3B':  '3B',
-    'HR':  'HR',
-  };
-  displayText = notation[result] || result;
-
-  ctx.fillText(displayText, textX, textY);
-
-  // RBI count — small number at bottom right of cell if >0
-  if(ab.rbis>0){
-    ctx.font='9px Arial'; ctx.fillStyle='#333'; ctx.textAlign='right';
-    ctx.fillText('RBI'+ab.rbis, cellX+cellW-6, cellY+cellH-6);
+  // ── RBI count — bottom right, small ──
+  if (ab.rbis>0) {
+    ctx.font='8px Arial'; ctx.fillStyle='#444'; ctx.textAlign='right';
+    ctx.fillText('RBI:'+ab.rbis, cellX+cellW-4, cellY+cellH-5);
     ctx.textAlign='left';
   }
 
-  // Notes — if any, tiny text at bottom
-  if(ab.notes){
-    ctx.font='7px Arial'; ctx.fillStyle='#888';
-    const note = ab.notes.length>12 ? ab.notes.slice(0,12)+'…' : ab.notes;
-    ctx.fillText(note, cellX+4, cellY+cellH-4);
+  // ── Stolen bases indicator ──
+  if (ab.stolen_bases>0) {
+    ctx.font='bold 8px Arial'; ctx.fillStyle='#b07000'; ctx.textAlign='right';
+    ctx.fillText('SB:'+ab.stolen_bases, cellX+cellW-4, cellY+cellH-16);
+    ctx.textAlign='left';
   }
 }
 
-function drawDiamondCell(ctx,cx,cy,s,result){ /* legacy - not used */ }
-function drawDiamond(ctx,cx,cy,s,result){ /* legacy - not used */ }
-
+// Legacy aliases
+function drawDiamondCell(){} function drawDiamond(){}
 
 // ── Init ──
 if(!configured){ showConfigBanner(); }
