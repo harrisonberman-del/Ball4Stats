@@ -1242,7 +1242,7 @@ function pctColor(p){
   return'#1a4a7a';
 }
 function outcomeColor(result){
-  const map={1B:'#4a9e74',2B:'#2d6a4f',3B:'#c9782b',HR:'#c0392b',BB:'#2563a8',HBP:'#4a7ab8',
+  const map={'1B':'#4a9e74','2B':'#2d6a4f','3B':'#c9782b',HR:'#c0392b',BB:'#2563a8',HBP:'#4a7ab8',
     K:'#999',FO:'#b0a090',GO:'#c4b8a8',LO:'#a89880',SF:'#ccc',FC:'#ccc',E:'#ccc',DP:'#888',SKIP:'#eee'};
   return map[result]||'#ccc';
 }
@@ -3702,6 +3702,172 @@ function drawScoreCell(ctx, cellX, cellY, cellW, cellH, ab) {
 
 // Legacy aliases
 function drawDiamondCell(){} function drawDiamond(){}
+
+
+// ── Per-game bar chart ──
+function drawPerGameChart(data){
+  const canvas=document.getElementById('perGameChart');
+  if(!canvas||!data.length)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const W=canvas.offsetWidth||300, H=160;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const pad={t:8,r:8,b:28,l:28};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const barW=Math.min(Math.floor(cw/data.length)-2,24);
+  const gap=(cw-(barW*data.length))/(data.length+1);
+  const maxH=Math.max(...data.map(d=>d.h),1);
+
+  // Grid lines
+  ctx.strokeStyle='#e8e6e1'; ctx.lineWidth=1;
+  [0,Math.ceil(maxH/2),maxH].forEach(v=>{
+    const y=pad.t+ch-(v/maxH)*ch;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.fillStyle='#7a7568'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='right';
+    ctx.fillText(v,pad.l-3,y+3);
+  });
+
+  data.forEach((d,i)=>{
+    const x=pad.l+gap+(barW+gap)*i;
+    // H bar
+    const hH=d.h>0?(d.h/maxH)*ch:2;
+    ctx.fillStyle='#2d6a4f'; ctx.fillRect(x, pad.t+ch-hH, barW, hH);
+    // HR dot
+    if(d.hr>0){
+      ctx.beginPath(); ctx.arc(x+barW/2, pad.t+ch-hH-5, 3, 0, Math.PI*2);
+      ctx.fillStyle='#c0392b'; ctx.fill();
+    }
+    // BB marker
+    if(d.bb>0){
+      ctx.fillStyle='#2563a8'; ctx.fillRect(x, pad.t+ch-hH-2, barW, 2);
+    }
+    // Date label
+    ctx.fillStyle='#7a7568'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
+    const lbl=d.date?d.date.slice(5):'G'+(i+1);
+    ctx.fillText(lbl, x+barW/2, H-8);
+    // BA inside bar
+    if(d.ab>0&&hH>14){
+      const baStr=(d.h/d.ab).toFixed(3).replace(/^0/,'');
+      ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='7px DM Mono,monospace'; ctx.textAlign='center';
+      ctx.fillText(baStr, x+barW/2, pad.t+ch-hH+10);
+    }
+  });
+  ctx.textAlign='left';
+}
+
+// ── Radar / pentagon chart ──
+function drawRadarChart(ab,h,hr,bb,k,sb,pa,xbh,iso,woba){
+  const canvas=document.getElementById('radarChart');
+  if(!canvas)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=200*dpr; canvas.height=200*dpr;
+  canvas.style.width='200px'; canvas.style.height='200px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const cx=100, cy=105, R=68;
+  const axes=[
+    {label:'Contact', val:ab>0?(ab-k)/ab:0,   max:1},
+    {label:'Power',   val:Math.min(iso,0.5),   max:0.5},
+    {label:'OBP',     val:Math.min(ab>0?(h+bb)/(ab+bb):0,0.6), max:0.6},
+    {label:'Speed',   val:Math.min(sb/10,1),   max:1},
+    {label:'Average', val:Math.min(ab>0?h/ab:0,0.5), max:0.5},
+  ];
+  const N=axes.length;
+  const angle=i=>(i/N)*Math.PI*2-Math.PI/2;
+
+  // Web rings
+  [0.25,0.5,0.75,1].forEach(r=>{
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=angle(i), x=cx+Math.cos(a)*R*r, y=cy+Math.sin(a)*R*r;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.strokeStyle='#e8e6e1'; ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // Axis lines
+  axes.forEach((_,i)=>{
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle(i))*R, cy+Math.sin(angle(i))*R);
+    ctx.strokeStyle='#d4d1ca'; ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // Data shape
+  ctx.beginPath();
+  axes.forEach((ax,i)=>{
+    const v=ax.max>0?Math.min(ax.val/ax.max,1):0;
+    const x=cx+Math.cos(angle(i))*R*v;
+    const y=cy+Math.sin(angle(i))*R*v;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(45,106,79,0.15)'; ctx.fill();
+  ctx.strokeStyle='#2d6a4f'; ctx.lineWidth=2; ctx.stroke();
+
+  // Dots
+  axes.forEach((ax,i)=>{
+    const v=ax.max>0?Math.min(ax.val/ax.max,1):0;
+    const x=cx+Math.cos(angle(i))*R*v;
+    const y=cy+Math.sin(angle(i))*R*v;
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fillStyle='#2d6a4f'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+  });
+
+  // Labels
+  ctx.font='bold 9px DM Sans,sans-serif'; ctx.fillStyle='#3c3a34'; ctx.textAlign='center';
+  axes.forEach((ax,i)=>{
+    const a=angle(i);
+    ctx.fillText(ax.label, cx+Math.cos(a)*(R+16), cy+Math.sin(a)*(R+16)+3);
+  });
+  ctx.textAlign='left';
+}
+
+// ── Scorecard cell drawing ──
+function drawScorecardAB(ctx, cellX, cellY, cellW, cellH, ab) {
+  const result = ab.result||'';
+  const hits=['1B','2B','3B','HR'], outs=['K','FO','GO','LO','FC','DP','SF'], walks=['BB','HBP'];
+  const isHit=hits.includes(result), isOut=outs.includes(result), isWalk=walks.includes(result);
+  const cx=cellX+cellW/2, cy=cellY+cellH/2+2;
+  const DS=Math.min(cellW,cellH)*0.27;
+  const dColor=isHit?'#2d6a4f':isOut?'#222':isWalk?'#b07000':'#666';
+
+  ctx.beginPath();
+  ctx.moveTo(cx,cy-DS); ctx.lineTo(cx+DS,cy); ctx.lineTo(cx,cy+DS); ctx.lineTo(cx-DS,cy);
+  ctx.closePath();
+
+  if(result==='HR')ctx.fillStyle='rgba(45,106,79,0.18)';
+  else if(result==='3B')ctx.fillStyle='rgba(45,106,79,0.12)';
+  else if(result==='2B')ctx.fillStyle='rgba(45,106,79,0.08)';
+  else if(isHit||isWalk)ctx.fillStyle='rgba(45,106,79,0.05)';
+  else ctx.fillStyle='rgba(0,0,0,0)';
+  ctx.fill();
+
+  ctx.strokeStyle=dColor; ctx.lineWidth=isHit?2:1.5; ctx.stroke();
+
+  if(result==='HR'){
+    ctx.beginPath(); ctx.arc(cx,cy,DS*1.35,0,Math.PI*2);
+    ctx.strokeStyle='#2d6a4f'; ctx.lineWidth=1.8; ctx.stroke();
+  }
+
+  ctx.font=result.length>2?'bold 8px Arial':'bold 10px Arial';
+  ctx.fillStyle=dColor; ctx.textBaseline='alphabetic';
+  ctx.fillText(result, cellX+14, cellY+18);
+
+  if(ab.rbis>0){
+    ctx.font='8px Arial'; ctx.fillStyle='#444'; ctx.textAlign='right';
+    ctx.fillText('RBI:'+ab.rbis, cellX+cellW-4, cellY+cellH-5); ctx.textAlign='left';
+  }
+  if(ab.stolen_bases>0){
+    ctx.font='bold 8px Arial'; ctx.fillStyle='#b07000'; ctx.textAlign='right';
+    ctx.fillText('SB:'+ab.stolen_bases, cellX+cellW-4, cellY+cellH-16); ctx.textAlign='left';
+  }
+}
+function drawDiamondCell(){}
+function drawDiamond(){}
 
 // ── Init ──
 if(!configured){ showConfigBanner(); }
