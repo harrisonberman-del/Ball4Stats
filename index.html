@@ -918,6 +918,49 @@ canvas#scoresheetCanvas {
 .tg-chevron { color:var(--ink3); transition:transform .2s; }
 .tg-card.open .tg-chevron { transform:rotate(180deg); }
 
+
+/* ── Inline game edit row ── */
+.game-edit-row td {
+  background:#f6f3ee; padding:10px 12px;
+  border-bottom:2px solid var(--accent);
+}
+.game-edit-form {
+  display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end;
+}
+.game-edit-field { display:flex; flex-direction:column; gap:3px; }
+.game-edit-field label {
+  font-size:.6rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--ink3);
+}
+.game-edit-field input {
+  background:var(--white); border:1.5px solid var(--sand3);
+  border-radius:5px; padding:5px 7px; font-family:var(--font-mono);
+  font-size:.85rem; font-weight:600; width:58px; text-align:center;
+  outline:none; transition:border-color .12s; color:var(--ink);
+}
+.game-edit-field input.wide { width:110px; text-align:left; font-family:var(--font); }
+.game-edit-field input:focus { border-color:var(--accent); background:var(--white); }
+.game-edit-actions { display:flex; gap:6px; align-items:flex-end; margin-left:4px; }
+.game-edit-save {
+  background:var(--accent); color:#fff; border:none; font-family:var(--font);
+  font-size:.8rem; font-weight:700; padding:7px 16px; border-radius:6px;
+  cursor:pointer; white-space:nowrap;
+}
+.game-edit-save:hover { background:#235c42; }
+.game-edit-cancel {
+  background:none; border:1.5px solid var(--sand3); color:var(--ink3);
+  font-family:var(--font); font-size:.8rem; font-weight:500;
+  padding:6px 12px; border-radius:6px; cursor:pointer;
+}
+.game-edit-cancel:hover { border-color:var(--ink3); color:var(--ink); }
+.game-edit-delete {
+  background:none; border:1.5px solid #e8d8d8; color:#c0392b;
+  font-family:var(--font); font-size:.8rem; font-weight:500;
+  padding:6px 12px; border-radius:6px; cursor:pointer;
+}
+.game-edit-delete:hover { background:#fff0f0; }
+tr.editing td { background:var(--accent-light) !important; }
+
 </style>
 </head>
 <body>
@@ -1740,50 +1783,111 @@ async function saveGame(){
 
 // ── All Games ──
 let gFilter='ALL';
+let expandedGameId = null;
+
 function renderGamesPage(){
+  // Player filter strip
   document.getElementById('gamesStrip').innerHTML=
     `<button class="ps-btn${gFilter==='ALL'?' active':''}" onclick="setGF('ALL')">All Players</button>`+
     players.map(p=>`<button class="ps-btn${gFilter===p.name?' active':''}" onclick="setGF('${esc(p.name)}')">${p.name}</button>`).join('');
-  const rows=(gFilter==='ALL'?games:games.filter(g=>g.player_name===gFilter));
-  document.getElementById('gamesHead').innerHTML=`<tr><th class="left">Date</th><th class="left">Player</th><th class="left">Opp</th>${RF.map(f=>`<th>${f.l}</th>`).join('')}<th></th></tr>`;
-  if(!rows.length){document.getElementById('gamesBody').innerHTML=`<tr><td colspan="${RF.length+3}" class="empty">No games yet.</td></tr>`;return;}
-  document.getElementById('gamesBody').innerHTML=rows.map(g=>`<tr>
-    <td class="left">${g.date||'—'}</td>
-    <td class="name-col">${g.player_name}</td>
-    <td class="left">${g.opp||'—'}</td>
-    ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
-  </tr>`).join('');
+
+  const rows = (gFilter==='ALL' ? games : games.filter(g=>g.player_name===gFilter))
+    .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  document.getElementById('gamesHead').innerHTML=`<tr>
+    <th class="left">Date</th>
+    <th class="left">Player</th>
+    <th class="left">Opp</th>
+    ${RF.map(f=>`<th title="${f.d}">${f.l}</th>`).join('')}
+    <th></th>
+  </tr>`;
+
+  if(!rows.length){
+    document.getElementById('gamesBody').innerHTML=`<tr><td colspan="${RF.length+4}" class="empty">No games yet.</td></tr>`;
+    return;
+  }
+
+  document.getElementById('gamesBody').innerHTML = rows.map(g => {
+    const isEditing = g.id === expandedGameId;
+    const rowClass  = isEditing ? 'editing' : '';
+
+    const displayRow = `<tr class="${rowClass}" style="cursor:pointer" onclick="toggleGameEdit('${esc(g.id)}')">
+      <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
+      <td class="name-col">${g.player_name}</td>
+      <td class="left" style="color:var(--ink2)">${g.opp||'—'}</td>
+      ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
+      <td style="text-align:center;color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</td>
+    </tr>`;
+
+    if (!isEditing) return displayRow;
+
+    // Inline edit form
+    const editRow = `<tr class="game-edit-row">
+      <td colspan="${RF.length+4}">
+        <div class="game-edit-form">
+          <div class="game-edit-field">
+            <label>Date</label>
+            <input type="date" id="ge-date-${esc(g.id)}" class="wide" value="${g.date||''}">
+          </div>
+          <div class="game-edit-field">
+            <label>Opponent</label>
+            <input type="text" id="ge-opp-${esc(g.id)}" class="wide" value="${g.opp||''}" placeholder="Team name…">
+          </div>
+          ${RF.map(f=>`<div class="game-edit-field">
+            <label>${f.l}</label>
+            <input type="number" id="ge-${f.id}-${esc(g.id)}" min="0" value="${g[f.id]??0}">
+          </div>`).join('')}
+          <div class="game-edit-actions">
+            <button class="game-edit-save" onclick="saveGameEdit('${esc(g.id)}')">Save</button>
+            <button class="game-edit-cancel" onclick="toggleGameEdit(null)">Cancel</button>
+            <button class="game-edit-delete" onclick="confirmDel('game','${esc(g.id)}')">Delete</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+
+    return displayRow + editRow;
+  }).join('');
 }
-function setGF(p){gFilter=p;renderGamesPage();}
 
-async function editGameRow(gameId, playerName) {
-  // Show a simple edit modal for this game row
-  const row = games.find(g=>g.id===gameId);
-  if(!row) return;
+function toggleGameEdit(gameId) {
+  expandedGameId = expandedGameId === gameId ? null : gameId;
+  renderGamesPage();
+  // Scroll to the edit row
+  if (expandedGameId) {
+    setTimeout(() => {
+      const el = document.getElementById('ge-date-' + expandedGameId);
+      if (el) el.focus();
+    }, 50);
+  }
+}
 
-  // Build a prompt-based editor for each raw stat
-  const statLabels = RF.map(f=>f.l).join(', ');
-  const current = RF.map(f=>`${f.l}:${row[f.id]??0}`).join('  ');
-  const input = prompt(`Edit stats for ${playerName} vs ${row.opp||'?'} on ${row.date||'?'}\n\nCurrent: ${current}\n\nEnter changes as STAT=VALUE (e.g. HR=2 RBI=3)\nSeparate multiple with spaces:`);
-  if(!input) return;
-
+async function saveGameEdit(gameId) {
   const updates = {};
-  input.trim().split(/\s+/).forEach(part=>{
-    const [key,val] = part.split('=');
-    if(key&&val!==undefined){
-      const field = RF.find(f=>f.l.toLowerCase()===key.toLowerCase()||f.id.toLowerCase()===key.toLowerCase());
-      if(field) updates[field.id] = parseInt(val)||0;
-    }
+  const dateVal = document.getElementById('ge-date-' + gameId)?.value;
+  const oppVal  = document.getElementById('ge-opp-'  + gameId)?.value.trim();
+  if (dateVal) updates.date = dateVal;
+  if (oppVal !== undefined) updates.opp = oppVal;
+  RF.forEach(f => {
+    const el = document.getElementById(`ge-${f.id}-${gameId}`);
+    if (el) updates[f.id] = parseInt(el.value) || 0;
   });
-
-  if(!Object.keys(updates).length){ showToast('No valid changes entered', true); return; }
 
   try {
     await sbPatch('games', `id=eq.${gameId}`, updates);
-    showToast('Stats updated!');
+    // Update local cache
+    const g = games.find(x => x.id === gameId);
+    if (g) Object.assign(g, updates);
+    expandedGameId = null;
+    showToast('Game updated!');
     await loadAll();
-  } catch(e){ showToast('Error: '+e.message, true); }
+  } catch(e) { showToast('Error: ' + e.message, true); }
 }
+
+function setGF(p){ gFilter=p; expandedGameId=null; renderGamesPage(); }
+
+// Keep old editGameRow as no-op (called from elsewhere)
+async function editGameRow(gameId) { toggleGameEdit(gameId); }
 
 // ── Delete ──
 let pending=null;
