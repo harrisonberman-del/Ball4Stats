@@ -827,6 +827,97 @@ canvas#scoresheetCanvas {
   max-width:100%;
 }
 
+
+/* ══ TEAM GAMES ══ */
+.tg-card {
+  background:var(--white); border:1px solid var(--sand2);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  margin-bottom:.875rem; overflow:hidden;
+}
+.tg-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.875rem 1.25rem; gap:.75rem; flex-wrap:wrap;
+  cursor:pointer; transition:background .1s;
+}
+.tg-header:hover { background:var(--sand); }
+.tg-date { font-size:.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--ink3); }
+.tg-opp { font-size:1rem; font-weight:700; color:var(--ink); margin-top:2px; }
+.tg-opp-edit { display:inline-flex; align-items:center; gap:6px; }
+.tg-opp-input {
+  font-family:var(--font); font-size:.9rem; font-weight:700;
+  background:var(--sand); border:1.5px solid var(--accent);
+  border-radius:5px; padding:3px 8px; outline:none; color:var(--ink); min-width:120px;
+}
+.tg-score {
+  font-family:var(--font-mono); font-size:1.5rem; font-weight:700;
+  display:flex; align-items:baseline; gap:.5rem; flex-shrink:0;
+}
+.tg-score-us { color:var(--accent); }
+.tg-score-them { color:var(--ink3); }
+.tg-score-dash { color:var(--sand3); font-size:1.1rem; }
+.tg-result { font-size:.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; padding:3px 8px; border-radius:3px; }
+.tg-result.win  { background:var(--accent-light); color:var(--accent); }
+.tg-result.loss { background:#fff0f0; color:var(--c-warn,#b03030); }
+.tg-result.tie  { background:var(--sand2); color:var(--ink3); }
+.tg-result.ns   { background:var(--sand2); color:var(--ink3); }
+
+.tg-body { border-top:1px solid var(--sand2); }
+.tg-sync-banner {
+  display:flex; align-items:center; gap:10px;
+  background:#fff8e6; border-bottom:1px solid #f0d060;
+  padding:.625rem 1.25rem; font-size:.82rem; color:#7a5800; flex-wrap:wrap;
+}
+.tg-sync-btn {
+  background:#f0c040; border:none; border-radius:5px; font-family:var(--font);
+  font-size:.75rem; font-weight:700; padding:4px 12px; cursor:pointer;
+  color:#5a4000; transition:background .12s;
+}
+.tg-sync-btn:hover { background:#e0b030; }
+
+.tg-boxscore { overflow-x:auto; }
+.tg-box-table { width:100%; border-collapse:collapse; font-size:.8rem; }
+.tg-box-table th {
+  background:var(--bg); padding:6px 10px; font-size:.63rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.08em; color:var(--ink3);
+  border-bottom:1px solid var(--sand2); text-align:center; white-space:nowrap;
+}
+.tg-box-table th.left { text-align:left; }
+.tg-box-table td { padding:7px 10px; border-bottom:1px solid var(--sand2);
+  font-family:var(--font-mono); font-size:.79rem; text-align:center; color:var(--ink2); }
+.tg-box-table td.left { text-align:left; font-family:var(--font);
+  font-weight:600; color:var(--ink); }
+.tg-box-table tr:last-child td { border-bottom:none; }
+.tg-box-table tr:hover td { background:var(--bg); }
+.tg-box-table td.hi { color:var(--accent); font-weight:700; }
+.tg-totals-row td { background:var(--bg); font-weight:700;
+  border-top:2px solid var(--sand2); }
+
+.tg-their-score-row {
+  display:flex; align-items:center; gap:10px;
+  padding:.75rem 1.25rem; border-top:1px solid var(--sand2);
+  background:var(--bg); flex-wrap:wrap;
+}
+.tg-their-score-row label { font-size:.75rem; font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--ink3); }
+.tg-score-input {
+  font-family:var(--font-mono); font-size:1rem; font-weight:700;
+  background:var(--white); border:1.5px solid var(--sand3);
+  border-radius:6px; padding:5px 10px; width:70px; text-align:center;
+  outline:none; transition:border-color .12s;
+}
+.tg-score-input:focus { border-color:var(--accent); }
+.tg-save-score-btn {
+  background:var(--accent); color:#fff; border:none; font-family:var(--font);
+  font-size:.8rem; font-weight:600; padding:6px 14px; border-radius:6px;
+  cursor:pointer; transition:background .12s;
+}
+.tg-save-score-btn:hover { background:#235c42; }
+
+.tg-chevron { color:var(--ink3); transition:transform .2s; }
+.tg-card.open .tg-chevron { transform:rotate(180deg); }
+
 </style>
 </head>
 <body>
@@ -840,8 +931,8 @@ canvas#scoresheetCanvas {
     <button onclick="showPage('roster')">Players</button>
     <button onclick="showPage('log')">Log Game</button>
     <button onclick="showPage('games')">All Games</button>
-    <button onclick="showPage('lineup')">⚾ Lineup</button>
     <button onclick="showPage('schedule')">📅 Games</button>
+    <button onclick="showPage('teamgames')">📋 Record</button>
   </nav>
 </header>
 
@@ -897,7 +988,7 @@ canvas#scoresheetCanvas {
 
 
 <!-- LINEUP -->
-<div id="page-lineup" class="page">
+<div id="page-lineup" class="page" style="display:none!important">
   <div class="ph"><h1>Weekly Lineup Builder</h1><p>Based on 3-week rolling averages</p></div>
 
   <!-- Step 1: Select available players -->
@@ -972,6 +1063,16 @@ canvas#scoresheetCanvas {
       <button class="btn" onclick="saveScheduledGame()">Save Game</button>
     </div>
   </div>
+</div>
+
+
+<!-- TEAM GAMES PAGE -->
+<div id="page-teamgames" class="page">
+  <div class="ph">
+    <h1>Record</h1>
+    <button class="btn-ghost" style="font-size:.8rem;padding:6px 14px" onclick="loadAll().then(renderTeamGames)">↻ Refresh</button>
+  </div>
+  <div id="teamGamesList"><div class="empty"><span class="spinner"></span> Loading…</div></div>
 </div>
 
 <!-- CONFIRM MODAL -->
@@ -2191,7 +2292,7 @@ async function showGameReview(gameId) {
   // Switch page
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-schedule').classList.add('active');
-  document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',i===5));
+  document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',i===4));
 
   const el = document.getElementById('scheduleList');
 
@@ -3868,6 +3969,238 @@ function drawScorecardAB(ctx, cellX, cellY, cellW, cellH, ab) {
 }
 function drawDiamondCell(){}
 function drawDiamond(){}
+
+
+// ══════════════════════════════════════════════
+// TEAM GAMES
+// ══════════════════════════════════════════════
+
+// Their scores stored in memory (keyed by date, persisted via scheduled_games or localStorage)
+let teamScores = {}; // {date: {them: N, opp: 'CPL'}}
+
+function loadTeamScores() {
+  try { teamScores = JSON.parse(localStorage.getItem('teamScores_2025') || '{}'); } catch(e) { teamScores = {}; }
+}
+function saveTeamScores() {
+  localStorage.setItem('teamScores_2025', JSON.stringify(teamScores));
+}
+
+function renderTeamGames() {
+  loadTeamScores();
+  const el = document.getElementById('teamGamesList');
+  if (!el) return;
+
+  if (!games.length) {
+    el.innerHTML = '<div class="empty">No games logged yet — head to Log Game to get started.</div>';
+    return;
+  }
+
+  // Group all player games by date
+  const byDate = {};
+  games.forEach(g => {
+    const date = g.date || 'Unknown';
+    if (!byDate[date]) byDate[date] = [];
+    byDate[date].push(g);
+  });
+
+  // Sort dates newest first
+  const dates = Object.keys(byDate).sort((a,b) => b.localeCompare(a));
+
+  el.innerHTML = dates.map(date => {
+    const dayGames = byDate[date];
+
+    // Find most common opponent name for this date
+    const oppCounts = {};
+    dayGames.forEach(g => {
+      const opp = (g.opp || '').trim();
+      if (opp) oppCounts[opp] = (oppCounts[opp] || 0) + 1;
+    });
+    const oppNames = Object.keys(oppCounts);
+    const topOpp = oppNames.sort((a,b) => oppCounts[b] - oppCounts[a])[0] || 'Unknown';
+    const hasMismatch = oppNames.length > 1;
+
+    // Calculate our runs (sum of all players' R for this date)
+    const ourRuns = dayGames.reduce((sum, g) => sum + (Number(g.r) || 0), 0);
+
+    // Their score from stored data
+    const stored = teamScores[date] || {};
+    const theirRuns = stored.them != null ? stored.them : null;
+
+    // Result
+    const won  = theirRuns != null && ourRuns > theirRuns;
+    const lost = theirRuns != null && ourRuns < theirRuns;
+    const tie  = theirRuns != null && ourRuns === theirRuns;
+    const resultClass = theirRuns == null ? 'ns' : won ? 'win' : lost ? 'loss' : 'tie';
+    const resultLabel = theirRuns == null ? 'Tap to enter score' : won ? 'W' : lost ? 'L' : 'T';
+
+    // Date display
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateStr = dateObj.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+
+    // Unique players this date
+    const playerNames = [...new Set(dayGames.map(g => g.player_name))];
+
+    // Build box score rows
+    const boxRows = playerNames.map(name => {
+      const pg = dayGames.find(g => g.player_name === name) || {};
+      const gAB = Number(pg.ab)||0, gH = Number(pg.h)||0;
+      const gBA = gAB > 0 ? (gH/gAB).toFixed(3).replace(/^0/,'') : '—';
+      return `<tr>
+        <td class="left">${name}</td>
+        <td>${pg.ab||0}</td>
+        <td>${pg.h||0}</td>
+        <td>${pg['2b']||0}</td>
+        <td>${pg['3b']||0}</td>
+        <td>${pg.hr||0}</td>
+        <td>${pg.rbi||0}</td>
+        <td>${pg.r||0}</td>
+        <td>${pg.bb||0}</td>
+        <td>${pg.k||0}</td>
+        <td>${pg.sb||0}</td>
+        <td class="${gAB>0&&gH/gAB>=.300?'hi':''}">${gBA}</td>
+        <td><button class="btn-del" style="font-size:.7rem;padding:2px 7px" onclick="editPlayerGameOpp('${esc(date)}','${esc(name)}')">Edit</button></td>
+      </tr>`;
+    }).join('');
+
+    // Team totals row
+    const totals = ['ab','h','2b','3b','hr','rbi','r','bb','k','sb'].map(k =>
+      dayGames.reduce((s,g) => s + (Number(g[k])||0), 0)
+    );
+    const totH = totals[1], totAB = totals[0];
+    const totBA = totAB > 0 ? (totH/totAB).toFixed(3).replace(/^0/,'') : '—';
+
+    const totRow = `<tr class="tg-totals-row">
+      <td class="left" style="font-family:var(--font);color:var(--ink3);font-size:.75rem">TEAM</td>
+      ${totals.map(v=>`<td>${v}</td>`).join('')}
+      <td class="${totAB>0&&totH/totAB>=.300?'hi':''}">${totBA}</td>
+      <td></td>
+    </tr>`;
+
+    // Sync banner if mismatched opponents
+    const syncBanner = hasMismatch ? `
+      <div class="tg-sync-banner">
+        ⚠️ Players logged different opponent names:
+        <strong>${oppNames.join(' · ')}</strong>
+        <button class="tg-sync-btn" onclick="syncOpponents('${esc(date)}','${esc(topOpp)}')">
+          Set all to "${topOpp}"
+        </button>
+      </div>` : '';
+
+    const cardId = `tgcard-${date.replace(/-/g,'')}`;
+
+    return `<div class="tg-card" id="${cardId}">
+      <div class="tg-header" onclick="toggleTGCard('${cardId}')">
+        <div>
+          <div class="tg-date">${dateStr} &nbsp;·&nbsp; ${playerNames.length} player${playerNames.length!==1?'s':''}</div>
+          <div class="tg-opp">vs. ${topOpp}${hasMismatch?' <span style="font-size:.72rem;color:#b07000;font-weight:600">⚠️</span>':''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div class="tg-score">
+            <span class="tg-score-us">${ourRuns}</span>
+            <span class="tg-score-dash">–</span>
+            <span class="tg-score-them">${theirRuns != null ? theirRuns : '?'}</span>
+          </div>
+          <span class="tg-result ${resultClass}">${resultLabel}</span>
+          <span class="tg-chevron">▼</span>
+        </div>
+      </div>
+
+      <div class="tg-body" style="display:none">
+        ${syncBanner}
+
+        <!-- Box score -->
+        <div class="tg-boxscore">
+          <table class="tg-box-table">
+            <thead><tr>
+              <th class="left">Player</th>
+              <th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th>
+              <th>RBI</th><th>R</th><th>BB</th><th>K</th><th>SB</th>
+              <th>BA</th><th></th>
+            </tr></thead>
+            <tbody>${boxRows}${totRow}</tbody>
+          </table>
+        </div>
+
+        <!-- Their score entry -->
+        <div class="tg-their-score-row">
+          <label>Their Score:</label>
+          <input type="number" class="tg-score-input" id="them-${esc(date)}"
+            value="${theirRuns != null ? theirRuns : ''}" placeholder="?" min="0">
+          <input type="text" id="opp-${esc(date)}"
+            value="${topOpp}"
+            placeholder="Opponent name…"
+            style="font-family:var(--font);font-size:.875rem;background:var(--white);border:1.5px solid var(--sand3);border-radius:6px;padding:5px 10px;width:160px;outline:none;transition:border-color .12s"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--sand3)'">
+          <button class="tg-save-score-btn" onclick="saveTeamGameScore('${esc(date)}')">Save</button>
+          <span style="font-size:.75rem;color:var(--ink3);margin-left:4px">Our runs auto-calculated from player stats (${ourRuns} R total)</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTGCard(id) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  const body = card.querySelector('.tg-body');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  card.classList.toggle('open', !isOpen);
+}
+
+async function syncOpponents(date, topOpp) {
+  if (!confirm(`Set all games on ${date} to opponent "${topOpp}"?`)) return;
+  const dayGames = games.filter(g => g.date === date);
+  const toUpdate = dayGames.filter(g => (g.opp||'').trim() !== topOpp);
+  if (!toUpdate.length) { showToast('Already in sync!'); return; }
+
+  let updated = 0;
+  for (const g of toUpdate) {
+    try {
+      await sbPatch('games', `id=eq.${g.id}`, {opp: topOpp});
+      g.opp = topOpp; // update local cache
+      updated++;
+    } catch(e) { console.warn('sync error:', e); }
+  }
+
+  // Also update the stored opp name
+  if (!teamScores[date]) teamScores[date] = {};
+  teamScores[date].opp = topOpp;
+  saveTeamScores();
+
+  showToast(`Updated ${updated} player${updated!==1?'s':''} to "${topOpp}"`);
+  renderTeamGames();
+}
+
+function saveTeamGameScore(date) {
+  const themInput = document.getElementById('them-' + date);
+  const oppInput  = document.getElementById('opp-' + date);
+  if (!themInput) return;
+
+  const them = parseInt(themInput.value);
+  const opp  = oppInput ? oppInput.value.trim() : '';
+
+  if (!teamScores[date]) teamScores[date] = {};
+  if (!isNaN(them)) teamScores[date].them = them;
+  if (opp) teamScores[date].opp = opp;
+  saveTeamScores();
+
+  showToast('Score saved!');
+  renderTeamGames();
+}
+
+async function editPlayerGameOpp(date, playerName) {
+  const g = games.find(g => g.date === date && g.player_name === playerName);
+  if (!g) return;
+  const newOpp = prompt(`Edit opponent for ${playerName} on ${date}:`, g.opp || '');
+  if (newOpp === null) return;
+  try {
+    await sbPatch('games', `id=eq.${g.id}`, {opp: newOpp.trim()});
+    g.opp = newOpp.trim();
+    showToast('Updated!');
+    renderTeamGames();
+  } catch(e) { showToast('Error: ' + e.message, true); }
+}
 
 // ── Init ──
 if(!configured){ showConfigBanner(); }
