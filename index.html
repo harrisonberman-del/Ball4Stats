@@ -1854,7 +1854,7 @@ function renderGamesPage(){
     const isEditing = g.id === expandedGameId;
     const rowClass  = isEditing ? 'editing' : '';
 
-    const displayRow = `<tr class="${rowClass}" style="cursor:pointer" onclick="toggleGameEdit('${esc(g.id)}')">
+    const displayRow = `<tr class="${rowClass}" style="cursor:pointer" data-gameid="${g.id}" onclick="handleGameRowClick(this)">
       <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
       <td class="name-col">${g.player_name}</td>
       <td class="left" style="color:var(--ink2)">${g.opp||'—'}</td>
@@ -1891,6 +1891,11 @@ function renderGamesPage(){
 
     return displayRow + editRow;
   }).join('');
+}
+
+function handleGameRowClick(row) {
+  const gameId = row.getAttribute('data-gameid');
+  if (gameId) toggleGameEdit(gameId);
 }
 
 function toggleGameEdit(gameId) {
@@ -4343,6 +4348,13 @@ async function editPlayerGameOpp(date, playerName) {
 }
 
 window._tgEditId = null;
+
+function handleTGRowClick(row) {
+  const gameId = row.getAttribute('data-tgid');
+  const date   = row.getAttribute('data-tgdate');
+  if (gameId) toggleTGEdit(gameId, date);
+}
+
 function toggleTGEdit(gameId, date) {
   window._tgEditId = window._tgEditId === gameId ? null : gameId;
   renderTeamGames();
@@ -4394,8 +4406,10 @@ async function saveTGEdit(gameId, date) {
 }
 
 // ── Init ──
-if(!configured){ showConfigBanner(); }
-loadAll();
+document.addEventListener('DOMContentLoaded', () => {
+  if(!configured){ showConfigBanner(); }
+  loadAll();
+});
 </script>
 
 <script>
