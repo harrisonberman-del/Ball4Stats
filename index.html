@@ -961,6 +961,49 @@ canvas#scoresheetCanvas {
 .game-edit-delete:hover { background:#fff0f0; }
 tr.editing td { background:var(--accent-light) !important; }
 
+
+/* ── Inline edit inside Record box score ── */
+.tg-edit-row td {
+  background:var(--accent-light);
+  padding:10px 12px;
+  border-bottom:2px solid var(--accent);
+}
+.tg-edit-form {
+  display:flex; flex-wrap:wrap; gap:7px; align-items:flex-end;
+}
+.tg-edit-field { display:flex; flex-direction:column; gap:3px; }
+.tg-edit-field label {
+  font-size:.58rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--ink3);
+}
+.tg-edit-field input {
+  background:var(--white); border:1.5px solid var(--sand3);
+  border-radius:5px; padding:5px 6px; font-family:var(--font-mono);
+  font-size:.82rem; font-weight:600; width:52px; text-align:center;
+  outline:none; color:var(--ink); transition:border-color .12s;
+}
+.tg-edit-field input.tg-wide { width:100px; text-align:left; font-family:var(--font); }
+.tg-edit-field input:focus { border-color:var(--accent); }
+.tg-edit-actions { display:flex; gap:6px; align-items:flex-end; margin-left:4px; }
+.tg-edit-save {
+  background:var(--accent); color:#fff; border:none; font-family:var(--font);
+  font-size:.78rem; font-weight:700; padding:6px 14px; border-radius:5px; cursor:pointer;
+}
+.tg-edit-save:hover { background:#235c42; }
+.tg-edit-cancel {
+  background:none; border:1.5px solid var(--sand3); color:var(--ink3);
+  font-family:var(--font); font-size:.78rem; padding:6px 10px;
+  border-radius:5px; cursor:pointer;
+}
+.tg-edit-cancel:hover { border-color:var(--ink3); color:var(--ink); }
+.tg-edit-del {
+  background:none; border:1.5px solid #e8d8d8; color:#c0392b;
+  font-family:var(--font); font-size:.78rem; padding:6px 10px;
+  border-radius:5px; cursor:pointer;
+}
+.tg-edit-del:hover { background:#fff0f0; }
+tr.tg-editing td { background:var(--accent-light) !important; }
+
 </style>
 </head>
 <body>
@@ -4296,13 +4339,57 @@ function saveTeamGameScore(date) {
 async function editPlayerGameOpp(date, playerName) {
   const g = games.find(g => g.date === date && g.player_name === playerName);
   if (!g) return;
-  const newOpp = prompt(`Edit opponent for ${playerName} on ${date}:`, g.opp || '');
-  if (newOpp === null) return;
+  toggleTGEdit(g.id, date);
+}
+
+window._tgEditId = null;
+function toggleTGEdit(gameId, date) {
+  window._tgEditId = window._tgEditId === gameId ? null : gameId;
+  renderTeamGames();
+  // Re-open the card for this date
+  if (date) {
+    const cardId = 'tgcard-' + date.replace(/-/g,'');
+    const card = document.getElementById(cardId);
+    if (card) {
+      const body = card.querySelector('.tg-body');
+      if (body) { body.style.display = 'block'; card.classList.add('open'); }
+    }
+    // Focus first input
+    if (window._tgEditId) {
+      setTimeout(() => {
+        const el = document.getElementById('tge-date-' + window._tgEditId);
+        if (el) el.focus();
+      }, 60);
+    }
+  }
+}
+
+async function saveTGEdit(gameId, date) {
+  const statIds = ['ab','h','2b','3b','hr','rbi','r','bb','k','sb','hbp','sf'];
+  const updates = {};
+  const dateEl = document.getElementById('tge-date-' + gameId);
+  const oppEl  = document.getElementById('tge-opp-'  + gameId);
+  if (dateEl?.value) updates.date = dateEl.value;
+  if (oppEl)         updates.opp  = oppEl.value.trim();
+  statIds.forEach(id => {
+    const el = document.getElementById(`tge-${id}-${gameId}`);
+    if (el) updates[id] = parseInt(el.value) || 0;
+  });
   try {
-    await sbPatch('games', `id=eq.${g.id}`, {opp: newOpp.trim()});
-    g.opp = newOpp.trim();
-    showToast('Updated!');
+    await sbPatch('games', `id=eq.${gameId}`, updates);
+    const g = games.find(x => x.id === gameId);
+    if (g) Object.assign(g, updates);
+    window._tgEditId = null;
+    showToast('Stats updated!');
+    await loadAll();
     renderTeamGames();
+    // Re-open card
+    const cardId = 'tgcard-' + (updates.date || date).replace(/-/g,'');
+    const card = document.getElementById(cardId);
+    if (card) {
+      const body = card.querySelector('.tg-body');
+      if (body) { body.style.display = 'block'; card.classList.add('open'); }
+    }
   } catch(e) { showToast('Error: ' + e.message, true); }
 }
 
