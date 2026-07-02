@@ -854,21 +854,26 @@ tr.tg-editing td { background:var(--accent-light) !important; }
   transition:transform .12s;
 }
 .stat-flag-btn:hover { transform:scale(1.2); }
+.stat-flag-btn {
+  background:none; border:none; cursor:pointer; padding:3px 4px;
+  line-height:1; vertical-align:middle; display:inline-flex; align-items:center;
+}
+.stat-flag-btn:hover svg { opacity:1; }
+.stat-flag-btn svg { opacity:.8; transition:opacity .12s; }
 .stat-flag-tooltip {
   position:fixed; z-index:9999;
-  background:#1a1210; color:#fff;
-  border:1px solid rgba(220,38,38,.4);
-  border-radius:8px; padding:10px 14px;
-  max-width:260px; font-size:.78rem; line-height:1.6;
-  box-shadow:0 4px 20px rgba(0,0,0,.3);
+  background:var(--ink); color:#fff;
+  border-radius:7px; padding:9px 13px;
+  max-width:240px; font-size:.76rem; line-height:1.65;
+  box-shadow:0 4px 24px rgba(0,0,0,.22);
   pointer-events:none;
 }
 .stat-flag-tooltip .flag-title {
-  font-weight:700; color:#f87171; font-size:.8rem;
-  margin-bottom:6px; display:flex; align-items:center; gap:5px;
+  font-weight:700; color:#fca5a5; font-size:.75rem;
+  margin-bottom:5px;
 }
-.stat-flag-tooltip ul { padding-left:14px; color:rgba(255,255,255,.8); }
-.stat-flag-tooltip li { margin-bottom:3px; }
+.stat-flag-tooltip ul { padding-left:12px; color:rgba(255,255,255,.75); margin:0; }
+.stat-flag-tooltip li { margin-bottom:2px; }
 
 </style>
 </head>
@@ -1704,6 +1709,7 @@ function renderGamesPage(){
     .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 
   document.getElementById('gamesHead').innerHTML=`<tr>
+    <th style="width:28px;padding:0"></th>
     <th class="left">Date</th>
     <th class="left">Player</th>
     <th class="left">Opp</th>
@@ -1722,14 +1728,21 @@ function renderGamesPage(){
 
     const issues = validateGameRow(g);
     const flagBtn = issues.length
-      ? `<button class="stat-flag-btn" title="Stat issues" onclick="event.stopPropagation();showFlagTooltip(this,${JSON.stringify(issues).replace(/"/g,'&quot;')})">🔺</button>`
-      : '';
+      ? `<button class="stat-flag-btn" onclick="event.stopPropagation();showFlagTooltip(this,${JSON.stringify(issues).replace(/"/g,'&quot;')})">
+           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M6 1L11.196 10H0.804L6 1Z" fill="#dc2626" opacity="0.9"/>
+             <path d="M6 4.5V7" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+             <circle cx="6" cy="8.5" r=".6" fill="white"/>
+           </svg>
+         </button>`
+      : '<span style="display:inline-block;width:20px"></span>';
     const displayRow = `<tr class="${rowClass}" style="cursor:pointer" data-gameid="${g.id}" onclick="handleGameRowClick(this)">
+      <td style="width:28px;text-align:center;padding-right:0">${flagBtn}</td>
       <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
       <td class="name-col">${g.player_name}</td>
       <td class="left" style="color:var(--ink2)">${g.opp||'—'}</td>
       ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
-      <td style="text-align:center;white-space:nowrap">${flagBtn}<span style="color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</span></td>
+      <td style="text-align:center;color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</td>
     </tr>`;
 
     if (!isEditing) return displayRow;
@@ -4756,50 +4769,25 @@ async function saveTGEdit(gameId, date) {
 // ═══════════════════════════════════════
 function validateGameRow(g) {
   const issues = [];
-  const ab  = Number(g.ab)  || 0;
-  const h   = Number(g.h)   || 0;
-  const d2  = Number(g['2b']) || 0;
-  const d3  = Number(g['3b']) || 0;
-  const hr  = Number(g.hr)  || 0;
-  const rbi = Number(g.rbi) || 0;
-  const r   = Number(g.r)   || 0;
-  const bb  = Number(g.bb)  || 0;
-  const k   = Number(g.k)   || 0;
-  const sb  = Number(g.sb)  || 0;
-  const sba = Number(g.sba) || 0;
-  const hbp = Number(g.hbp) || 0;
-  const sf  = Number(g.sf)  || 0;
-  const pa  = Number(g.pa)  || 0;
+  const ab = Number(g.ab)     || 0;
+  const h  = Number(g.h)      || 0;
+  const d2 = Number(g['2b'])  || 0;
+  const d3 = Number(g['3b'])  || 0;
+  const hr = Number(g.hr)     || 0;
+  const k  = Number(g.k)      || 0;
+  const sb = Number(g.sb)     || 0;
+  const sba= Number(g.sba)    || 0;
 
-  // Core hit logic
-  if (h > ab && ab > 0)
-    issues.push(`Hits (${h}) > At Bats (${ab}) — impossible`);
-  if (d2 > h)
-    issues.push(`Doubles (${d2}) > Hits (${h}) — can't have more 2B than total hits`);
-  if (d3 > h)
-    issues.push(`Triples (${d3}) > Hits (${h})`);
-  if (hr > h)
-    issues.push(`Home Runs (${hr}) > Hits (${h})`);
-  if (d2 + d3 + hr > h)
-    issues.push(`Extra base hits (${d2+d3+hr}) > Total hits (${h}) — singles would be negative`);
-  if (k > ab && ab > 0)
-    issues.push(`Strikeouts (${k}) > At Bats (${ab})`);
-  if (rbi > (h + bb + hbp) && h + bb + hbp > 0)
-    issues.push(`RBIs (${rbi}) seem high vs times on base (${h+bb+hbp})`);
-  if (sb > 0 && sba > 0 && sb > sba)
-    issues.push(`Stolen bases (${sb}) > Attempts (${sba})`);
-  if (r > (h + bb + hbp) && h + bb + hbp > 0)
-    issues.push(`Runs scored (${r}) > times on base — unlikely`);
-  if (pa > 0 && ab + bb + hbp + sf > pa + 3)
-    issues.push(`Plate appearances (${pa}) seem too low vs AB+BB+HBP+SF (${ab+bb+hbp+sf})`);
-  if (ab === 0 && h > 0)
-    issues.push(`Has hits but 0 AB — check At Bats`);
-  if (ab === 0 && k > 0)
-    issues.push(`Has Ks but 0 AB`);
-  if (ab > 15)
-    issues.push(`${ab} AB in one game seems very high — double-check`);
-  if (rbi > 9)
-    issues.push(`${rbi} RBI in one game is very unusual`);
+  // Strictly impossible — mathematical contradictions only
+  if (h > ab && ab > 0)         issues.push(`${h} H > ${ab} AB`);
+  if (d2 > h)                   issues.push(`${d2} 2B > ${h} H`);
+  if (d3 > h)                   issues.push(`${d3} 3B > ${h} H`);
+  if (hr > h)                   issues.push(`${hr} HR > ${h} H`);
+  if (d2 + d3 + hr > h)         issues.push(`${d2+d3+hr} XBH > ${h} H (singles go negative)`);
+  if (k > ab && ab > 0)         issues.push(`${k} K > ${ab} AB`);
+  if (sba > 0 && sb > sba)      issues.push(`${sb} SB > ${sba} SBA`);
+  if (ab === 0 && h > 0)        issues.push(`${h} H with 0 AB`);
+  if (ab === 0 && k > 0)        issues.push(`${k} K with 0 AB`);
 
   return issues;
 }
