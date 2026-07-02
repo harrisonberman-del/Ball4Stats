@@ -1508,7 +1508,7 @@ function renderPDetail(){
           <div class="ops-gauge-info">
             <div class="ops-gauge-num" id="opsGaugeNum">${opsPlus}</div>
             <div class="ops-gauge-lbl">OPS+</div>
-            <div class="ops-gauge-sub">${opsPlus>110?'Well above average':opsPlus>100?'Above average':opsPlus===100?'Exactly average':opsPlus>85?'Below average':'Well below average'} &nbsp;·&nbsp; Team avg = 100</div>
+            <div class="ops-gauge-sub">${opsPlus>120?'Elite on this team':opsPlus>110?'Well above average':opsPlus>100?'Above average':opsPlus===100?'Right at average':opsPlus>85?'Near average':'Below average'} &nbsp;·&nbsp; 100 = team avg</div>
           </div>
         </div>
         <div style="margin-top:.5rem;padding-top:.625rem;border-top:1px solid var(--sand2)">
@@ -1554,30 +1554,102 @@ function renderPDetail(){
     <div class="profile-cols">
       <div class="panel">
         <div class="panel-title">Power Profile</div>
+
+        <!-- Stacked hit type bar -->
         <div class="power-bar">${powerBarHTML}</div>
-        ${hitSegments.length?`<div class="power-legend">${hitSegments.map(seg=>`
-          <span class="power-leg-item"><span class="power-leg-swatch" style="background:${seg.color}"></span>${seg.label} ${seg.val}${h>0?' ('+(seg.val/h*100).toFixed(0)+'%)':''}</span>`
-        ).join('')}</div>`:'<div style="color:var(--ink3);font-size:.82rem">No hits yet.</div>'}
-        <div class="power-callouts">
+        ${hitSegments.length
+          ? `<div class="power-legend">${hitSegments.map(seg=>`
+              <span class="power-leg-item"><span class="power-leg-swatch" style="background:${seg.color}"></span>${seg.label} ${seg.val}${h>0?' ('+(seg.val/h*100).toFixed(0)+'%)':''}</span>`
+            ).join('')}</div>`
+          : '<div style="color:var(--ink3);font-size:.82rem;margin-bottom:.5rem">No hits yet.</div>'}
+
+        <!-- Key power callouts -->
+        <div class="power-callouts" style="margin-top:.75rem">
           <div><div class="power-callout-val">${tbPerHit}</div><div class="power-callout-lbl">TB / Hit</div></div>
           <div><div class="power-callout-val">${h>0?(xbh/h*100).toFixed(0)+'%':'—'}</div><div class="power-callout-lbl">XBH Rate</div></div>
           <div><div class="power-callout-val">${iso?s.ISO:'—'}</div><div class="power-callout-lbl">ISO</div></div>
         </div>
+
+        <!-- Per hit-type horizontal bars -->
+        ${h>0?`<div style="margin-top:.875rem;padding-top:.75rem;border-top:1px solid var(--sand2)">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:.625rem">Hit Breakdown</div>
+          ${[{label:'1B',val:sin,color:'#4a9e74'},{label:'2B',val:d2,color:'#1a6644'},{label:'3B',val:d3,color:'#a8520e'},{label:'HR',val:hr,color:'#c8102e'}].map(seg=>`
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+              <div style="font-size:.72rem;font-weight:700;color:var(--ink2);width:22px;flex-shrink:0">${seg.label}</div>
+              <div style="flex:1;height:9px;background:var(--sand2);border-radius:4px;overflow:hidden">
+                <div style="height:100%;width:${h>0?(seg.val/h*100).toFixed(1)+'%':'0%'};background:${seg.color};border-radius:4px;transition:width .5s ease"></div>
+              </div>
+              <div style="font-size:.72rem;font-weight:600;color:var(--ink3);width:28px;text-align:right;flex-shrink:0">${seg.val}</div>
+              <div style="font-size:.68rem;color:var(--ink3);width:36px;flex-shrink:0">${h>0?(seg.val/h*100).toFixed(0)+'%':'—'}</div>
+            </div>`).join('')}
+        </div>`:''}
+
+        <!-- SLG context -->
+        ${ab>0?`<div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--sand2);display:flex;gap:1rem;align-items:center">
+          <div style="text-align:center;flex:1">
+            <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--ink)">${s['SLG%']||'—'}</div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-top:2px">SLG</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--ink)">${tb}</div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-top:2px">Total Bases</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:${xbh>0?'var(--accent)':'var(--ink3)'}">${xbh}</div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-top:2px">XBH</div>
+          </div>
+        </div>`:''}
       </div>
 
       <div class="panel">
         <div class="panel-title">Plate Profile</div>
+
+        <!-- BB/K ratio hero -->
         <div class="disc-gauge">
-          <div class="disc-gauge-val">${bbk>0?bbk.toFixed(2):'—'}</div>
+          <div class="disc-gauge-val" style="color:${bbk>=1?'var(--c-good,#15803d)':bbk>=0.5?'var(--ink)':'#c8102e'}">${bbk>0?bbk.toFixed(2):'—'}</div>
           <div class="disc-gauge-lbl">BB / K Ratio</div>
-          <div class="disc-gauge-sub">${bb} walks · ${k} strikeouts</div>
+          <div class="disc-gauge-sub">${bb} walks · ${k} strikeouts${bbk>=1?' · Great discipline':bbk>=0.5?' · Solid':k>0?' · Work on strikeouts':''}</div>
         </div>
-        <div class="disc-compare">
-          <div class="disc-stat"><div class="disc-stat-val">${bbPct.toFixed(1)}%</div><div class="disc-stat-lbl">Walk Rate</div></div>
-          <div class="disc-stat"><div class="disc-stat-val">${kPct.toFixed(1)}%</div><div class="disc-stat-lbl">K Rate</div></div>
-          <div class="disc-stat"><div class="disc-stat-val">${ab>0?((ab-k)/ab*100).toFixed(1)+'%':'—'}</div><div class="disc-stat-lbl">Contact</div></div>
-          <div class="disc-stat"><div class="disc-stat-val">${pa>0?(hr/pa*100).toFixed(1)+'%':'—'}</div><div class="disc-stat-lbl">HR Rate</div></div>
+
+        <!-- BB vs K visual tug-of-war bar -->
+        ${(bb+k)>0?`<div style="margin:.75rem 0">
+          <div style="display:flex;justify-content:space-between;font-size:.68rem;font-weight:700;margin-bottom:4px">
+            <span style="color:#15803d">BB ${bb}</span>
+            <span style="color:var(--ink3);font-size:.62rem">walks vs strikeouts</span>
+            <span style="color:#c8102e">K ${k}</span>
+          </div>
+          <div style="display:flex;height:10px;border-radius:5px;overflow:hidden">
+            <div style="background:#15803d;flex:${bb}"></div>
+            <div style="background:#e2e5ea;flex:0.5"></div>
+            <div style="background:#c8102e;flex:${k}"></div>
+          </div>
+        </div>`:''}
+
+        <!-- Four rate stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.75rem">
+          ${[
+            {label:'Contact Rate', val:ab>0?((ab-k)/ab*100).toFixed(1)+'%':'—', good:ab>0&&(ab-k)/ab>=.75, note:'Balls put in play'},
+            {label:'Walk Rate',    val:pa>0?(bb/pa*100).toFixed(1)+'%':'—',     good:pa>0&&bb/pa>=.10,    note:'BB per PA'},
+            {label:'K Rate',       val:pa>0?(k/pa*100).toFixed(1)+'%':'—',      warn:pa>0&&k/pa>=.25,     note:'K per PA'},
+            {label:'HR / PA',      val:pa>0?(hr/pa*100).toFixed(1)+'%':'—',     good:hr>0,                note:'Home run rate'},
+          ].map(x=>`<div style="background:var(--sand);border-radius:6px;padding:9px 10px">
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:4px">${x.label}</div>
+            <div style="font-family:var(--font-mono);font-size:1rem;font-weight:700;color:${x.good?'var(--c-good,#15803d)':x.warn?'#c8102e':'var(--ink)'}">${x.val}</div>
+            <div style="font-size:.62rem;color:var(--ink3);margin-top:2px">${x.note}</div>
+          </div>`).join('')}
         </div>
+
+        <!-- BABIP luck indicator -->
+        ${s.BABIP?`<div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--sand2);display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)">BABIP</div>
+            <div style="font-size:.72rem;color:var(--ink3);margin-top:1px">Luck indicator — .300 is average</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:${parseFloat(s.BABIP)>=.350?'#c8102e':parseFloat(s.BABIP)<=.250?'#1d4ed8':'var(--ink)'}">${s.BABIP}</div>
+            <div style="font-size:.68rem;color:var(--ink3)">${parseFloat(s.BABIP)>=.350?'Running hot':'Running cold'}</div>
+          </div>
+        </div>`:''}
       </div>
     </div>
 
