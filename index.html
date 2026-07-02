@@ -885,6 +885,28 @@ tr.tg-editing td { background:var(--accent-light) !important; }
 .stat-flag-tooltip ul { padding-left:12px; color:rgba(255,255,255,.75); margin:0; }
 .stat-flag-tooltip li { margin-bottom:2px; }
 
+
+/* ── OPS+ Gauge ── */
+.ops-gauge-wrap { display:flex;align-items:center;gap:1.25rem;margin-bottom:.875rem; }
+.ops-gauge-canvas { flex-shrink:0; }
+.ops-gauge-info { flex:1; }
+.ops-gauge-num { font-family:var(--font-mono);font-size:2rem;font-weight:700;color:var(--ink);line-height:1; }
+.ops-gauge-lbl { font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-top:2px; }
+.ops-gauge-sub { font-size:.75rem;color:var(--ink3);margin-top:4px;line-height:1.4; }
+
+/* ── Scatter plot ── */
+.scatter-wrap { position:relative; }
+.scatter-player-lbl {
+  position:absolute; background:var(--accent);color:#fff;
+  font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:3px;
+  pointer-events:none;white-space:nowrap;transform:translateX(-50%);
+}
+
+/* ── Rolling line ── */
+.rolling-line-wrap { margin-top:.75rem; }
+.rolling-line-label { font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:.375rem;display:flex;justify-content:space-between; }
+.rolling-line-label span { font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--font-mono); }
+
 </style>
 </head>
 <body>
@@ -1477,6 +1499,39 @@ function renderPDetail(){
       </div>
     </div>
 
+    <!-- OPS+ Gauge + Scatter in two cols -->
+    <div class="profile-cols">
+      <div class="panel">
+        <div class="panel-title">OPS+ <span class="panel-sub">100 = team average</span></div>
+        <div class="ops-gauge-wrap">
+          <canvas id="opsGaugeCanvas" class="ops-gauge-canvas" width="140" height="80"></canvas>
+          <div class="ops-gauge-info">
+            <div class="ops-gauge-num" id="opsGaugeNum">${opsPlus}</div>
+            <div class="ops-gauge-lbl">OPS+</div>
+            <div class="ops-gauge-sub">${opsPlus>110?'Well above average':opsPlus>100?'Above average':opsPlus===100?'Exactly average':opsPlus>85?'Below average':'Well below average'} &nbsp;·&nbsp; Team avg = 100</div>
+          </div>
+        </div>
+        <div style="margin-top:.5rem;padding-top:.625rem;border-top:1px solid var(--sand2)">
+          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:.5rem">wRC+ <span style="font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--font-mono);color:var(--ink)">${wrcPlus}</span></div>
+          <div style="height:8px;background:var(--sand2);border-radius:4px;position:relative;overflow:visible;margin-bottom:4px">
+            <div style="position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--sand3)"></div>
+            <div style="height:100%;width:${Math.min(Math.max((wrcPlus/200)*100,1),100)}%;background:${wrcPlus>=110?'var(--c-good,#15803d)':wrcPlus>=90?'var(--accent)':'#c8102e'};border-radius:4px;transition:width .6s ease"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--ink3)"><span>0</span><span>100</span><span>200</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Team Scatter <span class="panel-sub">OBP vs SLG</span></div>
+        <div class="scatter-wrap">
+          <canvas id="scatterCanvas" style="width:100%;height:180px;display:block"></canvas>
+        </div>
+        <div style="font-size:.65rem;color:var(--ink3);margin-top:.5rem">
+          Each dot = one player · <strong style="color:var(--accent2)">You</strong> highlighted · tap chart to see names
+        </div>
+      </div>
+    </div>
+
     <div class="panel">
       <div class="panel-title">Game Performance</div>
       <div class="game-strip">${gameStripHTML}</div>
@@ -1485,9 +1540,9 @@ function renderPDetail(){
           `<span class="game-legend-item"><span class="game-legend-swatch" style="background:${c}"></span>${l}</span>`
         ).join('')}
       </div>
-      ${pg.length>=2?`<div class="spark-wrap">
-        <div class="spark-label">Rolling 3-Game wOBA</div>
-        <canvas id="sparkChart" class="spark-chart"></canvas>
+      ${pg.length>=2?`<div class="rolling-line-wrap">
+        <div class="rolling-line-label">Rolling 3-Game BA <span id="rollingBACurrent"></span></div>
+        <canvas id="rollingBAChart" style="width:100%;height:64px;display:block"></canvas>
       </div>`:''}
       <div class="profile-highlights">
         ${bestGame?`<div class="highlight-card"><div class="highlight-val">${f3(bestOPS)} OPS</div><div class="highlight-lbl">Best game${bestGame.opp?' vs '+bestGame.opp:''}</div></div>`:''}
@@ -1562,9 +1617,19 @@ function renderPDetail(){
 
   </div>`;
 
+  // Build rolling 3-game BA
+  const rollingBA = pg.map((g,i)=>{
+    const slice=pg.slice(Math.max(0,i-2),i+1);
+    const totAB=slice.reduce((s,x)=>s+(Number(x.ab)||0),0);
+    const totH =slice.reduce((s,x)=>s+(Number(x.h)||0),0);
+    return totAB>0?totH/totAB:0;
+  });
+
   requestAnimationFrame(()=>{
     drawToolRadar(toolScores, teamTools);
-    if(rollingWoba.length>=2) drawSparkline(rollingWoba);
+    if(rollingBA.length>=2) drawRollingBALine(rollingBA, pg, ba);
+    drawOPSGauge(opsPlus);
+    drawTeamScatter(teamStats, selP, s);
   });
 }
 
@@ -1619,36 +1684,215 @@ function drawToolRadar(player, team){
   poly(player,'#2d6a4f','rgba(45,106,79,.15)');
 }
 
-function drawSparkline(data){
-  const canvas=document.getElementById('sparkChart');
-  if(!canvas)return;
-  const dpr=window.devicePixelRatio||1;
-  const W=canvas.offsetWidth, H=56;
+// ── Rolling 3-game BA line chart ──
+function drawRollingBALine(data, games, seasonBA) {
+  const canvas = document.getElementById('rollingBAChart');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth||300, H = 64;
   canvas.width=W*dpr; canvas.height=H*dpr;
-  const ctx=canvas.getContext('2d');
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx = canvas.getContext('2d');
   ctx.scale(dpr,dpr);
-  const pad={l:4,r:4,t:8,b:16};
+
+  const pad={l:28,r:8,t:6,b:22};
   const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  const yMin=Math.max(0,Math.min(...data)-.05), yMax=Math.max(...data)+.05, yRange=yMax-yMin||.1;
+  const yMin=Math.max(0, Math.min(...data,seasonBA)-.05);
+  const yMax=Math.min(1, Math.max(...data,seasonBA)+.08);
+  const yRange=yMax-yMin||.1;
+
+  // Grid lines at .200, .300, .400
+  [.200,.300,.400].forEach(v=>{
+    if(v<yMin||v>yMax) return;
+    const y=pad.t+ch-(v-yMin)/yRange*ch;
+    ctx.strokeStyle='#e2e5ea'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.fillStyle='#9ca3af'; ctx.font='7px DM Mono,monospace'; ctx.textAlign='right';
+    ctx.fillText('.'+String(v*1000).padStart(3,'0').slice(0,3), pad.l-3, y+3);
+  });
+
+  // Season average reference line (dashed)
+  const avgY=pad.t+ch-(seasonBA-yMin)/yRange*ch;
+  ctx.setLineDash([3,3]); ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,avgY); ctx.lineTo(pad.l+cw,avgY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  if(data.length<2) return;
   const xStep=cw/(data.length-1);
 
-  ctx.strokeStyle='#e8e6e1'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch/2); ctx.lineTo(pad.l+cw,pad.t+ch/2); ctx.stroke();
+  // Gradient fill under line
+  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+  grad.addColorStop(0,'rgba(26,43,74,.18)');
+  grad.addColorStop(1,'rgba(26,43,74,.02)');
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+cw,pad.t+ch); ctx.lineTo(pad.l,pad.t+ch);
+  ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
 
-  ctx.beginPath(); ctx.strokeStyle='#2d6a4f'; ctx.lineWidth=2; ctx.lineJoin='round';
+  // Line
+  ctx.beginPath(); ctx.strokeStyle='#1a2b4a'; ctx.lineWidth=2;
+  ctx.lineJoin='round'; ctx.lineCap='round';
   data.forEach((v,i)=>{
     const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
     i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
   });
   ctx.stroke();
+
+  // Dots + game labels
   data.forEach((v,i)=>{
     const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
-    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
-    ctx.fillStyle='#2d6a4f'; ctx.fill();
+    const isHot=v>seasonBA+.050, isCold=v<seasonBA-.050;
+    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle=isHot?'#c8102e':isCold?'#1d4ed8':'#1a2b4a'; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+    // Game label below
+    ctx.fillStyle='#9ca3af'; ctx.font='7px DM Mono,monospace'; ctx.textAlign='center';
+    const lbl=games[i]?.date?games[i].date.slice(5):'G'+(i+1);
+    ctx.fillText(lbl, x, H-3);
   });
-  ctx.fillStyle='#6b6b6b'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
-  if(data.length) ctx.fillText(f3(data[data.length-1]), pad.l+(data.length-1)*xStep, H-2);
+
+  // Update current value label
+  const cur=data[data.length-1];
+  const curEl=document.getElementById('rollingBACurrent');
+  if(curEl) curEl.textContent=cur>0?('.'+String(Math.round(cur*1000)).padStart(3,'0')):'—';
 }
+
+// ── OPS+ Half-circle gauge ──
+function drawOPSGauge(opsPlus) {
+  const canvas=document.getElementById('opsGaugeCanvas');
+  if(!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=140*dpr; canvas.height=80*dpr;
+  canvas.style.width='140px'; canvas.style.height='80px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const cx=70, cy=72, r=54, arcW=10;
+  // Background arc (gray track)
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,Math.PI,2*Math.PI,false);
+  ctx.strokeStyle='#e2e5ea'; ctx.lineWidth=arcW; ctx.lineCap='round';
+  ctx.stroke();
+
+  // Value arc — color based on value
+  const pct=Math.min(Math.max(opsPlus/200,0),1);
+  const startA=Math.PI;
+  const endA=Math.PI+pct*Math.PI;
+  const col=opsPlus>=115?'#c8102e':opsPlus>=100?'#1a2b4a':opsPlus>=85?'#6b7280':'#1d4ed8';
+
+  const grad=ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+  if(opsPlus>=100){grad.addColorStop(0,'#c8cdd6');grad.addColorStop(1,'#c8102e');}
+  else{grad.addColorStop(0,'#1d4ed8');grad.addColorStop(1,'#6b7280');}
+
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,startA,endA,false);
+  ctx.strokeStyle=grad; ctx.lineWidth=arcW; ctx.lineCap='round'; ctx.stroke();
+
+  // 100 tick mark
+  ctx.beginPath();
+  ctx.moveTo(cx,cy-r+arcW/2+2);
+  ctx.lineTo(cx,cy-r-2);
+  ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1; ctx.lineCap='butt'; ctx.stroke();
+
+  // Labels
+  ctx.fillStyle='#9ca3af'; ctx.font='8px DM Mono,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('0',cx-r-2,cy+12);
+  ctx.fillText('200',cx+r+4,cy+12);
+  ctx.fillText('100',cx,cy-r-6);
+}
+
+// ── Team scatter: OBP vs SLG ──
+function drawTeamScatter(teamStats, selP, myStats) {
+  const canvas=document.getElementById('scatterCanvas');
+  if(!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||280, H=180;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const pad={l:32,r:12,t:12,b:28};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+
+  const pts=teamStats.filter(x=>x.gp>0).map(x=>({
+    name:x.name,
+    x:parseFloat(x.OBP)||0,
+    y:parseFloat(x['SLG%'])||0,
+  }));
+  if(!pts.length) return;
+
+  const xMin=.100, xMax=Math.max(.600,...pts.map(p=>p.x))+.05;
+  const yMin=.050, yMax=Math.max(.900,...pts.map(p=>p.y))+.05;
+  const xRange=xMax-xMin, yRange=yMax-yMin;
+
+  const toX=v=>pad.l+(v-xMin)/xRange*cw;
+  const toY=v=>pad.t+ch-(v-yMin)/yRange*ch;
+
+  // Background
+  ctx.fillStyle='#f8f9fb'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  [.200,.300,.400,.500].forEach(v=>{
+    if(v<yMin||v>yMax) return;
+    ctx.strokeStyle='#e8eaee'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(v)); ctx.lineTo(pad.l+cw,toY(v)); ctx.stroke();
+  });
+  [.200,.300,.400,.500].forEach(v=>{
+    if(v<xMin||v>xMax) return;
+    ctx.strokeStyle='#e8eaee'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(toX(v),pad.t); ctx.lineTo(toX(v),pad.t+ch); ctx.stroke();
+  });
+
+  // Axis labels
+  ctx.fillStyle='#9ca3af'; ctx.font='8px DM Mono,monospace';
+  ctx.textAlign='center';
+  ctx.fillText('OBP →', pad.l+cw/2, H-2);
+  ctx.save(); ctx.translate(10,pad.t+ch/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('SLG →', 0, 0); ctx.restore();
+
+  // Tick labels
+  [.200,.300,.400].forEach(v=>{
+    ctx.textAlign='right'; ctx.fillText(f3(v), pad.l-3, toY(v)+3);
+    ctx.textAlign='center'; ctx.fillText(f3(v), toX(v), pad.t+ch+11);
+  });
+
+  // Quadrant lines (team avg OBP + SLG)
+  const avgOBP=pts.reduce((s,p)=>s+p.x,0)/pts.length;
+  const avgSLG=pts.reduce((s,p)=>s+p.y,0)/pts.length;
+  ctx.setLineDash([3,3]); ctx.strokeStyle='#c8cdd6'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(toX(avgOBP),pad.t); ctx.lineTo(toX(avgOBP),pad.t+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,toY(avgSLG)); ctx.lineTo(pad.l+cw,toY(avgSLG)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Dots
+  pts.forEach(p=>{
+    const isSelf=p.name===selP;
+    const x=toX(p.x), y=toY(p.y);
+    ctx.beginPath(); ctx.arc(x,y,isSelf?7:5,0,Math.PI*2);
+    ctx.fillStyle=isSelf?'#c8102e':'#1a2b4a';
+    ctx.globalAlpha=isSelf?1:.55;
+    ctx.fill();
+    ctx.globalAlpha=1;
+    if(isSelf){
+      ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+    }
+    // Name label for self + hover logic skipped (canvas doesn't do hover well)
+    if(isSelf){
+      ctx.fillStyle='#c8102e'; ctx.font='bold 8px DM Sans,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(p.name, x, y-10);
+    }
+  });
+
+  // Quadrant labels
+  ctx.font='7px DM Sans,sans-serif'; ctx.fillStyle='rgba(107,114,128,.5)';
+  ctx.textAlign='left'; ctx.fillText('Power', toX(avgOBP)+4, toY(avgSLG)-4);
+  ctx.textAlign='right'; ctx.fillText('Contact', toX(avgOBP)-4, toY(avgSLG)-4);
+}
+
 
 function toggleGameLog(){
   const t=document.getElementById('logToggle');
@@ -4376,6 +4620,21 @@ function drawPerGameChart(data){
       ctx.fillText(baStr, x+barW/2, pad.t+ch-hH+10);
     }
   });
+
+  // Season average reference line
+  const sAvgAB = data.reduce((s,d)=>s+d.ab,0);
+  const sAvgH  = data.reduce((s,d)=>s+d.h,0);
+  if(sAvgAB>0){
+    const sBA = sAvgH/sAvgAB;
+    const refY = pad.t+ch-(sBA/maxH)*ch;
+    ctx.setLineDash([4,3]);
+    ctx.strokeStyle='rgba(200,16,46,.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(pad.l,refY); ctx.lineTo(pad.l+cw,refY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(200,16,46,.7)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='left';
+    ctx.fillText('avg', pad.l+2, refY-2);
+  }
+
   ctx.textAlign='left';
 }
 
