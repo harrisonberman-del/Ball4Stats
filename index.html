@@ -1542,7 +1542,7 @@ function renderPDetail(){
       </div>
       ${pg.length>=2?`<div class="rolling-line-wrap">
         <div class="rolling-line-label">Rolling 3-Game BA <span id="rollingBACurrent"></span></div>
-        <canvas id="rollingBAChart" style="width:100%;height:64px;display:block"></canvas>
+        <canvas id="rollingBAChart" style="width:100%;height:160px;display:block"></canvas>
       </div>`:''}
       <div class="profile-highlights">
         ${bestGame?`<div class="highlight-card"><div class="highlight-val">${f3(bestOPS)} OPS</div><div class="highlight-lbl">Best game${bestGame.opp?' vs '+bestGame.opp:''}</div></div>`:''}
@@ -1762,51 +1762,71 @@ function drawRollingBALine(data, games, seasonBA) {
   const canvas = document.getElementById('rollingBAChart');
   if(!canvas) return;
   const dpr = window.devicePixelRatio||1;
-  const W = canvas.offsetWidth||300, H = 64;
+  const W = canvas.offsetWidth||300;
+  const H = 160; // much taller — gives room to breathe
   canvas.width=W*dpr; canvas.height=H*dpr;
   canvas.style.width=W+'px'; canvas.style.height=H+'px';
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr,dpr);
 
-  const pad={l:28,r:8,t:6,b:22};
+  // Generous padding — left for y-labels, bottom for x-labels
+  const pad={l:38,r:16,t:12,b:32};
   const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  const yMin=Math.max(0, Math.min(...data,seasonBA)-.05);
-  const yMax=Math.min(1, Math.max(...data,seasonBA)+.08);
-  const yRange=yMax-yMin||.1;
 
-  // Grid lines at .200, .300, .400
-  [.200,.300,.400].forEach(v=>{
-    if(v<yMin||v>yMax) return;
-    const y=pad.t+ch-(v-yMin)/yRange*ch;
-    ctx.strokeStyle='#e2e5ea'; ctx.lineWidth=1;
+  // Y range: always show .100–.700 minimum, expand if data goes beyond
+  const dataMin = Math.min(...data, seasonBA);
+  const dataMax = Math.max(...data, seasonBA);
+  const yMin = Math.max(0,   Math.floor((dataMin - .05) * 10) / 10);
+  const yMax = Math.min(1.0, Math.ceil( (dataMax + .05) * 10) / 10);
+  const yRange = yMax - yMin || .1;
+
+  // Background
+  ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#e8eaee'; ctx.lineWidth=1;
+  ctx.strokeRect(pad.l,pad.t,cw,ch);
+
+  // Grid lines — every .100
+  const step = yRange <= .3 ? .050 : .100;
+  for(let v=Math.ceil(yMin/step)*step; v<=yMax+.001; v+=step){
+    const y = pad.t + ch - (v-yMin)/yRange*ch;
+    if(y < pad.t-1 || y > pad.t+ch+1) continue;
+    ctx.strokeStyle = Math.abs(v % .100) < .001 ? '#e2e5ea' : '#f0f1f4';
+    ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
-    ctx.fillStyle='#9ca3af'; ctx.font='7px DM Mono,monospace'; ctx.textAlign='right';
-    ctx.fillText('.'+String(v*1000).padStart(3,'0').slice(0,3), pad.l-3, y+3);
-  });
+    // Y label
+    ctx.fillStyle='#9ca3af'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='right';
+    const lbl = v.toFixed(3).replace('0.','.');
+    ctx.fillText(lbl, pad.l-5, y+3.5);
+  }
 
-  // Season average reference line (dashed)
-  const avgY=pad.t+ch-(seasonBA-yMin)/yRange*ch;
-  ctx.setLineDash([3,3]); ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1;
+  // Season average dashed line
+  const avgY = pad.t + ch - (seasonBA-yMin)/yRange*ch;
+  ctx.save();
+  ctx.setLineDash([5,4]);
+  ctx.strokeStyle='rgba(107,114,128,.5)'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(pad.l,avgY); ctx.lineTo(pad.l+cw,avgY); ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.restore();
+  // "Avg" label on the right
+  ctx.fillStyle='rgba(107,114,128,.7)'; ctx.font='8px DM Sans,sans-serif'; ctx.textAlign='left';
+  ctx.fillText('avg', pad.l+cw+3, avgY+3);
 
-  if(data.length<2) return;
-  const xStep=cw/(data.length-1);
+  if(data.length < 2){ ctx.textAlign='left'; return; }
+  const xStep = cw / (data.length-1);
 
-  // Gradient fill under line
+  // Gradient fill
   const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
-  grad.addColorStop(0,'rgba(26,43,74,.18)');
-  grad.addColorStop(1,'rgba(26,43,74,.02)');
+  grad.addColorStop(0,'rgba(26,43,74,.12)');
+  grad.addColorStop(1,'rgba(26,43,74,0)');
   ctx.beginPath();
   data.forEach((v,i)=>{
     const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
     i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
   });
-  ctx.lineTo(pad.l+cw,pad.t+ch); ctx.lineTo(pad.l,pad.t+ch);
+  ctx.lineTo(pad.l+cw, pad.t+ch); ctx.lineTo(pad.l, pad.t+ch);
   ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
 
   // Line
-  ctx.beginPath(); ctx.strokeStyle='#1a2b4a'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.strokeStyle='#1a2b4a'; ctx.lineWidth=2.5;
   ctx.lineJoin='round'; ctx.lineCap='round';
   data.forEach((v,i)=>{
     const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
@@ -1814,23 +1834,35 @@ function drawRollingBALine(data, games, seasonBA) {
   });
   ctx.stroke();
 
-  // Dots + game labels
+  // Dots + value callouts + x-labels
   data.forEach((v,i)=>{
     const x=pad.l+i*xStep, y=pad.t+ch-(v-yMin)/yRange*ch;
-    const isHot=v>seasonBA+.050, isCold=v<seasonBA-.050;
-    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
-    ctx.fillStyle=isHot?'#c8102e':isCold?'#1d4ed8':'#1a2b4a'; ctx.fill();
-    ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
-    // Game label below
-    ctx.fillStyle='#9ca3af'; ctx.font='7px DM Mono,monospace'; ctx.textAlign='center';
-    const lbl=games[i]?.date?games[i].date.slice(5):'G'+(i+1);
-    ctx.fillText(lbl, x, H-3);
+    const isHot  = v > seasonBA+.050;
+    const isCold = v < seasonBA-.050;
+    const dotCol = isHot?'#c8102e':isCold?'#1d4ed8':'#1a2b4a';
+
+    // Dot
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle=dotCol; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+
+    // BA value above dot (only if there's space — not first/last overlapping)
+    const baStr = v>0 ? v.toFixed(3).replace('0.','.'):'—';
+    ctx.fillStyle=dotCol; ctx.font='bold 9px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(baStr, x, y-10);
+
+    // X-axis date label
+    ctx.fillStyle='#9ca3af'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
+    const lbl = games[i]?.date ? games[i].date.slice(5) : 'G'+(i+1);
+    ctx.fillText(lbl, x, H-8);
   });
 
-  // Update current value label
+  ctx.textAlign='left';
+
+  // Update header current value
   const cur=data[data.length-1];
   const curEl=document.getElementById('rollingBACurrent');
-  if(curEl) curEl.textContent=cur>0?('.'+String(Math.round(cur*1000)).padStart(3,'0')):'—';
+  if(curEl) curEl.textContent=cur>0?cur.toFixed(3).replace('0.','.') :'—';
 }
 
 // ── OPS+ Half-circle gauge ──
