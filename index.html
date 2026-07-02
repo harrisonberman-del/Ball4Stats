@@ -12,26 +12,29 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --sand:#f4f4f2;--sand2:#e8e6e1;--sand3:#d4d1ca;
-  --ink:#1a1a1a;--ink2:#3d3a34;--ink3:#6b6b6b;
-  --accent:#2d6a4f;--accent-light:#e8f4ee;--accent2:#c9782b;
-  --hot:#c0392b;--cold:#2563a8;
+  --bg:#f8f7f5;
+  --sand:#f8f7f5;--sand2:#edeae4;--sand3:#d6d1c8;
+  --ink:#141210;--ink2:#38342c;--ink3:#7c7568;
+  --accent:#18633e;--accent-light:#e4f0eb;--accent2:#a8520e;
+  --c-flag:#dc2626;
+  --hot:#b02828;--cold:#2050a0;
   --white:#ffffff;
-  --shadow:0 1px 2px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
-  --shadow-md:0 2px 8px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.06);
-  --radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 3px 10px rgba(0,0,0,.04);
+  --shadow-md:0 2px 8px rgba(0,0,0,.08),0 8px 28px rgba(0,0,0,.05);
+  --radius:8px;--radius-lg:12px;
   --font:'DM Sans',sans-serif;--font-serif:'DM Serif Display',serif;--font-mono:'DM Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--sand);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;min-height:100vh;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;min-height:100vh;}
 
-header{background:var(--white);border-bottom:2px solid var(--accent);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+header{background:var(--white);border-bottom:1px solid var(--sand2);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--sand2);}
 .logo{font-family:var(--font-serif);font-size:1.25rem;color:var(--ink);display:flex;align-items:center;gap:8px;}
 .logo em{color:var(--accent);font-style:normal;}
 nav{display:flex;gap:2px;}
-nav button{background:none;border:none;color:var(--ink3);font-family:var(--font);font-size:.875rem;font-weight:500;padding:8px 14px;border-radius:6px;cursor:pointer;transition:all .12s;}
-nav button:hover{color:var(--ink);background:var(--sand);}
-nav button.active{color:var(--accent);background:var(--accent-light);font-weight:600;}
+nav button{background:none;border:none;color:var(--ink3);font-family:var(--font);font-size:.81rem;font-weight:500;padding:7px 13px;border-radius:5px;cursor:pointer;transition:all .1s;position:relative;}
+nav button:hover{color:var(--ink);background:var(--bg);}
+nav button.active{color:var(--accent);font-weight:700;}
+nav button.active::after{content:'';position:absolute;bottom:-1px;left:4px;right:4px;height:2px;background:var(--accent);border-radius:2px 2px 0 0;}
 
 .page{display:none;padding:1.75rem 2rem;max-width:1200px;margin:0 auto;}
 .page.active{display:block;}
@@ -58,8 +61,8 @@ nav button.active{color:var(--accent);background:var(--accent-light);font-weight
   box-shadow:var(--shadow);position:relative;overflow:hidden;
 }
 .hero-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--accent);
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-mid,#228050));
 }
 .hc-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:5px;}
 .hc-name{font-family:var(--font-serif);font-size:1.05rem;color:var(--ink);margin-bottom:3px;}
@@ -842,6 +845,30 @@ tr.editing td { background:var(--accent-light) !important; }
 }
 .tg-edit-del:hover { background:#fff0f0; }
 tr.tg-editing td { background:var(--accent-light) !important; }
+
+
+/* ── Stat validation flag ── */
+.stat-flag-btn {
+  background:none; border:none; cursor:pointer; padding:2px 4px;
+  font-size:.9rem; line-height:1; vertical-align:middle;
+  transition:transform .12s;
+}
+.stat-flag-btn:hover { transform:scale(1.2); }
+.stat-flag-tooltip {
+  position:fixed; z-index:9999;
+  background:#1a1210; color:#fff;
+  border:1px solid rgba(220,38,38,.4);
+  border-radius:8px; padding:10px 14px;
+  max-width:260px; font-size:.78rem; line-height:1.6;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+  pointer-events:none;
+}
+.stat-flag-tooltip .flag-title {
+  font-weight:700; color:#f87171; font-size:.8rem;
+  margin-bottom:6px; display:flex; align-items:center; gap:5px;
+}
+.stat-flag-tooltip ul { padding-left:14px; color:rgba(255,255,255,.8); }
+.stat-flag-tooltip li { margin-bottom:3px; }
 
 </style>
 </head>
@@ -1693,12 +1720,16 @@ function renderGamesPage(){
     const isEditing = g.id === expandedGameId;
     const rowClass  = isEditing ? 'editing' : '';
 
+    const issues = validateGameRow(g);
+    const flagBtn = issues.length
+      ? `<button class="stat-flag-btn" title="Stat issues" onclick="event.stopPropagation();showFlagTooltip(this,${JSON.stringify(issues).replace(/"/g,'&quot;')})">🔺</button>`
+      : '';
     const displayRow = `<tr class="${rowClass}" style="cursor:pointer" data-gameid="${g.id}" onclick="handleGameRowClick(this)">
       <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
       <td class="name-col">${g.player_name}</td>
       <td class="left" style="color:var(--ink2)">${g.opp||'—'}</td>
       ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
-      <td style="text-align:center;color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</td>
+      <td style="text-align:center;white-space:nowrap">${flagBtn}<span style="color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</span></td>
     </tr>`;
 
     if (!isEditing) return displayRow;
@@ -1814,14 +1845,16 @@ document.getElementById('confirmModal').addEventListener('click',e=>{if(e.target
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  ['leaders','roster','log','games','lineup','schedule'].forEach((p,i)=>{if(p===id)document.querySelectorAll('nav button')[i].classList.add('active');});
-  if(id==='lineup') renderAvailGrid();
-  else if(id==='schedule'){
+  document.getElementById('page-'+id)?.classList.add('active');
+  ['leaders','roster','log','games','schedule','teamgames'].forEach((p,i)=>{if(p===id)document.querySelectorAll('nav button')[i].classList.add('active');});
+  if(id==='schedule'){
     if(!window._skipScheduleReload) loadScheduledGames().then(renderSchedulePage);
     window._skipScheduleReload=false;
+  } else if(id==='teamgames'){
+    renderTeamGames();
+  } else {
+    renderAll();
   }
-  else renderAll();
 }
 function renderAll(){renderLeaders();renderRoster();renderLogPage();renderGamesPage();}
 
@@ -4715,6 +4748,92 @@ async function saveTGEdit(gameId, date) {
       if (body) { body.style.display = 'block'; card.classList.add('open'); }
     }
   } catch(e) { showToast('Error: ' + e.message, true); }
+}
+
+
+// ═══════════════════════════════════════
+// STAT VALIDATION
+// ═══════════════════════════════════════
+function validateGameRow(g) {
+  const issues = [];
+  const ab  = Number(g.ab)  || 0;
+  const h   = Number(g.h)   || 0;
+  const d2  = Number(g['2b']) || 0;
+  const d3  = Number(g['3b']) || 0;
+  const hr  = Number(g.hr)  || 0;
+  const rbi = Number(g.rbi) || 0;
+  const r   = Number(g.r)   || 0;
+  const bb  = Number(g.bb)  || 0;
+  const k   = Number(g.k)   || 0;
+  const sb  = Number(g.sb)  || 0;
+  const sba = Number(g.sba) || 0;
+  const hbp = Number(g.hbp) || 0;
+  const sf  = Number(g.sf)  || 0;
+  const pa  = Number(g.pa)  || 0;
+
+  // Core hit logic
+  if (h > ab && ab > 0)
+    issues.push(`Hits (${h}) > At Bats (${ab}) — impossible`);
+  if (d2 > h)
+    issues.push(`Doubles (${d2}) > Hits (${h}) — can't have more 2B than total hits`);
+  if (d3 > h)
+    issues.push(`Triples (${d3}) > Hits (${h})`);
+  if (hr > h)
+    issues.push(`Home Runs (${hr}) > Hits (${h})`);
+  if (d2 + d3 + hr > h)
+    issues.push(`Extra base hits (${d2+d3+hr}) > Total hits (${h}) — singles would be negative`);
+  if (k > ab && ab > 0)
+    issues.push(`Strikeouts (${k}) > At Bats (${ab})`);
+  if (rbi > (h + bb + hbp) && h + bb + hbp > 0)
+    issues.push(`RBIs (${rbi}) seem high vs times on base (${h+bb+hbp})`);
+  if (sb > 0 && sba > 0 && sb > sba)
+    issues.push(`Stolen bases (${sb}) > Attempts (${sba})`);
+  if (r > (h + bb + hbp) && h + bb + hbp > 0)
+    issues.push(`Runs scored (${r}) > times on base — unlikely`);
+  if (pa > 0 && ab + bb + hbp + sf > pa + 3)
+    issues.push(`Plate appearances (${pa}) seem too low vs AB+BB+HBP+SF (${ab+bb+hbp+sf})`);
+  if (ab === 0 && h > 0)
+    issues.push(`Has hits but 0 AB — check At Bats`);
+  if (ab === 0 && k > 0)
+    issues.push(`Has Ks but 0 AB`);
+  if (ab > 15)
+    issues.push(`${ab} AB in one game seems very high — double-check`);
+  if (rbi > 9)
+    issues.push(`${rbi} RBI in one game is very unusual`);
+
+  return issues;
+}
+
+let flagTooltipEl = null;
+
+function showFlagTooltip(btn, issues) {
+  removeFlagTooltip();
+  const tt = document.createElement('div');
+  tt.className = 'stat-flag-tooltip';
+  tt.id = 'flagTooltip';
+  tt.innerHTML = `<div class="flag-title">⚠️ Stat Issues</div>
+    <ul>${issues.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  document.body.appendChild(tt);
+  flagTooltipEl = tt;
+
+  // Position near button
+  const rect = btn.getBoundingClientRect();
+  let top  = rect.bottom + 6;
+  let left = rect.left - 100;
+  if (left < 8) left = 8;
+  if (top + 200 > window.innerHeight) top = rect.top - 210;
+  tt.style.top  = top  + 'px';
+  tt.style.left = left + 'px';
+
+  // Click anywhere to close
+  setTimeout(()=>{
+    document.addEventListener('click', removeFlagTooltip, {once:true});
+  }, 10);
+}
+
+function removeFlagTooltip() {
+  document.getElementById('flagTooltip')?.remove();
+  flagTooltipEl = null;
 }
 
 // ── Init ──
