@@ -907,6 +907,169 @@ tr.tg-editing td { background:var(--accent-light) !important; }
 .rolling-line-label { font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:.375rem;display:flex;justify-content:space-between; }
 .rolling-line-label span { font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--font-mono); }
 
+
+/* ═══════════════════════════════════════════
+   EXPERIENCE LAYER — motion, depth, delight
+   ═══════════════════════════════════════════ */
+
+/* Smooth everything */
+html { scroll-behavior:smooth; }
+::selection { background:var(--accent); color:#fff; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width:10px; height:10px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--sand3); border-radius:5px; border:2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background:var(--ink3); }
+
+/* Focus rings for keyboard users */
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline:2px solid var(--accent); outline-offset:2px;
+}
+
+/* ── Page entrance animation ── */
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.page.active { animation:pageIn .32s cubic-bezier(.16,1,.3,1); }
+
+/* ── Staggered card entrance ── */
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(12px) scale(.99); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.page.active .hero-card,
+.page.active .panel,
+.page.active .tg-card,
+.page.active .game-card {
+  animation:cardIn .4s cubic-bezier(.16,1,.3,1) backwards;
+}
+.page.active .hero-card:nth-child(1) { animation-delay:.02s; }
+.page.active .hero-card:nth-child(2) { animation-delay:.06s; }
+.page.active .hero-card:nth-child(3) { animation-delay:.10s; }
+.page.active .hero-card:nth-child(4) { animation-delay:.14s; }
+.page.active .panel:nth-of-type(1) { animation-delay:.04s; }
+.page.active .panel:nth-of-type(2) { animation-delay:.08s; }
+.page.active .panel:nth-of-type(3) { animation-delay:.12s; }
+.page.active .tg-card:nth-child(1) { animation-delay:.03s; }
+.page.active .tg-card:nth-child(2) { animation-delay:.07s; }
+.page.active .tg-card:nth-child(3) { animation-delay:.11s; }
+
+/* ── Card hover depth ── */
+.hero-card, .panel, .tg-card, .game-card, .player-tile {
+  transition:transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s ease;
+}
+.hero-card:hover, .tg-card:hover, .game-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+}
+.player-tile:hover {
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+}
+.player-tile:active { transform:translateY(-1px) scale(.99); }
+
+/* ── Hero card shine on hover ── */
+.hero-card { position:relative; overflow:hidden; }
+.hero-card::after {
+  content:''; position:absolute; top:0; left:-80%; width:60%; height:100%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent);
+  transform:skewX(-20deg); transition:left .5s ease; pointer-events:none;
+}
+.hero-card:hover::after { left:130%; }
+
+/* ── Table row interaction ── */
+tbody tr { transition:background .12s ease, transform .12s ease; }
+tbody tr:hover { background:var(--accent-light) !important; }
+
+/* ── Leaders top-3 medal treatment ── */
+.rank-1 { position:relative; }
+tbody tr:first-child .name-col::before { content:'🥇 '; font-size:.75rem; }
+tbody tr:nth-child(2) .name-col::before { content:'🥈 '; font-size:.75rem; opacity:.8; }
+tbody tr:nth-child(3) .name-col::before { content:'🥉 '; font-size:.75rem; opacity:.7; }
+
+/* ── Button press feel ── */
+.btn, .btn-ghost, .live-action-btn, .lsb, .ps-btn {
+  transition:transform .1s ease, background .12s ease, box-shadow .12s ease;
+}
+.btn:active, .live-action-btn:active, .lsb:active { transform:scale(.97); }
+.btn:hover { box-shadow:0 2px 8px rgba(26,43,74,.25); }
+
+/* ── Nav underline slide ── */
+nav button::after {
+  transition:left .2s cubic-bezier(.16,1,.3,1), right .2s cubic-bezier(.16,1,.3,1), opacity .2s;
+}
+
+/* ── Stat category pills ── */
+.ps-btn { position:relative; overflow:hidden; }
+.ps-btn.active {
+  box-shadow:0 2px 8px rgba(26,43,74,.3);
+}
+
+/* ── Number pop-in for hero values ── */
+@keyframes numPop {
+  0%   { opacity:0; transform:translateY(6px) scale(.9); }
+  60%  { transform:translateY(-2px) scale(1.03); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+.hc-val { animation:numPop .5s cubic-bezier(.16,1,.3,1) backwards; animation-delay:.15s; }
+
+/* ── Toast refinement ── */
+.toast {
+  animation:toastIn .35s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(8px);
+}
+@keyframes toastIn {
+  from { opacity:0; transform:translateX(-50%) translateY(12px) scale(.95); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+}
+
+/* ── Empty states with personality ── */
+.empty, .schedule-empty {
+  padding:3rem 1.5rem !important;
+  text-align:center;
+  color:var(--ink3);
+}
+.empty::before {
+  content:'⚾'; display:block; font-size:2rem; margin-bottom:.75rem;
+  opacity:.4; filter:grayscale(.3);
+  animation:ballBounce 2.5s ease-in-out infinite;
+}
+@keyframes ballBounce {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  50%     { transform:translateY(-8px) rotate(180deg); }
+}
+
+/* ── Percentile bars grow on load ── */
+@keyframes barGrow { from { width:0 !important; } }
+.pct-bar-fill { animation:barGrow .8s cubic-bezier(.16,1,.3,1) backwards; animation-delay:.2s; }
+
+/* ── Diamond pulse on live game ── */
+@keyframes diamondPulse {
+  0%,100% { opacity:.15; }
+  50%     { opacity:.28; }
+}
+
+/* ── Section headers with accent tick ── */
+.panel-title {
+  display:flex; align-items:center; gap:8px;
+}
+.panel-title::before {
+  content:''; width:3px; height:12px; background:var(--accent);
+  border-radius:2px; flex-shrink:0;
+}
+
+/* ── Log game inputs — satisfying focus ── */
+input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
+  box-shadow:0 0 0 3px rgba(26,43,74,.12);
+}
+
+/* ── Reduced motion respect ── */
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2247,7 +2410,7 @@ function showPage(id){
     renderAll();
   }
 }
-function renderAll(){renderLeaders();renderRoster();renderLogPage();renderGamesPage();}
+function renderAll(){renderLeaders();renderRoster();renderLogPage();renderGamesPage();requestAnimationFrame(animateCountUps);}
 
 // ── Loading bar ──
 function startLoad(){const b=document.getElementById('loadingBar');b.className='loading-bar active';}
@@ -5215,6 +5378,32 @@ function showFlagTooltip(btn, issues) {
 function removeFlagTooltip() {
   document.getElementById('flagTooltip')?.remove();
   flagTooltipEl = null;
+}
+
+
+// ── Count-up animation for hero numbers ──
+function animateCountUps() {
+  document.querySelectorAll('.hc-val').forEach(el => {
+    const raw = el.textContent.trim();
+    // Only animate pure numbers or .XXX averages
+    const isAvg = /^\.\d{3}$/.test(raw);
+    const isNum = /^\d+(\.\d+)?$/.test(raw);
+    if (!isAvg && !isNum) return;
+    const target = isAvg ? parseFloat('0'+raw) : parseFloat(raw);
+    if (!isFinite(target)) return;
+    const dur = 600, start = performance.now();
+    function tick(now) {
+      const p = Math.min((now-start)/dur, 1);
+      const eased = 1-Math.pow(1-p, 3);
+      const val = target*eased;
+      el.textContent = isAvg
+        ? val.toFixed(3).replace(/^0/,'')
+        : (Number.isInteger(target) ? Math.round(val) : val.toFixed(1));
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = raw;
+    }
+    requestAnimationFrame(tick);
+  });
 }
 
 // ── Init ──
