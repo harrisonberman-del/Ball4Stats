@@ -1187,7 +1187,8 @@ function calc(pg) {
   const outs=ab>0?ab-h:1, rc27=outs>0?(rc/outs)*27:0;
   return {...t,pa,tb,
     BA:f3(ba),OBP:f3(obp),'SLG%':f3(slg),OPS:f3(obp+slg),
-    wOBA:f3(wOBA),BABIP:f3(babip),RC:rc.toFixed(1),'RC/27':rc27.toFixed(2),ISO:f3(slg-ba),
+    wOBA:f3(wOBA),_wOBA:wOBA,_pa:pa,
+    BABIP:f3(babip),RC:rc.toFixed(1),'RC/27':rc27.toFixed(2),ISO:f3(slg-ba),
     'BB%':pa>0?(bb/pa*100).toFixed(1)+'%':'.000',
     'K%':pa>0?(k/pa*100).toFixed(1)+'%':'.000',
     'SB%':sba>0?(sb/sba*100).toFixed(1)+'%':'—',
@@ -1196,8 +1197,25 @@ function calc(pg) {
   };
 }
 function f3(n){if(!isFinite(n)||isNaN(n))return'.000';const s=n.toFixed(3);return s.startsWith('0.')?s.slice(1):s;}
-function playerStats(name){ return {...calc(games.filter(g=>g.player_name===name)),name}; }
-function allStats(){ return players.map(p=>playerStats(p.name)); }
+function playerStats(name){
+  const base = {...calc(games.filter(g=>g.player_name===name)),name};
+  // Compute lgwOBA from all roster players for wRAA
+  const allWOBA = players.map(p=>calc(games.filter(g=>g.player_name===p.name))._wOBA||0).filter(v=>v>0);
+  const lgWOBA = allWOBA.length>0?allWOBA.reduce((s,v)=>s+v,0)/allWOBA.length:.320;
+  const wRAA = base._pa>0?((base._wOBA||0)-lgWOBA)/1.15*base._pa:0;
+  return {...base, wRAA:base._pa>0?(wRAA>=0?'+':'')+wRAA.toFixed(1):'—', _wRAA:wRAA};
+}
+function allStats(){
+  const raw = players.map(p=>playerStats(p.name));
+  const lgWOBA = raw.length>0
+    ? raw.reduce((s,x)=>s+(x._wOBA||0),0)/raw.length
+    : .320;
+  const wOBAscale = 1.15;
+  return raw.map(x=>{
+    const wRAA = x._pa>0 ? ((x._wOBA||0)-lgWOBA)/wOBAscale*x._pa : 0;
+    return {...x, wRAA:(x._pa>0?(wRAA>=0?'+':'')+wRAA.toFixed(1):'—'), _wRAA:wRAA};
+  });
+}
 // All players including subs (for lineup builder rolling stats)
 function allPlayersIncludingSubs(){
   const rosterNames = new Set(players.map(p=>p.name));
@@ -1211,10 +1229,10 @@ const CATS=[
   {key:'HR',label:'Home Runs',cols:['GP','AB','H','HR','RBI','R','TB','BA','SLG%','ISO']},
   {key:'RBI',label:'RBIs',cols:['GP','AB','H','HR','RBI','R','BB','BA','OBP']},
   {key:'OPS',label:'OPS',cols:['GP','AB','H','OBP','SLG%','OPS','wOBA','ISO','BABIP']},
-  {key:'wOBA',label:'wOBA',cols:['GP','PA','AB','H','BB','hbp','wOBA','OBP','OPS']},
+  {key:'wOBA',label:'wOBA',cols:['GP','PA','AB','H','BB','hbp','wOBA','wRAA','OBP','OPS']},
   {key:'sb',label:'Stolen Bases',cols:['GP','AB','sb','sba','SB%','SBR','r','OBP']},
   {key:'RC',label:'Runs Created',cols:['GP','AB','H','HR','TB','RC','RC/27','OPS','wOBA']},
-  {key:'Advanced',label:'Advanced',cols:['GP','AB','H','BA','OBP','SLG%','OPS','wOBA','BABIP','ISO','TB','RC','RC/27','BB%','K%','SB%','RAT']},
+  {key:'Advanced',label:'Advanced',cols:['GP','AB','H','BA','OBP','SLG%','OPS','wOBA','wRAA','BABIP','ISO','TB','RC','RC/27','BB%','K%','SB%','RAT']},
 ];
 let curCat=0, sCol=null, sAsc=false;
 
@@ -1659,7 +1677,7 @@ function renderPDetail(){
       <div class="panel-title">Advanced Stats <span class="panel-sub">sabermetric breakdown</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
         ${[
-          {l:'wRAA',    v:(()=>{ const lgW=teamStats.length>0?teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/teamStats.length:.320; const sc=1.15; const val=((woba-lgW)/sc)*pa; return pa>0?(val>=0?'+':'')+val.toFixed(1):'—'; })(), g:woba>teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/(teamStats.length||1), w:woba<teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/(teamStats.length||1)-.050, desc:'Runs above avg offense'},
+          {l:'wRAA', v:s.wRAA, g:(s._wRAA||0)>0, w:(s._wRAA||0)<-1, desc:'Runs above avg offense'},
           {l:'wOBA',    v:s.wOBA,            g:woba>=.340,                  desc:'Overall offensive value'},
           {l:'BABIP',   v:s.BABIP,           g:parseFloat(s.BABIP)>=.320,   desc:'Luck on balls in play'},
           {l:'ISO',     v:s.ISO,             g:iso>=.150,                   desc:'Isolated power (SLG−BA)'},
