@@ -1659,6 +1659,7 @@ function renderPDetail(){
       <div class="panel-title">Advanced Stats <span class="panel-sub">sabermetric breakdown</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
         ${[
+          {l:'wRAA',    v:(()=>{ const lgW=teamStats.length>0?teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/teamStats.length:.320; const sc=1.15; const val=((woba-lgW)/sc)*pa; return pa>0?(val>=0?'+':'')+val.toFixed(1):'—'; })(), g:woba>teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/(teamStats.length||1), w:woba<teamStats.reduce((a,x)=>a+(parseFloat(x.wOBA)||0),0)/(teamStats.length||1)-.050, desc:'Runs above avg offense'},
           {l:'wOBA',    v:s.wOBA,            g:woba>=.340,                  desc:'Overall offensive value'},
           {l:'BABIP',   v:s.BABIP,           g:parseFloat(s.BABIP)>=.320,   desc:'Luck on balls in play'},
           {l:'ISO',     v:s.ISO,             g:iso>=.150,                   desc:'Isolated power (SLG−BA)'},
