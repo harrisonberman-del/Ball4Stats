@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Softball">
 <meta name="theme-color" content="#2d6a4f">
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Softball Stats 2025&quot;,&quot;short_name&quot;:&quot;Softball&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23f5f0e8&quot;,&quot;theme_color&quot;:&quot;%232d6a4f&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232d6a4f'/%3E%3Ctext y='.9em' font-size='70' x='15'%3E⚾%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
-<title>Softball Stats 2025</title>
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Softball Stats 2026&quot;,&quot;short_name&quot;:&quot;Softball&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23f5f0e8&quot;,&quot;theme_color&quot;:&quot;%232d6a4f&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232d6a4f'/%3E%3Ctext y='.9em' font-size='70' x='15'%3E⚾%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+<title>Softball Stats 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1564,7 +1564,7 @@ canvas { max-width: 100%; }
 
 <header>
   <div class="header-top-row">
-    <div class="logo">⚾ Softball <em>Stats</em> 2025</div>
+    <div class="logo">⚾ Softball <em>Stats</em> 2026</div>
     <div class="season-filter">
       <button class="sf-btn active" data-season="all" onclick="setSeasonFilter('all')">All</button>
       <button class="sf-btn" data-season="regular" onclick="setSeasonFilter('regular')">Regular</button>
@@ -1590,7 +1590,7 @@ canvas { max-width: 100%; }
       <p>Could not connect to the database. Check your Supabase project is active and the tables have been created.</p>
     </div>
   </div>
-  <div class="ph"><h1>Stat Leaders</h1><p id="lastUpdated">2025 Season</p></div>
+  <div class="ph"><h1>Stat Leaders</h1><p id="lastUpdated">2026 Season</p></div>
   <div class="hero-grid" id="heroGrid">
     <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
     <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
@@ -2191,7 +2191,7 @@ function renderPDetail(){
     <div class="profile-header">
       <div>
         <div class="profile-name">${selP}</div>
-        <div class="profile-meta">${gp} games · ${ab} AB · 2025 Season</div>
+        <div class="profile-meta">${gp} games · ${ab} AB · 2026 Season</div>
       </div>
       <div class="profile-headline">
         ${[['AVG',s.BA],['OBP',s.OBP],['SLG',s['SLG%']],['OPS',s.OPS],['OPS+',opsPlus],['wRC+',wrcPlus]].map(([l,v])=>
