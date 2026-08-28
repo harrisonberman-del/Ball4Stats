@@ -390,7 +390,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   }
 
   /* ── Page padding ── */
-  .page { padding: .875rem; padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+  .page { padding: .875rem 1rem; padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
   .ph { margin-bottom: 1rem; }
   .ph h1 { font-size:1.35rem; font-weight: 700; }
   .ph p { font-size:.8rem; }
@@ -417,9 +417,16 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   .player-grid { grid-template-columns:repeat(3,1fr); gap:6px; }
   .player-tile { padding:12px 6px; min-height: 60px; }
 
-  /* ── Tables — tighter, still horizontally scrollable ── */
-  .table-wrap { border-radius:8px; margin:0 -.875rem; border-left:none; border-right:none; }
-  .table-wrap table { font-size: .78rem; }
+  /* ── Tables — properly contained with internal scroll ── */
+  .table-wrap {
+    border-radius: 8px;
+    margin: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .table-wrap table { font-size: .78rem; min-width: max-content; }
   thead th { padding:8px 10px; font-size:.6rem; }
   tbody td { padding:9px 10px; font-size:.78rem; }
 
@@ -1474,9 +1481,15 @@ body {
   touch-action: pan-x pan-y;
   -webkit-overflow-scrolling: touch;
 }
+.table-wrap table {
+  min-width: max-content;
+}
 
 /* Explicit width caps on page containers */
-.page, header, .header-top-row, nav {
+.page {
+  max-width: 100vw;
+}
+header, .header-top-row, nav {
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -1521,6 +1534,26 @@ canvas { max-width: 100%; }
     padding: 6px 8px;
     font-size: .65rem;
   }
+}
+
+
+/* ══ CLEAN MOBILE TABLE RULES ══ */
+@media (max-width: 640px) {
+  .table-wrap {
+    border-radius: 8px !important;
+    margin: 0 !important;
+    max-width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    background: var(--white);
+  }
+  .table-wrap table {
+    min-width: max-content !important;
+    font-size: .78rem;
+  }
+  .table-wrap thead th { padding: 8px 12px; font-size: .6rem; white-space: nowrap; }
+  .table-wrap tbody td { padding: 9px 12px; font-size: .78rem; white-space: nowrap; }
 }
 
 </style>
@@ -1913,8 +1946,7 @@ function renderLeaders(){
   const gn=(s,k)=>{const v=s[k]??s[k.toLowerCase()];if(v==null||v==='—')return-Infinity;return parseFloat(String(v).replace('%',''))||0;};
   const sorted=[...ac].sort((a,b)=>sAsc?gn(a,sk)-gn(b,sk):gn(b,sk)-gn(a,sk));
 
-  const lbEssential = ['GP','BA','OBP','OPS','wOBA','HR','RBI','wRC+'];
-  document.getElementById('lbHead').innerHTML=`<tr><th class="left">#</th><th class="left" onclick="srt('name')">Player</th>${cat.cols.map(col=>`<th onclick="srt('${col}')" class="${sk===col?'sorted':''} ${lbEssential.includes(col)?'':'col-hide-mobile'}">${col}</th>`).join('')}</tr>`;
+  document.getElementById('lbHead').innerHTML=`<tr><th class="left">#</th><th class="left" onclick="srt('name')">Player</th>${cat.cols.map(col=>`<th onclick="srt('${col}')" class="${sk===col?'sorted':''}">${col}</th>`).join('')}</tr>`;
   if(!sorted.length){document.getElementById('lbBody').innerHTML=`<tr><td colspan="${cat.cols.length+2}" style="padding:0"><div class="empty-cta">
     <span class="icon">⚾</span>
     <div class="title">No games logged yet</div>
@@ -1924,7 +1956,7 @@ function renderLeaders(){
   document.getElementById('lbBody').innerHTML=sorted.map((s,i)=>`<tr>
     <td class="left ${i===0?'rank-1':i===1?'rank-2':''}">${i+1}</td>
     <td class="name-col">${s.name}</td>
-    ${cat.cols.map(col=>`<td class="${col===sk?'hi':''} ${lbEssential.includes(col)?'':'col-hide-mobile'}">${s[col]??s[col.toLowerCase()]??'—'}</td>`).join('')}
+    ${cat.cols.map(col=>`<td class="${col===sk?'hi':''}">${s[col]??s[col.toLowerCase()]??'—'}</td>`).join('')}
   </tr>`).join('');
 }
 function setCat(i){curCat=i;sCol=null;sAsc=false;renderLeaders();}
