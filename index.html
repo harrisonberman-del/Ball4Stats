@@ -37,7 +37,8 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;min-height:100vh;}
 
-header{background:var(--accent);border-bottom:none;padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+header{background:var(--accent);border-bottom:none;padding:0;display:flex;flex-direction:column;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.header-top-row{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:48px;}
 .logo{font-family:var(--font-serif);font-size:1.15rem;color:#ffffff;display:flex;align-items:center;gap:8px;letter-spacing:-.01em;}
 .logo em{color:#7eb3f5;font-style:normal;}
 nav{display:flex;gap:2px;}
@@ -339,91 +340,225 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 
 /* Mobile header - stack logo above nav */
 @media(max-width:640px){
-  header {
+  /* ── Header: compact top row + separate season row + tab nav ── */
+  header { padding:0; }
+  .header-top-row {
+    padding: 8px 14px;
     height: auto;
-    padding: 10px 1rem 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
+    gap: 8px;
   }
-  .logo { font-size:1.1rem; padding-bottom:8px; }
+  .logo { font-size:1rem; padding:0; }
+  .season-filter {
+    margin-right: 0;
+    padding: 2px;
+  }
+  .sf-btn {
+    padding: 6px 10px;
+    font-size: .68rem;
+  }
+
+  /* ── Nav — big tap targets, bottom-fixed feel ── */
   nav {
-    display: flex;
+    padding: 0;
+    height: 44px; /* Apple minimum tap target */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 0;
-    margin: 0 -1rem;
-    padding: 0 1rem;
-    border-top: 1px solid var(--sand2);
+    border-top: 1px solid rgba(255,255,255,.1);
   }
   nav::-webkit-scrollbar { display:none; }
   nav button {
     flex-shrink: 0;
     font-size: .78rem;
-    padding: 10px 12px;
+    padding: 0 14px;
     border-radius: 0;
     border-bottom: 2px solid transparent;
+    min-height: 44px;
+    color: rgba(255,255,255,.65);
+    letter-spacing: .01em;
+    font-weight: 600;
   }
   nav button.active {
     background: none;
     border-bottom-color: #7eb3f5;
     color: #ffffff;
   }
-  nav button {
-    color: rgba(255,255,255,.65);
-  }
-  nav button:hover {
+  nav button.active::after { display:none; }
+  nav button:hover, nav button:active {
     color: #ffffff;
     background: rgba(255,255,255,.08);
   }
-  .page { padding: 1rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
-  
-  /* Hero grid: 2x2 on mobile */
-  .hero-grid { grid-template-columns: repeat(2,1fr); gap:.625rem; margin-bottom:1rem; }
-  .hero-card { padding:.875rem 1rem; }
-  .hc-val { font-size:1.25rem; }
-  .hc-name { font-size:.95rem; }
-  
-  /* Profile header stacks on mobile */
-  .profile-header { flex-direction:column; align-items:flex-start; }
-  .profile-headline { gap:1rem; }
-  .phl-val { font-size:1.25rem; }
-  .profile-name { font-size:1.4rem; }
-  
-  /* Tables scroll horizontally */
-  .table-wrap { border-radius:8px; }
-  
-  /* Panels full width */
-  .profile-cols { grid-template-columns:1fr; gap:1rem; }
-  
-  /* Lineup cards more compact */
-  .lineup-card { padding:.875rem 1rem; gap:.75rem; }
-  .lc-stats { gap:10px; }
-  
-  /* Form inputs full width on mobile */
+
+  /* ── Page padding ── */
+  .page { padding: .875rem; padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+  .ph { margin-bottom: 1rem; }
+  .ph h1 { font-size:1.35rem; font-weight: 700; }
+  .ph p { font-size:.8rem; }
+
+  /* ── Hero grid ── */
+  .hero-grid { grid-template-columns: repeat(2,1fr); gap:.5rem; margin-bottom:1rem; }
+  .hero-card { padding: .75rem .875rem; }
+  .hc-val { font-size:1.35rem; }
+  .hc-name { font-size:.9rem; }
+  .hc-label { font-size:.6rem; }
+
+  /* ── Profile header ── */
+  .profile-header { flex-direction:column; align-items:flex-start; padding: 1rem .875rem; }
+  .profile-headline { gap:.75rem; flex-wrap: wrap; }
+  .phl-val { font-size:1.15rem; }
+  .profile-name { font-size:1.5rem; }
+
+  /* ── Panels: tighter padding ── */
+  .panel { padding: 1rem .875rem; }
+  .panel-title { font-size:.68rem; margin-bottom: .75rem; }
+  .profile-cols { grid-template-columns:1fr; gap:.75rem; }
+
+  /* ── Player grid — 3 cols on mobile (was 2, tiny tiles ok) ── */
+  .player-grid { grid-template-columns:repeat(3,1fr); gap:6px; }
+  .player-tile { padding:12px 6px; min-height: 60px; }
+
+  /* ── Tables — tighter, still horizontally scrollable ── */
+  .table-wrap { border-radius:8px; margin:0 -.875rem; border-left:none; border-right:none; }
+  .table-wrap table { font-size: .78rem; }
+  thead th { padding:8px 10px; font-size:.6rem; }
+  tbody td { padding:9px 10px; font-size:.78rem; }
+
+  /* ── Inline edit form — STACK VERTICALLY on mobile ── */
+  .game-edit-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .game-edit-field {
+    width: 100%;
+  }
+  .game-edit-field input {
+    width: 100% !important;
+    min-height: 44px;
+    font-size: .95rem;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .game-edit-field label {
+    font-size: .72rem;
+    font-weight: 700;
+  }
+  .game-edit-actions {
+    margin-left: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .game-edit-save, .game-edit-cancel, .game-edit-delete {
+    min-height: 44px;
+    padding: 10px !important;
+    font-size: .85rem !important;
+    width: 100%;
+  }
+
+  /* ── Record tab (tg) edit form — same treatment ── */
+  .tg-edit-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .tg-edit-field { width: 100%; }
+  .tg-edit-field input {
+    width: 100% !important;
+    min-height: 44px;
+    font-size: .95rem;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .tg-edit-actions {
+    margin-left: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .tg-edit-save, .tg-edit-cancel, .tg-edit-del {
+    min-height: 44px;
+    width: 100%;
+    padding: 10px !important;
+  }
+
+  /* ── All Games edit pencil column bigger ── */
+  .stat-flag-btn { padding: 8px; min-width: 32px; min-height: 32px; }
+  .stat-flag-btn svg { width: 14px; height: 14px; }
+
+  /* ── Form inputs stack ── */
   .form-grid-top { flex-direction:column; }
   .form-grid-top .ff { min-width:0; }
-  
-  /* Player grid 2 columns on mobile */
-  .player-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
-  
-  /* Stat summary more compact */
-  .mini-stat-grid { grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:6px; }
-  .msc { padding:6px 4px; }
-  .msc-val { font-size:.82rem; }
-  
-  /* Percentile bars - smaller label */
-  .pct-label { width:52px; font-size:.72rem; }
-  
-  /* Ph header */
-  .ph h1 { font-size:1.25rem; }
-  
-  /* Avail grid 2 cols */
-  .avail-grid { grid-template-columns:repeat(2,1fr); }
-  
-  /* Stat form grid 3 cols on mobile */
+  .ff input, .ff select {
+    min-height: 44px;
+    font-size: .95rem;
+    padding: 10px 12px;
+  }
+  .ff label { font-size: .72rem; }
   .stat-form-grid { grid-template-columns:repeat(3,1fr); gap:8px; }
+  .stat-form-grid input { min-height: 44px; font-size: .95rem; }
+
+  /* ── Percentile bars ── */
+  .pct-label { width:50px; font-size:.7rem; }
+
+  /* ── Buttons: bigger tap targets ── */
+  .btn, .btn-ghost {
+    min-height: 40px;
+    padding: 10px 16px;
+    font-size: .85rem;
+  }
+
+  /* ── Lineup cards ── */
+  .lineup-card { padding:.875rem 1rem; gap:.75rem; }
+  .lc-stats { gap:10px; }
+
+  /* ── Avail grid ── */
+  .avail-grid { grid-template-columns:repeat(2,1fr); }
+  .avail-tile { min-height: 48px; padding: 10px 12px; }
+
+  /* ── Player strip: horizontal scroll with bigger touch ── */
+  .player-strip { padding: 4px 0; }
+  .ps-btn { min-height: 40px; padding: 8px 14px; font-size: .82rem; }
+
+  /* ── Toast bigger on mobile ── */
+  .toast { font-size: .9rem; padding: 12px 20px; }
+
+  /* ── Playoff toggle bigger ── */
+  .playoff-toggle-row { padding: 14px 16px; min-height: 56px; }
+  .playoff-toggle-check { width: 24px; height: 24px; }
+
+  /* ── Record card headers ── */
+  .tg-header { padding: 14px 16px; min-height: 60px; }
+  .tg-date { font-size: .72rem; }
+  .tg-opp { font-size: 1.05rem; }
+  .tg-score { font-size: 1.5rem; }
+
+  /* ── Section jump chips for player profile ── */
+  .profile-section-jumps {
+    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    gap: 6px; padding: 8px 0; margin: 0 -.875rem .875rem;
+    padding-left: .875rem; padding-right: .875rem;
+    scrollbar-width: none;
+    position: sticky; top: 92px; z-index: 90;
+    background: var(--bg);
+  }
+  .profile-section-jumps::-webkit-scrollbar { display: none; }
+  .psj-chip {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+    background: var(--white); border: 1px solid var(--sand2);
+    font-size: .78rem; font-weight: 600; color: var(--ink2);
+    cursor: pointer; white-space: nowrap;
+    min-height: 40px; display: flex; align-items: center;
+    transition: all .12s;
+  }
+  .psj-chip:active { background: var(--accent); color: #fff; border-color: var(--accent); }
+}
+
+/* Hide section jumps on desktop */
+@media(min-width:641px){
+  .profile-section-jumps { display: none !important; }
 }
 
 /* ══ TABLE CLEANUP ══ */
@@ -1143,16 +1278,18 @@ input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
 <div class="loading-bar" id="loadingBar"></div>
 
 <header>
-  <div class="logo">⚾ Softball <em>Stats</em> 2025</div>
-  <nav>
+  <div class="header-top-row">
+    <div class="logo">⚾ Softball <em>Stats</em> 2025</div>
     <div class="season-filter">
       <button class="sf-btn active" data-season="all" onclick="setSeasonFilter('all')">All</button>
       <button class="sf-btn" data-season="regular" onclick="setSeasonFilter('regular')">Regular</button>
       <button class="sf-btn" data-season="playoffs" onclick="setSeasonFilter('playoffs')">Playoffs</button>
     </div>
+  </div>
+  <nav>
     <button class="active" onclick="showPage('leaders')">Leaders</button>
     <button onclick="showPage('roster')">Players</button>
-    <button onclick="showPage('log')">Log Game</button>
+    <button onclick="showPage('log')">Log</button>
     <button onclick="showPage('games')">All Games</button>
     <button onclick="showPage('schedule')">📅 Games</button>
     <button onclick="showPage('teamgames')">📋 Record</button>
@@ -1746,7 +1883,17 @@ function renderPDetail(){
       </div>
     </div>
 
-    <div class="profile-cols">
+    <!-- Mobile section jumps -->
+    <div class="profile-section-jumps">
+      <div class="psj-chip" onclick="jumpToSection('sec-percentile')">📊 Percentiles</div>
+      <div class="psj-chip" onclick="jumpToSection('sec-charts')">📈 Charts</div>
+      <div class="psj-chip" onclick="jumpToSection('sec-power')">💥 Power</div>
+      <div class="psj-chip" onclick="jumpToSection('sec-plate')">🎯 Plate</div>
+      <div class="psj-chip" onclick="jumpToSection('sec-advanced')">🔬 Advanced</div>
+      <div class="psj-chip" onclick="jumpToSection('sec-games')">🗓 Games</div>
+    </div>
+
+    <div class="profile-cols" id="sec-percentile">
       <div class="panel">
         <div class="panel-title">Percentile Rankings <span class="panel-sub">vs. teammates</span></div>
         ${pctBars.map(b=>`
@@ -1797,7 +1944,7 @@ function renderPDetail(){
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-charts">
       <div class="panel-title">Game Performance</div>
       <div class="game-strip">${gameStripHTML}</div>
       <div class="game-strip-legend">
@@ -1817,7 +1964,7 @@ function renderPDetail(){
     </div>
 
     <div class="profile-cols">
-      <div class="panel">
+      <div class="panel" id="sec-power">
         <div class="panel-title">Power Profile</div>
 
         <!-- Stacked hit type bar -->
@@ -1866,7 +2013,7 @@ function renderPDetail(){
         </div>`:''}
       </div>
 
-      <div class="panel">
+      <div class="panel" id="sec-plate">
         <div class="panel-title">Plate Profile</div>
 
         <!-- BB/K ratio hero -->
@@ -1920,7 +2067,7 @@ function renderPDetail(){
 
 
 
-    <div class="panel">
+    <div class="panel" id="sec-advanced">
       <div class="panel-title">Advanced Stats <span class="panel-sub">sabermetric breakdown</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
         ${[
@@ -1941,7 +2088,7 @@ function renderPDetail(){
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="sec-games">
       <div class="panel-title">Game by Game</div>
       ${gbyg}
     </div>
@@ -5585,6 +5732,16 @@ function filterGames(gamesArr) {
   if (seasonFilter === 'playoffs') return gamesArr.filter(g => g.is_playoff === true);
   // regular
   return gamesArr.filter(g => !g.is_playoff);
+}
+
+
+// ── Section jump for mobile profile ──
+function jumpToSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Offset for sticky header (~92px) + section jumps bar (~56px)
+  const y = el.getBoundingClientRect().top + window.pageYOffset - 150;
+  window.scrollTo({top: y, behavior: 'smooth'});
 }
 
 // ── Init ──
