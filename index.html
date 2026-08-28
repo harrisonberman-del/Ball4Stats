@@ -5210,7 +5210,7 @@ function renderTeamGames() {
     const lost = theirRuns != null && ourRuns < theirRuns;
     const tie  = theirRuns != null && ourRuns === theirRuns;
     const resultClass = theirRuns == null ? 'ns' : won ? 'win' : lost ? 'loss' : 'tie';
-    const resultLabel = theirRuns == null ? 'Tap to enter score' : won ? 'W' : lost ? 'L' : 'T';
+    const resultLabel = theirRuns == null ? 'Tap ▼' : won ? 'W' : lost ? 'L' : 'T';
 
     // Date display
     const dateObj = new Date(date + 'T12:00:00');
@@ -5287,6 +5287,44 @@ function renderTeamGames() {
       <div class="tg-body" style="display:none">
         ${syncBanner}
 
+        <!-- Big score entry at top -->
+        <div style="padding:14px 16px;background:linear-gradient(135deg,var(--accent-light) 0%,#f0f4fa 100%);border-bottom:1px solid var(--sand2)">
+          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:8px">Final Score</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <!-- Us -->
+            <div style="text-align:center;flex-shrink:0">
+              <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:700;color:var(--accent);line-height:1">${ourRuns}</div>
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-top:3px">Us (auto)</div>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;color:var(--ink3);flex-shrink:0">–</div>
+            <!-- Them: BIG input -->
+            <div style="text-align:center;flex-shrink:0">
+              <input type="number" inputmode="numeric" pattern="[0-9]*"
+                id="them-${esc(date)}"
+                value="${theirRuns != null ? theirRuns : ''}"
+                placeholder="?"
+                min="0"
+                style="width:70px;font-family:var(--font-mono);font-size:1.6rem;font-weight:700;text-align:center;background:var(--white);border:2px solid var(--sand3);border-radius:8px;padding:4px 6px;color:var(--ink);outline:none;transition:border-color .15s"
+                onfocus="this.style.borderColor='var(--accent)';this.select()"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();saveTeamGameScore('${esc(date)}')}"
+                onchange="saveTeamGameScore('${esc(date)}')">
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-top:3px">Them ✎</div>
+            </div>
+            <!-- Opponent name -->
+            <div style="flex:1;min-width:140px">
+              <input type="text" id="opp-${esc(date)}"
+                value="${topOpp}"
+                placeholder="Opponent…"
+                style="width:100%;font-family:var(--font);font-size:.85rem;font-weight:600;background:var(--white);border:1.5px solid var(--sand3);border-radius:6px;padding:8px 10px;outline:none;transition:border-color .12s"
+                onfocus="this.style.borderColor='var(--accent)'"
+                onblur="this.style.borderColor='var(--sand3)';saveTeamGameScore('${esc(date)}')">
+            </div>
+            <!-- Save -->
+            <button class="tg-save-score-btn" style="padding:9px 16px;font-size:.82rem" onclick="saveTeamGameScore('${esc(date)}')">💾 Save</button>
+          </div>
+          ${theirRuns == null ? '<div style="font-size:.72rem;color:var(--ink3);margin-top:6px;text-align:center">👆 Tap the "?" to enter their score</div>' : ''}
+        </div>
+
         <!-- Box score -->
         <div class="tg-boxscore">
           <table class="tg-box-table">
@@ -5298,22 +5336,6 @@ function renderTeamGames() {
             </tr></thead>
             <tbody>${boxRows}${totRow}</tbody>
           </table>
-        </div>
-
-        <!-- Their score entry -->
-        <div class="tg-their-score-row">
-          <label>Their Score:</label>
-          <input type="number" inputmode="numeric" pattern="[0-9]*" class="tg-score-input" id="them-${esc(date)}"
-            value="${theirRuns != null ? theirRuns : ''}" placeholder="?" min="0"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();saveTeamGameScore('${esc(date)}')}"
-            onchange="saveTeamGameScore('${esc(date)}')">
-          <input type="text" id="opp-${esc(date)}"
-            value="${topOpp}"
-            placeholder="Opponent name…"
-            style="font-family:var(--font);font-size:.875rem;background:var(--white);border:1.5px solid var(--sand3);border-radius:6px;padding:5px 10px;width:160px;outline:none;transition:border-color .12s"
-            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--sand3)'">
-          <button class="tg-save-score-btn" onclick="saveTeamGameScore('${esc(date)}')">Save</button>
-          <span style="font-size:.75rem;color:var(--ink3);margin-left:4px">Our runs auto-calculated from player stats (${ourRuns} R total)</span>
         </div>
       </div>
     </div>`;
