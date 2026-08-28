@@ -5305,8 +5305,8 @@ function renderTeamGames() {
           <label>Their Score:</label>
           <input type="number" inputmode="numeric" pattern="[0-9]*" class="tg-score-input" id="them-${esc(date)}"
             value="${theirRuns != null ? theirRuns : ''}" placeholder="?" min="0"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();saveTeamGameScore('${esc(date)}')}"
-            onblur="saveTeamGameScore('${esc(date)}')">
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();saveTeamGameScore('${esc(date)}')}"
+            onchange="saveTeamGameScore('${esc(date)}')">
           <input type="text" id="opp-${esc(date)}"
             value="${topOpp}"
             placeholder="Opponent name…"
