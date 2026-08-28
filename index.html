@@ -1312,6 +1312,146 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
   -webkit-tap-highlight-color: transparent;
 }
 
+
+/* ══ SKELETON LOADING STATES ══ */
+@keyframes skeletonShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--sand2) 0%,
+    #f0eee8 40%,
+    var(--sand2) 80%);
+  background-size: 400px 100%;
+  animation: skeletonShimmer 1.4s linear infinite;
+  border-radius: 4px;
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+}
+.skeleton-line { height: 12px; margin: 6px 0; }
+.skeleton-line.sm { height: 8px; width: 60%; }
+.skeleton-line.md { height: 14px; width: 80%; }
+.skeleton-line.lg { height: 22px; width: 100%; }
+
+.skeleton-card {
+  background: var(--white);
+  border: 1px solid var(--sand2);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.4rem;
+  box-shadow: var(--shadow);
+}
+.skeleton-hero-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: .75rem; margin-bottom: 1.5rem;
+}
+@media(max-width:640px){
+  .skeleton-hero-grid { grid-template-columns: repeat(2,1fr); gap:.5rem; }
+}
+.skeleton-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; border-bottom:1px solid var(--sand2);
+}
+.skeleton-circle {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0;
+}
+
+/* ══ EMPTY STATES with CTAs ══ */
+.empty-cta {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--ink3);
+  background: var(--white);
+  border: 1px solid var(--sand2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.empty-cta .icon {
+  font-size: 3rem; margin-bottom: 1rem;
+  opacity: .5; display: block;
+  animation: ballBounce 2.5s ease-in-out infinite;
+}
+.empty-cta .title {
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--ink); margin-bottom: .375rem;
+}
+.empty-cta .desc {
+  font-size: .875rem; margin-bottom: 1.25rem;
+  max-width: 320px; margin-left: auto; margin-right: auto;
+  line-height: 1.55;
+}
+.empty-cta .cta-btn {
+  display: inline-block; background: var(--accent); color: #fff;
+  padding: 11px 22px; border-radius: 8px;
+  font-family: var(--font); font-size: .9rem; font-weight: 700;
+  border: none; cursor: pointer; letter-spacing: .01em;
+  transition: transform .1s, box-shadow .15s;
+  min-height: 44px;
+}
+.empty-cta .cta-btn:hover {
+  box-shadow: 0 4px 12px rgba(26,43,74,.25);
+}
+.empty-cta .cta-btn:active { transform: scale(.97); }
+
+/* ══ EXPANDABLE TABLE ROWS on mobile ══ */
+@media(max-width:640px){
+  /* Hide non-essential table columns on mobile */
+  .table-wrap.mobile-collapse th.col-hide-mobile,
+  .table-wrap.mobile-collapse td.col-hide-mobile {
+    display: none;
+  }
+  /* Row detail modal */
+  .row-detail-modal {
+    position: fixed; inset: 0; z-index: 400;
+    display: flex; align-items: flex-end;
+    background: rgba(0,0,0,.4);
+    animation: fadeIn .2s;
+  }
+  .row-detail-panel {
+    width: 100%;
+    background: var(--white);
+    border-radius: 16px 16px 0 0;
+    padding: 1rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+    max-height: 82vh; overflow-y: auto;
+    animation: slideUp .28s cubic-bezier(.16,1,.3,1);
+    box-shadow: 0 -8px 32px rgba(0,0,0,.2);
+  }
+  .row-detail-handle {
+    width: 40px; height: 4px; background: var(--sand3);
+    border-radius: 2px; margin: 0 auto 1rem;
+  }
+  .row-detail-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; padding-bottom: .75rem;
+    border-bottom: 1px solid var(--sand2);
+  }
+  .row-detail-title { font-size: 1.1rem; font-weight: 700; }
+  .row-detail-close {
+    background: none; border: none; font-size: 1.4rem;
+    color: var(--ink3); cursor: pointer;
+    width: 32px; height: 32px; padding: 0;
+  }
+  .row-detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .row-detail-cell {
+    background: var(--sand); border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .row-detail-cell .lbl {
+    font-size: .62rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--ink3); margin-bottom: 3px;
+  }
+  .row-detail-cell .val {
+    font-family: var(--font-mono); font-size: 1.05rem;
+    font-weight: 700; color: var(--ink);
+  }
+}
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
 </style>
 </head>
 <body>
@@ -1347,9 +1487,14 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
     </div>
   </div>
   <div class="ph"><h1>Stat Leaders</h1><p id="lastUpdated">2025 Season</p></div>
-  <div class="hero-grid" id="heroGrid"><div class="hero-card" style="grid-column:1/-1;text-align:center;padding:2rem"><span class="spinner"></span> Loading stats…</div></div>
+  <div class="hero-grid" id="heroGrid">
+    <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line sm"></div><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>
+  </div>
   <div class="cat-tabs" id="catTabs"></div>
-  <div class="table-wrap"><table><thead id="lbHead"></thead><tbody id="lbBody"></tbody></table></div>
+  <div class="table-wrap mobile-collapse"><table><thead id="lbHead"></thead><tbody id="lbBody"></tbody></table></div>
 </div>
 
 <!-- PLAYERS -->
@@ -1359,7 +1504,12 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
     <input type="text" id="newPlayerInput" placeholder="New player name…" maxlength="30" onkeydown="if(event.key==='Enter')addPlayer()">
     <button class="btn" id="addPlayerBtn" onclick="addPlayer()">Add Player</button>
   </div>
-  <div class="player-grid" id="playerGrid"><div class="empty"><span class="spinner"></span> Loading…</div></div>
+  <div class="player-grid" id="playerGrid">
+    <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
+    <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
+    <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
+    <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
+  </div>
   <div id="playerDetail"></div>
 </div>
 
@@ -1397,7 +1547,13 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
 <div id="page-games" class="page">
   <div class="ph"><h1>All Games</h1><button class="btn-ghost" style="font-size:.8rem;padding:6px 14px" onclick="loadAll()">↻ Refresh</button></div>
   <div class="player-strip" id="gamesStrip"></div>
-  <div class="table-wrap"><table><thead id="gamesHead"></thead><tbody id="gamesBody"><tr><td class="empty" colspan="20"><span class="spinner"></span> Loading…</td></tr></tbody></table></div>
+  <div class="table-wrap mobile-collapse"><table><thead id="gamesHead"></thead><tbody id="gamesBody">
+    <tr><td colspan="20" style="padding:0">
+      <div class="skeleton-row"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+      <div class="skeleton-row"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+      <div class="skeleton-row"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+    </td></tr>
+  </tbody></table></div>
 </div>
 
 
@@ -1453,7 +1609,10 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
     <h1>Games</h1>
     <button class="add-game-btn" onclick="openAddGameModal()">+ Schedule Game</button>
   </div>
-  <div id="scheduleList"><div class="empty"><span class="spinner"></span> Loading…</div></div>
+  <div id="scheduleList">
+    <div class="skeleton-card" style="margin-bottom:.75rem"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+    <div class="skeleton-card" style="margin-bottom:.75rem"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+  </div>
 </div>
 
 <!-- ADD GAME MODAL -->
@@ -1486,7 +1645,10 @@ button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
     <h1>Record</h1>
     <button class="btn-ghost" style="font-size:.8rem;padding:6px 14px" onclick="loadAll().then(renderTeamGames)">↻ Refresh</button>
   </div>
-  <div id="teamGamesList"><div class="empty"><span class="spinner"></span> Loading…</div></div>
+  <div id="teamGamesList">
+    <div class="skeleton-card" style="margin-bottom:.75rem"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+    <div class="skeleton-card" style="margin-bottom:.75rem"><div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line sm"></div></div>
+  </div>
 </div>
 
 <!-- CONFIRM MODAL -->
@@ -1680,12 +1842,18 @@ function renderLeaders(){
   const gn=(s,k)=>{const v=s[k]??s[k.toLowerCase()];if(v==null||v==='—')return-Infinity;return parseFloat(String(v).replace('%',''))||0;};
   const sorted=[...ac].sort((a,b)=>sAsc?gn(a,sk)-gn(b,sk):gn(b,sk)-gn(a,sk));
 
-  document.getElementById('lbHead').innerHTML=`<tr><th class="left">#</th><th class="left" onclick="srt('name')">Player</th>${cat.cols.map(c=>`<th onclick="srt('${c}')" class="${sk===c?'sorted':''}">${c}</th>`).join('')}</tr>`;
-  if(!sorted.length){document.getElementById('lbBody').innerHTML=`<tr><td colspan="${cat.cols.length+2}" class="empty">No games logged yet — head to Log Game to get started.</td></tr>`;return;}
+  const lbEssential = ['GP','BA','OBP','OPS','wOBA','HR','RBI','wRC+'];
+  document.getElementById('lbHead').innerHTML=`<tr><th class="left">#</th><th class="left" onclick="srt('name')">Player</th>${cat.cols.map(col=>`<th onclick="srt('${col}')" class="${sk===col?'sorted':''} ${lbEssential.includes(col)?'':'col-hide-mobile'}">${col}</th>`).join('')}</tr>`;
+  if(!sorted.length){document.getElementById('lbBody').innerHTML=`<tr><td colspan="${cat.cols.length+2}" style="padding:0"><div class="empty-cta">
+    <span class="icon">⚾</span>
+    <div class="title">No games logged yet</div>
+    <div class="desc">Once you log a game, stat leaders and rankings will show up here.</div>
+    <button class="cta-btn" onclick="showPage('log')">+ Log Your First Game</button>
+  </div></td></tr>`;return;}
   document.getElementById('lbBody').innerHTML=sorted.map((s,i)=>`<tr>
     <td class="left ${i===0?'rank-1':i===1?'rank-2':''}">${i+1}</td>
     <td class="name-col">${s.name}</td>
-    ${cat.cols.map(c=>`<td class="${c===sk?'hi':''}">${s[c]??s[c.toLowerCase()]??'—'}</td>`).join('')}
+    ${cat.cols.map(col=>`<td class="${col===sk?'hi':''} ${lbEssential.includes(col)?'':'col-hide-mobile'}">${s[col]??s[col.toLowerCase()]??'—'}</td>`).join('')}
   </tr>`).join('');
 }
 function setCat(i){curCat=i;sCol=null;sAsc=false;renderLeaders();}
@@ -1704,7 +1872,12 @@ function renderRoster(){
     .filter(name => !rosterNames.has(name));
 
   if(!players.length && !subNames.length){
-    grid.innerHTML='<div class="empty">No players yet — add one above.</div>';
+    grid.innerHTML=`<div class="empty-cta">
+    <span class="icon">👥</span>
+    <div class="title">No players yet</div>
+    <div class="desc">Add your teammates to start tracking stats. You can also add players inline while logging a game.</div>
+    <button class="cta-btn" onclick="document.getElementById('newPlayerInput').focus()">+ Add Your First Player</button>
+  </div>`;
     document.getElementById('playerDetail').innerHTML='';
     return;
   }
@@ -2537,17 +2710,24 @@ function renderGamesPage(){
   const rows = filterGames(gFilter==='ALL' ? games : games.filter(g=>g.player_name===gFilter))
     .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 
+  // Essential columns on mobile: AB, H, HR, RBI
+  const essentialCols = ['ab','h','hr','rbi'];
   document.getElementById('gamesHead').innerHTML=`<tr>
     <th style="width:28px;padding:0"></th>
     <th class="left">Date</th>
     <th class="left">Player</th>
-    <th class="left">Opp</th>
-    ${RF.map(f=>`<th title="${f.d}">${f.l}</th>`).join('')}
+    <th class="left col-hide-mobile">Opp</th>
+    ${RF.map(f=>`<th title="${f.d}" class="${essentialCols.includes(f.id)?'':'col-hide-mobile'}">${f.l}</th>`).join('')}
     <th></th>
   </tr>`;
 
   if(!rows.length){
-    document.getElementById('gamesBody').innerHTML=`<tr><td colspan="${RF.length+4}" class="empty">No games yet.</td></tr>`;
+    document.getElementById('gamesBody').innerHTML=`<tr><td colspan="${RF.length+4}" style="padding:0"><div class="empty-cta">
+    <span class="icon">📋</span>
+    <div class="title">${seasonFilter==='all'?'No games logged yet':'No '+(seasonFilter==='playoffs'?'playoff':'regular season')+' games'}</div>
+    <div class="desc">${seasonFilter==='all'?'Log a game to see it appear here with full stats.':'Try switching the season filter, or log a game.'}</div>
+    ${seasonFilter==='all'?'<button class="cta-btn" onclick="showPage(\'log\')">+ Log a Game</button>':''}
+  </div></td></tr>`;
     return;
   }
 
@@ -2565,12 +2745,13 @@ function renderGamesPage(){
            </svg>
          </button>`
       : '<span style="display:inline-block;width:20px"></span>';
+    const essentialCols = ['ab','h','hr','rbi'];
     const displayRow = `<tr class="${rowClass}" style="cursor:pointer" data-gameid="${g.id}" onclick="handleGameRowClick(this)">
       <td style="width:28px;text-align:center;padding-right:0">${flagBtn}</td>
-      <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
+      <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date?g.date.slice(5):'—'}</td>
       <td class="name-col">${g.player_name}</td>
-      <td class="left" style="color:var(--ink2)">${g.opp||'—'}${g.is_playoff?'<span class="playoff-badge">Playoffs</span>':''}</td>
-      ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
+      <td class="left col-hide-mobile" style="color:var(--ink2)">${g.opp||'—'}${g.is_playoff?'<span class="playoff-badge">Playoffs</span>':''}</td>
+      ${RF.map(f=>`<td class="${essentialCols.includes(f.id)?'':'col-hide-mobile'}">${g[f.id]??0}</td>`).join('')}
       <td style="text-align:center;color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</td>
     </tr>`;
 
@@ -5358,7 +5539,12 @@ function renderTeamGames() {
 
   const filteredGames = filterGames(games);
   if (!filteredGames.length) {
-    el.innerHTML = '<div class="empty">No games logged yet — head to Log Game to get started.</div>';
+    el.innerHTML = `<div class="empty-cta">
+    <span class="icon">📊</span>
+    <div class="title">${seasonFilter==='all'?'No team games yet':'No '+(seasonFilter==='playoffs'?'playoff':'regular season')+' games'}</div>
+    <div class="desc">${seasonFilter==='all'?'Once games are logged, they\'ll be grouped here by date so you can see the whole team\'s box score.':'Try switching the season filter to see other games.'}</div>
+    ${seasonFilter==='all'?'<button class="cta-btn" onclick="showPage(\'log\')">+ Log a Game</button>':''}
+  </div>`;
     return;
   }
 
