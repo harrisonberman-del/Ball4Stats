@@ -1077,6 +1077,65 @@ input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
   *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
 
+
+/* ── Season filter toggle in header ── */
+.season-filter {
+  display:flex; align-items:center; gap:2px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:6px; padding:2px; margin-right:12px;
+}
+.sf-btn {
+  background:none; border:none; color:rgba(255,255,255,.55);
+  font-family:var(--font); font-size:.7rem; font-weight:600;
+  padding:5px 10px; border-radius:4px; cursor:pointer;
+  transition:all .12s; letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.sf-btn:hover { color:#fff; }
+.sf-btn.active {
+  background:#7eb3f5; color:var(--accent); font-weight:700;
+}
+
+/* Playoff badge */
+.playoff-badge {
+  display:inline-flex; align-items:center; gap:3px;
+  background:linear-gradient(135deg,#f9d548,#e8a63c);
+  color:#5a3d00; font-size:.6rem; font-weight:800;
+  padding:1px 6px; border-radius:3px; letter-spacing:.05em;
+  text-transform:uppercase; margin-left:6px; vertical-align:middle;
+  box-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+.playoff-badge::before { content:'🏆'; font-size:.72rem; }
+
+/* Log game playoff toggle */
+.playoff-toggle-row {
+  display:flex; align-items:center; gap:10px;
+  background:var(--sand); border:1.5px solid var(--sand3);
+  border-radius:8px; padding:10px 14px; margin-bottom:12px;
+  cursor:pointer; transition:all .12s;
+}
+.playoff-toggle-row:hover { border-color:var(--accent); }
+.playoff-toggle-row.on {
+  background:linear-gradient(135deg,#fff8dc,#fef3c7);
+  border-color:#e8a63c;
+}
+.playoff-toggle-check {
+  width:20px; height:20px; border-radius:5px;
+  border:2px solid var(--sand3); background:var(--white);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all .12s;
+}
+.playoff-toggle-row.on .playoff-toggle-check {
+  background:#e8a63c; border-color:#e8a63c; color:#fff;
+}
+.playoff-toggle-label {
+  font-size:.85rem; font-weight:600; color:var(--ink);
+  flex:1;
+}
+.playoff-toggle-desc {
+  font-size:.72rem; color:var(--ink3);
+}
+
 </style>
 </head>
 <body>
@@ -1086,6 +1145,11 @@ input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
 <header>
   <div class="logo">⚾ Softball <em>Stats</em> 2025</div>
   <nav>
+    <div class="season-filter">
+      <button class="sf-btn active" data-season="all" onclick="setSeasonFilter('all')">All</button>
+      <button class="sf-btn" data-season="regular" onclick="setSeasonFilter('regular')">Regular</button>
+      <button class="sf-btn" data-season="playoffs" onclick="setSeasonFilter('playoffs')">Playoffs</button>
+    </div>
     <button class="active" onclick="showPage('leaders')">Leaders</button>
     <button onclick="showPage('roster')">Players</button>
     <button onclick="showPage('log')">Log Game</button>
@@ -1132,6 +1196,19 @@ input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
         <div class="ff"><label>Date</label><input type="date" id="fDate" style="width:100%"></div>
         <div class="ff"><label>Opponent</label><input type="text" id="fOpp" placeholder="Team name…" style="width:100%"></div>
       </div>
+
+      <div class="playoff-toggle-row" id="playoffToggleRow" onclick="togglePlayoffFlag()">
+        <div class="playoff-toggle-check" id="playoffToggleCheck">
+          <svg id="playoffCheckIcon" width="12" height="12" viewBox="0 0 12 12" fill="none" style="display:none">
+            <path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div style="flex:1">
+          <div class="playoff-toggle-label">🏆 Playoff Game</div>
+          <div class="playoff-toggle-desc">Mark this game as part of the playoffs</div>
+        </div>
+      </div>
+
       <div class="stat-form-grid" id="statFields"></div>
       <div style="margin-top:1.25rem"><button class="btn" id="saveBtn" onclick="saveGame()">Save Game</button></div>
     </div>
@@ -1368,9 +1445,9 @@ function calc(pg) {
 }
 function f3(n){if(!isFinite(n)||isNaN(n))return'.000';const s=n.toFixed(3);return s.startsWith('0.')?s.slice(1):s;}
 function playerStats(name){
-  const base = {...calc(games.filter(g=>g.player_name===name)),name};
+  const base = {...calc(filterGames(games).filter(g=>g.player_name===name)),name};
   // Compute lgwOBA from all roster players for wRAA
-  const allWOBA = players.map(p=>calc(games.filter(g=>g.player_name===p.name))._wOBA||0).filter(v=>v>0);
+  const allWOBA = players.map(p=>calc(filterGames(games).filter(g=>g.player_name===p.name))._wOBA||0).filter(v=>v>0);
   const lgWOBA = allWOBA.length>0?allWOBA.reduce((s,v)=>s+v,0)/allWOBA.length:.320;
   const wRAA = base._pa>0?((base._wOBA||0)-lgWOBA)/1.15*base._pa:0;
   return {...base, wRAA:base._pa>0?(wRAA>=0?'+':'')+wRAA.toFixed(1):'—', _wRAA:wRAA};
@@ -1530,7 +1607,7 @@ function renderPDetail(){
   if(!selP){el.innerHTML='';return;}
 
   const s = playerStats(selP);
-  const pg = games.filter(g=>g.player_name===selP).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const pg = filterGames(games).filter(g=>g.player_name===selP).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const playerAbs = liveAtbats.filter(a=>a.batter_name===selP && a.result!=='SKIP');
 
   const teamStats = allStats().filter(x=>x.gp>0);
@@ -1607,7 +1684,7 @@ function renderPDetail(){
     {label:'K%',   p:pct('K%',parseFloat(s['K%'])||0,false), raw:s['K%']},
   ];
 
-  const playerGames=games.filter(g=>g.player_name===selP).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const playerGames=filterGames(games).filter(g=>g.player_name===selP).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const gbyg=!playerGames.length?'<div style="color:var(--ink3);font-size:.85rem;padding:.5rem">No games yet.</div>':
     `<div style="overflow-x:auto"><table class="profile-table">
       <thead><tr>${['Date','Opp','AB','H','2B','3B','HR','RBI','R','BB','K','SB','BA'].map(h2=>
@@ -2227,9 +2304,20 @@ function renderLogPage(){
 }
 function setLP(n){logP=n;document.getElementById('statFields').innerHTML='';renderLogPage();}
 
+
+// ── Log game playoff toggle ──
+let logIsPlayoff = false;
+function togglePlayoffFlag() {
+  logIsPlayoff = !logIsPlayoff;
+  const row = document.getElementById('playoffToggleRow');
+  const icon = document.getElementById('playoffCheckIcon');
+  if (row) row.classList.toggle('on', logIsPlayoff);
+  if (icon) icon.style.display = logIsPlayoff ? 'block' : 'none';
+}
+
 async function saveGame(){
   if(!logP)return;
-  const g={player_name:logP,date:document.getElementById('fDate').value,opp:document.getElementById('fOpp').value.trim()};
+  const g={player_name:logP,date:document.getElementById('fDate').value,opp:document.getElementById('fOpp').value.trim(),is_playoff:logIsPlayoff};
   RF.forEach(f=>g[f.id]=parseInt(document.getElementById('f_'+f.id).value)||0);
   const btn=document.getElementById('saveBtn');
   btn.disabled=true; btn.textContent='Saving…';
@@ -2238,7 +2326,12 @@ async function saveGame(){
     document.getElementById('fOpp').value='';
     RF.forEach(f=>document.getElementById('f_'+f.id).value='');
     document.getElementById('fDate').valueAsDate=new Date();
-    await loadAll(); showToast('Game saved!');
+    logIsPlayoff = false;
+    const row=document.getElementById('playoffToggleRow');
+    const icon=document.getElementById('playoffCheckIcon');
+    if(row) row.classList.remove('on');
+    if(icon) icon.style.display='none';
+    await loadAll(); showToast(g.is_playoff?'🏆 Playoff game saved!':'Game saved!');
   } catch(e){ showToast('Error: '+e.message,true); }
   btn.disabled=false; btn.textContent='Save Game';
 }
@@ -2253,7 +2346,7 @@ function renderGamesPage(){
     `<button class="ps-btn${gFilter==='ALL'?' active':''}" onclick="setGF('ALL')">All Players</button>`+
     players.map(p=>`<button class="ps-btn${gFilter===p.name?' active':''}" onclick="setGF('${esc(p.name)}')">${p.name}</button>`).join('');
 
-  const rows = (gFilter==='ALL' ? games : games.filter(g=>g.player_name===gFilter))
+  const rows = filterGames(gFilter==='ALL' ? games : games.filter(g=>g.player_name===gFilter))
     .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 
   document.getElementById('gamesHead').innerHTML=`<tr>
@@ -2288,7 +2381,7 @@ function renderGamesPage(){
       <td style="width:28px;text-align:center;padding-right:0">${flagBtn}</td>
       <td class="left" style="font-size:.78rem;color:var(--ink3)">${g.date||'—'}</td>
       <td class="name-col">${g.player_name}</td>
-      <td class="left" style="color:var(--ink2)">${g.opp||'—'}</td>
+      <td class="left" style="color:var(--ink2)">${g.opp||'—'}${g.is_playoff?'<span class="playoff-badge">Playoffs</span>':''}</td>
       ${RF.map(f=>`<td>${g[f.id]??0}</td>`).join('')}
       <td style="text-align:center;color:var(--ink3);font-size:.8rem">${isEditing ? '▲' : '✎'}</td>
     </tr>`;
@@ -2311,6 +2404,10 @@ function renderGamesPage(){
             <label>${f.l}</label>
             <input type="number" id="ge-${f.id}-${esc(g.id)}" min="0" value="${g[f.id]??0}">
           </div>`).join('')}
+          <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:${g.is_playoff?'#fef3c7':'var(--white)'};border:1.5px solid ${g.is_playoff?'#e8a63c':'var(--sand3)'};border-radius:6px;cursor:pointer;height:38px" onclick="const cb=document.getElementById('ge-playoff-${esc(g.id)}');cb.checked=!cb.checked;this.style.background=cb.checked?'#fef3c7':'var(--white)';this.style.borderColor=cb.checked?'#e8a63c':'var(--sand3)';">
+            <input type="checkbox" id="ge-playoff-${esc(g.id)}" ${g.is_playoff?'checked':''} style="pointer-events:none;margin:0">
+            <span style="font-size:.75rem;font-weight:600;white-space:nowrap">🏆 Playoff</span>
+          </div>
           <div class="game-edit-actions">
             <button class="game-edit-save" onclick="saveGameEdit('${esc(g.id)}')">Save</button>
             <button class="game-edit-cancel" onclick="toggleGameEdit(null)">Cancel</button>
@@ -2351,6 +2448,8 @@ async function saveGameEdit(gameId) {
     const el = document.getElementById(`ge-${f.id}-${gameId}`);
     if (el) updates[f.id] = parseInt(el.value) || 0;
   });
+  const playoffCb = document.getElementById('ge-playoff-' + gameId);
+  if (playoffCb) updates.is_playoff = playoffCb.checked;
 
   try {
     await sbPatch('games', `id=eq.${gameId}`, updates);
@@ -5063,14 +5162,15 @@ function renderTeamGames() {
   const el = document.getElementById('teamGamesList');
   if (!el) return;
 
-  if (!games.length) {
+  const filteredGames = filterGames(games);
+  if (!filteredGames.length) {
     el.innerHTML = '<div class="empty">No games logged yet — head to Log Game to get started.</div>';
     return;
   }
 
   // Group all player games by date
   const byDate = {};
-  games.forEach(g => {
+  filteredGames.forEach(g => {
     const date = g.date || 'Unknown';
     if (!byDate[date]) byDate[date] = [];
     byDate[date].push(g);
@@ -5165,7 +5265,7 @@ function renderTeamGames() {
       <div class="tg-header" onclick="toggleTGCard('${cardId}')">
         <div>
           <div class="tg-date">${dateStr} &nbsp;·&nbsp; ${playerNames.length} player${playerNames.length!==1?'s':''}</div>
-          <div class="tg-opp">vs. ${topOpp}${hasMismatch?' <span style="font-size:.72rem;color:#b07000;font-weight:600">⚠️</span>':''}</div>
+          <div class="tg-opp">vs. ${topOpp}${dayGames.some(g=>g.is_playoff)?'<span class="playoff-badge">Playoffs</span>':''}${hasMismatch?' <span style="font-size:.72rem;color:#b07000;font-weight:600">⚠️</span>':''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:.75rem">
           <div class="tg-score">
@@ -5411,6 +5511,31 @@ function animateCountUps() {
     }
     requestAnimationFrame(tick);
   });
+}
+
+
+// ── Global season filter ──
+let seasonFilter = 'all'; // 'all' | 'regular' | 'playoffs'
+
+function setSeasonFilter(mode) {
+  seasonFilter = mode;
+  document.querySelectorAll('.sf-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.season === mode);
+  });
+  // Re-render everything currently showing
+  renderAll();
+  if (typeof renderTeamGames === 'function') renderTeamGames();
+  if (selP) renderPDetail();
+  requestAnimationFrame(animateCountUps);
+}
+
+// Filter games array based on current season filter
+function filterGames(gamesArr) {
+  if (!gamesArr) return [];
+  if (seasonFilter === 'all') return gamesArr;
+  if (seasonFilter === 'playoffs') return gamesArr.filter(g => g.is_playoff === true);
+  // regular
+  return gamesArr.filter(g => !g.is_playoff);
 }
 
 // ── Init ──
