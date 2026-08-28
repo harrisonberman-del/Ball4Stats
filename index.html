@@ -2298,7 +2298,7 @@ function renderLogPage(){
   document.getElementById('logFormTitle').textContent=`${logP}'s Game Stats`;
   const sf=document.getElementById('statFields');
   if(!sf.innerHTML){
-    sf.innerHTML=RF.map(f=>`<div class="ff"><label>${f.l} <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:.65rem">${f.d}</span></label><input type="number" id="f_${f.id}" min="0" placeholder="0"></div>`).join('');
+    sf.innerHTML=RF.map(f=>`<div class="ff"><label>${f.l} <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:.65rem">${f.d}</span></label><input type="number" inputmode="numeric" pattern="[0-9]*" id="f_${f.id}" min="0" placeholder="0"></div>`).join('');
     document.getElementById('fDate').valueAsDate=new Date();
   }
 }
@@ -2402,7 +2402,7 @@ function renderGamesPage(){
           </div>
           ${RF.map(f=>`<div class="game-edit-field">
             <label>${f.l}</label>
-            <input type="number" id="ge-${f.id}-${esc(g.id)}" min="0" value="${g[f.id]??0}">
+            <input type="number" inputmode="numeric" pattern="[0-9]*" id="ge-${f.id}-${esc(g.id)}" min="0" value="${g[f.id]??0}">
           </div>`).join('')}
           <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:${g.is_playoff?'#fef3c7':'var(--white)'};border:1.5px solid ${g.is_playoff?'#e8a63c':'var(--sand3)'};border-radius:6px;cursor:pointer;height:38px" onclick="const cb=document.getElementById('ge-playoff-${esc(g.id)}');cb.checked=!cb.checked;this.style.background=cb.checked?'#fef3c7':'var(--white)';this.style.borderColor=cb.checked?'#e8a63c':'var(--sand3)';">
             <input type="checkbox" id="ge-playoff-${esc(g.id)}" ${g.is_playoff?'checked':''} style="pointer-events:none;margin:0">
@@ -3914,7 +3914,7 @@ function showAtBatUI() {
 
     <!-- RBI + confirm -->
     <div class="ab-footer">
-      <div class="ff"><label>RBIs</label><input type="number" id="abRBI" min="0" max="9" value="0" style="text-align:center"></div>
+      <div class="ff"><label>RBIs</label><input type="number" inputmode="numeric" pattern="[0-9]*" id="abRBI" min="0" max="9" value="0" style="text-align:center"></div>
       <div class="ff"><label>Notes</label><input type="text" id="abNotes" placeholder="optional…"></div>
       <button class="ab-skip-btn" onclick="skipAtBat()">Skip</button>
       <button class="ab-confirm-btn" id="confirmAB" onclick="confirmAtBat()" disabled>Record →</button>
@@ -5151,7 +5151,13 @@ function drawDiamond(){}
 let teamScores = {}; // {date: {them: N, opp: 'CPL'}}
 
 function loadTeamScores() {
-  try { teamScores = JSON.parse(localStorage.getItem('teamScores_2025') || '{}'); } catch(e) { teamScores = {}; }
+  try {
+    const raw = localStorage.getItem('teamScores_2025');
+    teamScores = raw ? JSON.parse(raw) : {};
+  } catch(e) {
+    console.warn('teamScores load failed:', e);
+    teamScores = {};
+  }
 }
 function saveTeamScores() {
   localStorage.setItem('teamScores_2025', JSON.stringify(teamScores));
@@ -5297,8 +5303,10 @@ function renderTeamGames() {
         <!-- Their score entry -->
         <div class="tg-their-score-row">
           <label>Their Score:</label>
-          <input type="number" class="tg-score-input" id="them-${esc(date)}"
-            value="${theirRuns != null ? theirRuns : ''}" placeholder="?" min="0">
+          <input type="number" inputmode="numeric" pattern="[0-9]*" class="tg-score-input" id="them-${esc(date)}"
+            value="${theirRuns != null ? theirRuns : ''}" placeholder="?" min="0"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();saveTeamGameScore('${esc(date)}')}"
+            onblur="saveTeamGameScore('${esc(date)}')">
           <input type="text" id="opp-${esc(date)}"
             value="${topOpp}"
             placeholder="Opponent name…"
@@ -5348,18 +5356,37 @@ async function syncOpponents(date, topOpp) {
 function saveTeamGameScore(date) {
   const themInput = document.getElementById('them-' + date);
   const oppInput  = document.getElementById('opp-' + date);
-  if (!themInput) return;
+  if (!themInput) {
+    showToast('Could not find input', true);
+    return;
+  }
 
-  const them = parseInt(themInput.value);
+  const rawVal = themInput.value.trim();
+  const them = rawVal === '' ? null : parseInt(rawVal, 10);
   const opp  = oppInput ? oppInput.value.trim() : '';
 
   if (!teamScores[date]) teamScores[date] = {};
-  if (!isNaN(them)) teamScores[date].them = them;
+  // Save even if 0 — only skip if truly empty
+  if (them !== null && !isNaN(them)) {
+    teamScores[date].them = them;
+  } else if (rawVal === '') {
+    delete teamScores[date].them;
+  }
   if (opp) teamScores[date].opp = opp;
-  saveTeamScores();
 
-  showToast('Score saved!');
-  renderTeamGames();
+  try {
+    saveTeamScores();
+    // Verify it stuck
+    const check = JSON.parse(localStorage.getItem('teamScores_2025') || '{}');
+    if (check[date]?.them !== teamScores[date].them && them !== null) {
+      showToast('Save failed — check browser storage', true);
+      return;
+    }
+    showToast(them !== null ? `Score saved: ${them}` : 'Cleared');
+    renderTeamGames();
+  } catch(e) {
+    showToast('Storage error: ' + e.message, true);
+  }
 }
 
 async function editPlayerGameOpp(date, playerName) {
