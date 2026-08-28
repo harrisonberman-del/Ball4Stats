@@ -1271,6 +1271,47 @@ input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus {
   font-size:.72rem; color:var(--ink3);
 }
 
+
+/* ══ Prevent accidental drag/select on interactive UI ══ */
+table, thead, tbody, tr, th, td,
+.hero-card, .panel-title, .ps-btn,
+.tg-header, .tg-card, .tg-box-table,
+.stat-flag-btn, .btn, .btn-ghost, .btn-del,
+.playoff-badge, .playoff-toggle-row,
+.sf-btn, .season-filter,
+.psj-chip, .profile-section-jumps,
+.player-tile, .player-strip,
+.avail-tile, .avail-check,
+.cat-tab, .cat-tabs,
+.game-card, .live-batter-bar,
+.live-order-row, .live-order-handle,
+.hc-label, .hc-name, .hc-val,
+.phl-item, .phl-val, .phl-lbl,
+.profile-name, .profile-meta,
+.tg-date, .tg-opp, .tg-score, .tg-result, .tg-chevron,
+.log-toggle, .log-toggle-arrow {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+/* Inputs and text content should still be selectable */
+input, textarea, .live-note-input,
+.panel p, .empty, .schedule-empty,
+.stat-flag-tooltip, .toast {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Kill iOS grey tap highlight on interactive elements */
+button, .hero-card, tr, .tg-header, .psj-chip, .ps-btn, .cat-tab,
+.player-tile, .stat-flag-btn, .playoff-toggle-row, .avail-tile,
+.game-card, .live-batter-bar, .tg-card, .lsb, .live-order-row {
+  -webkit-tap-highlight-color: transparent;
+}
+
 </style>
 </head>
 <body>
