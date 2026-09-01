@@ -1883,60 +1883,7 @@ button:focus-visible {
   margin-top: 1px;
 }
 
-/* Bar-style comparison — honest proportional side-by-side */
-.cmp-bar-row {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--sand2);
-}
-.cmp-bar-row:last-child { border-bottom: none; }
 
-.cmp-bar-label-top {
-  font-size: .62rem; font-weight: 700;
-  color: var(--ink3); text-transform: uppercase; letter-spacing: .09em;
-  margin-bottom: 8px;
-}
-
-.cmp-bar-line {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-.cmp-bar-line:last-child { margin-bottom: 0; }
-
-.cmp-bar-val {
-  font-family: var(--font-mono);
-  font-size: .8rem;
-  font-weight: 600;
-  color: var(--ink3);
-  text-align: right;
-  transition: color .2s;
-}
-.cmp-bar-val.win { color: var(--ink); font-weight: 700; }
-
-.cmp-bar-track-outer {
-  height: 8px;
-  background: var(--sand2);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.cmp-bar-fill-a {
-  height: 100%;
-  background: #6b7280;
-  border-radius: 4px;
-  transition: width .5s cubic-bezier(.16,1,.3,1), background .2s;
-  min-width: 2px;
-}
-.cmp-bar-fill-b {
-  height: 100%;
-  background: #6b7280;
-  border-radius: 4px;
-  transition: width .5s cubic-bezier(.16,1,.3,1), background .2s;
-  min-width: 2px;
-}
-.cmp-bar-fill-a.win { background: #1a2b4a; }
-.cmp-bar-fill-b.win { background: #c8102e; }
 
 .cmp-section-title {
   font-size: .62rem; font-weight: 700;
@@ -6631,37 +6578,6 @@ function renderCompare() {
     </div>`;
   };
 
-  // Helper: honest side-by-side bars — each bar's width is truthful to the max
-  const bar = (label, valA, valB, format=(v)=>v, lowerIsBetter=false) => {
-    const nA = parseFloat(valA)||0, nB = parseFloat(valB)||0;
-    const max = Math.max(nA, nB, 1);
-    const pctA = (nA/max)*100, pctB = (nB/max)*100;
-    let winA = false, winB = false;
-    if (nA !== nB) {
-      winA = lowerIsBetter ? nA < nB : nA > nB;
-      winB = !winA;
-    }
-    return `<div class="cmp-bar-row">
-      <div class="cmp-bar-label-top">${label}</div>
-      <div class="cmp-bar-line">
-        <div class="cmp-bar-val ${winA?'win':''}">${format(valA)}</div>
-        <div class="cmp-bar-track-outer">
-          <div class="cmp-bar-track-a">
-            <div class="cmp-bar-fill-a ${winA?'win':''}" style="width:${pctA}%"></div>
-          </div>
-        </div>
-      </div>
-      <div class="cmp-bar-line">
-        <div class="cmp-bar-val ${winB?'win':''}">${format(valB)}</div>
-        <div class="cmp-bar-track-outer">
-          <div class="cmp-bar-track-b">
-            <div class="cmp-bar-fill-b ${winB?'win':''}" style="width:${pctB}%"></div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  };
-
   // Verdict logic
   const opsA = parseFloat(A.OPS)||0, opsB = parseFloat(B.OPS)||0;
   const wobaA = parseFloat(A.wOBA)||0, wobaB = parseFloat(B.wOBA)||0;
@@ -6699,23 +6615,23 @@ function renderCompare() {
     ${row('wRC+', teamStatsWRCPlus(A), teamStatsWRCPlus(B), '100 = team avg')}
 
     <div class="cmp-section-title">Power</div>
-    ${bar('Home Runs', A.hr||0, B.hr||0)}
-    ${bar('Extra-Base Hits', (A['2b']||0)+(A['3b']||0)+(A.hr||0), (B['2b']||0)+(B['3b']||0)+(B.hr||0))}
-    ${bar('Total Bases', A.tb||0, B.tb||0)}
+    ${row('HR', A.hr||0, B.hr||0, 'Home runs')}
+    ${row('XBH', (A['2b']||0)+(A['3b']||0)+(A.hr||0), (B['2b']||0)+(B['3b']||0)+(B.hr||0), 'Extra-base hits')}
+    ${row('TB', A.tb||0, B.tb||0, 'Total bases')}
     ${row('ISO', A.ISO, B.ISO, 'Isolated power')}
 
     <div class="cmp-section-title">Plate Discipline</div>
-    ${bar('Walks', A.bb||0, B.bb||0)}
-    ${bar('Strikeouts', A.k||0, B.k||0, v=>v, true)}
+    ${row('BB', A.bb||0, B.bb||0, 'Walks')}
+    ${row('K', A.k||0, B.k||0, 'Strikeouts', false)}
     ${row('BB/K', (A.bb||0)+(A.k||0)>0 ? ((A.bb||0)/((A.bb||0)+(A.k||0))).toFixed(2) : '—',
                  (B.bb||0)+(B.k||0)>0 ? ((B.bb||0)/((B.bb||0)+(B.k||0))).toFixed(2) : '—',
-                 'Higher is better')}
+                 'Walk vs strikeout ratio')}
 
     <div class="cmp-section-title">Counting Stats</div>
-    ${bar('Hits', A.h||0, B.h||0)}
-    ${bar('RBIs', A.rbi||0, B.rbi||0)}
-    ${bar('Runs', A.r||0, B.r||0)}
-    ${bar('Stolen Bases', A.sb||0, B.sb||0)}
+    ${row('H', A.h||0, B.h||0, 'Hits')}
+    ${row('RBI', A.rbi||0, B.rbi||0, 'Runs batted in')}
+    ${row('R', A.r||0, B.r||0, 'Runs scored')}
+    ${row('SB', A.sb||0, B.sb||0, 'Stolen bases')}
 
     <div class="cmp-verdict">${verdict}</div>
   `;
