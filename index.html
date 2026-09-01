@@ -1732,6 +1732,212 @@ button:focus-visible {
   }
 }
 
+
+/* ══ Player Comparison Tool ══ */
+.compare-section {
+  background: var(--white);
+  border: 1px solid var(--sand2);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.compare-header {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none;
+}
+.compare-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink3);
+}
+.compare-title::before {
+  content: ''; width: 3px; height: 12px;
+  background: var(--accent); border-radius: 2px;
+}
+.compare-toggle {
+  color: var(--ink3); transition: transform .2s;
+  font-size: .8rem;
+}
+.compare-section.open .compare-toggle { transform: rotate(180deg); }
+
+.compare-body { display: none; margin-top: 1rem; }
+.compare-section.open .compare-body { display: block; }
+
+.compare-picker-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 640px) {
+  .compare-picker-row { grid-template-columns: 1fr; gap: .5rem; }
+  .compare-vs { display: none; }
+}
+.compare-picker {
+  background: var(--sand);
+  border: 1.5px solid var(--sand3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font);
+  font-size: .9rem;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+  width: 100%;
+  transition: all .12s;
+}
+.compare-picker:focus, .compare-picker:hover {
+  border-color: var(--accent);
+  background: var(--white);
+  outline: none;
+}
+.compare-picker.set-a:focus, .compare-picker.set-a:hover { border-color: #1a2b4a; }
+.compare-picker.set-b:focus, .compare-picker.set-b:hover { border-color: #c8102e; }
+
+.compare-vs {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--ink3);
+  padding: 0 4px;
+  letter-spacing: .05em;
+}
+
+.compare-results { }
+.compare-summary {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(26,43,74,.04) 0%, rgba(200,16,46,.04) 100%);
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--sand2);
+}
+.compare-name {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -.01em;
+}
+.compare-name.a { color: #1a2b4a; text-align: right; }
+.compare-name.b { color: #c8102e; text-align: left; }
+.compare-meta {
+  font-size: .68rem; font-weight: 600; color: var(--ink3);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-top: 2px;
+}
+.compare-meta.a { text-align: right; }
+.compare-vs-badge {
+  font-family: var(--font);
+  font-size: .7rem; font-weight: 700;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 4px 10px;
+  border: 1px solid var(--sand3);
+  border-radius: 12px;
+  background: var(--white);
+}
+
+/* Stat comparison row */
+.cmp-row {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  align-items: center;
+  padding: 10px 0;
+  gap: 12px;
+  border-bottom: 1px solid var(--sand2);
+}
+.cmp-row:last-child { border-bottom: none; }
+
+.cmp-val {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink2);
+  transition: color .2s;
+}
+.cmp-val.a { text-align: right; }
+.cmp-val.b { text-align: left; }
+.cmp-val.win { color: var(--accent); }
+.cmp-val.lose { color: var(--ink3); font-weight: 500; }
+
+.cmp-label {
+  text-align: center;
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+.cmp-label-desc {
+  font-size: .58rem;
+  color: var(--ink3);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 1px;
+}
+
+/* Bar-style comparison for percentage stats */
+.cmp-bar-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sand2);
+}
+.cmp-bar-row:last-child { border-bottom: none; }
+.cmp-bar-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.cmp-bar-label {
+  font-size: .68rem; font-weight: 700;
+  color: var(--ink3); text-transform: uppercase; letter-spacing: .08em;
+}
+.cmp-bar-track {
+  display: flex; height: 8px; border-radius: 4px;
+  background: var(--sand2); overflow: hidden;
+  position: relative;
+}
+.cmp-bar-fill-a {
+  background: #1a2b4a; transition: width .5s cubic-bezier(.16,1,.3,1);
+}
+.cmp-bar-fill-b {
+  background: #c8102e; transition: width .5s cubic-bezier(.16,1,.3,1);
+}
+.cmp-bar-values {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: .72rem;
+  font-weight: 600; margin-top: 4px;
+}
+.cmp-bar-values .a { color: #1a2b4a; }
+.cmp-bar-values .b { color: #c8102e; }
+
+.cmp-section-title {
+  font-size: .62rem; font-weight: 700;
+  color: var(--ink3); text-transform: uppercase;
+  letter-spacing: .1em;
+  margin: 1rem 0 .5rem;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--sand2);
+}
+
+.cmp-verdict {
+  margin-top: 1rem; padding: 12px 16px;
+  background: var(--bg); border-radius: 8px;
+  font-size: .82rem; color: var(--ink2); line-height: 1.5;
+  border-left: 3px solid var(--accent);
+}
+.cmp-verdict strong { color: var(--ink); }
+
+.compare-empty {
+  text-align: center; padding: 2rem 1rem;
+  color: var(--ink3); font-size: .875rem;
+}
+
 </style>
 </head>
 <body>
@@ -1784,6 +1990,29 @@ button:focus-visible {
     <input type="text" id="newPlayerInput" placeholder="New player name…" maxlength="30" onkeydown="if(event.key==='Enter')addPlayer()">
     <button class="btn" id="addPlayerBtn" onclick="addPlayer()">Add Player</button>
   </div>
+
+  <!-- Player comparison tool -->
+  <div class="compare-section" id="compareSection">
+    <div class="compare-header" onclick="toggleCompare()">
+      <div class="compare-title">⚖️ Player Comparison</div>
+      <div class="compare-toggle">▼</div>
+    </div>
+    <div class="compare-body">
+      <div class="compare-picker-row">
+        <select class="compare-picker set-a" id="cmpPlayerA" onchange="renderCompare()">
+          <option value="">Select first player…</option>
+        </select>
+        <span class="compare-vs">vs</span>
+        <select class="compare-picker set-b" id="cmpPlayerB" onchange="renderCompare()">
+          <option value="">Select second player…</option>
+        </select>
+      </div>
+      <div id="compareResults" class="compare-results">
+        <div class="compare-empty">Pick two players above to see how they stack up.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="player-grid" id="playerGrid">
     <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
     <div class="skeleton-card" style="padding:1rem"><div class="skeleton skeleton-circle" style="margin:0 auto 8px"></div><div class="skeleton skeleton-line sm" style="margin:0 auto"></div></div>
@@ -2019,6 +2248,7 @@ async function loadAll() {
       sbGet('live_atbats', 'order=created_at.asc').catch(() => [])
     ]);
     document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    populateComparePickers();
   } catch(e) {
     showToast('Error loading data: ' + e.message, true);
   }
@@ -6314,6 +6544,168 @@ document.addEventListener('keydown', (e) => {
 function openHelp() { document.getElementById('helpModal')?.classList.add('show'); }
 function closeHelp() { document.getElementById('helpModal')?.classList.remove('show'); }
 
+
+
+// ══════════════════════════════════════════════
+// PLAYER COMPARISON TOOL
+// ══════════════════════════════════════════════
+
+function toggleCompare() {
+  const sec = document.getElementById('compareSection');
+  if (!sec) return;
+  sec.classList.toggle('open');
+  if (sec.classList.contains('open')) populateComparePickers();
+}
+
+function populateComparePickers() {
+  const a = document.getElementById('cmpPlayerA');
+  const b = document.getElementById('cmpPlayerB');
+  if (!a || !b) return;
+  const names = players.map(p => p.name).sort();
+  const opts = ['<option value="">Select a player…</option>']
+    .concat(names.map(n => `<option value="${esc(n)}">${n}</option>`))
+    .join('');
+  const aVal = a.value, bVal = b.value;
+  a.innerHTML = opts; b.innerHTML = opts;
+  if (aVal) a.value = aVal;
+  if (bVal) b.value = bVal;
+}
+
+function renderCompare() {
+  const nameA = document.getElementById('cmpPlayerA')?.value;
+  const nameB = document.getElementById('cmpPlayerB')?.value;
+  const container = document.getElementById('compareResults');
+  if (!container) return;
+
+  if (!nameA || !nameB) {
+    container.innerHTML = '<div class="compare-empty">Pick two players above to see how they stack up.</div>';
+    return;
+  }
+  if (nameA === nameB) {
+    container.innerHTML = '<div class="compare-empty">Pick two <em>different</em> players to compare.</div>';
+    return;
+  }
+
+  const A = playerStats(nameA);
+  const B = playerStats(nameB);
+  if ((A.gp||0) === 0 && (B.gp||0) === 0) {
+    container.innerHTML = '<div class="compare-empty">Neither player has games logged yet.</div>';
+    return;
+  }
+
+  // Helper: render a direct-comparison row (higher = win)
+  const row = (label, valA, valB, desc, higherIsBetter=true) => {
+    const nA = parseFloat(valA), nB = parseFloat(valB);
+    let clsA = 'cmp-val a', clsB = 'cmp-val b';
+    if (isFinite(nA) && isFinite(nB) && nA !== nB) {
+      const aWins = higherIsBetter ? nA > nB : nA < nB;
+      clsA += aWins ? ' win' : ' lose';
+      clsB += aWins ? ' lose' : ' win';
+    }
+    return `<div class="cmp-row">
+      <div class="${clsA}">${valA ?? '—'}</div>
+      <div class="cmp-label">${label}${desc ? `<div class="cmp-label-desc">${desc}</div>` : ''}</div>
+      <div class="${clsB}">${valB ?? '—'}</div>
+    </div>`;
+  };
+
+  // Helper: bar comparison — both bars sized relative to combined max
+  const bar = (label, valA, valB, format=(v)=>v) => {
+    const nA = parseFloat(valA)||0, nB = parseFloat(valB)||0;
+    const max = Math.max(nA, nB, 0.001);
+    const pctA = (nA/max)*100, pctB = (nB/max)*100;
+    return `<div class="cmp-bar-row">
+      <div class="cmp-bar-header">
+        <span class="cmp-bar-label">${label}</span>
+      </div>
+      <div class="cmp-bar-track">
+        <div class="cmp-bar-fill-a" style="width:${pctA/2}%"></div>
+        <div style="width:1px;background:var(--sand3)"></div>
+        <div class="cmp-bar-fill-b" style="width:${pctB/2}%"></div>
+      </div>
+      <div class="cmp-bar-values">
+        <span class="a">${format(valA)}</span>
+        <span class="b">${format(valB)}</span>
+      </div>
+    </div>`;
+  };
+
+  // Verdict logic
+  const opsA = parseFloat(A.OPS)||0, opsB = parseFloat(B.OPS)||0;
+  const wobaA = parseFloat(A.wOBA)||0, wobaB = parseFloat(B.wOBA)||0;
+  const wraaA = A._wRAA || 0, wraaB = B._wRAA || 0;
+  let verdict = '';
+  if (wraaA - wraaB > 3) verdict = `<strong>${nameA}</strong> has been meaningfully more productive this season (wRAA ${A.wRAA} vs ${B.wRAA}).`;
+  else if (wraaB - wraaA > 3) verdict = `<strong>${nameB}</strong> has been meaningfully more productive this season (wRAA ${B.wRAA} vs ${A.wRAA}).`;
+  else if (Math.abs(opsA - opsB) < .050) verdict = `Nearly identical overall production — differences here are noise at this sample size.`;
+  else if (opsA > opsB) verdict = `<strong>${nameA}</strong> edges out on overall production (OPS ${A.OPS} vs ${B.OPS}).`;
+  else verdict = `<strong>${nameB}</strong> edges out on overall production (OPS ${B.OPS} vs ${A.OPS}).`;
+
+  container.innerHTML = `
+    <div class="compare-summary">
+      <div>
+        <div class="compare-name a">${nameA}</div>
+        <div class="compare-meta a">${A.gp||0} games · ${A.ab||0} AB</div>
+      </div>
+      <div class="compare-vs-badge">VS</div>
+      <div>
+        <div class="compare-name b">${nameB}</div>
+        <div class="compare-meta b">${B.gp||0} games · ${B.ab||0} AB</div>
+      </div>
+    </div>
+
+    <div class="cmp-section-title">The Slash Line</div>
+    ${row('AVG', A.BA, B.BA, 'Batting average')}
+    ${row('OBP', A.OBP, B.OBP, 'On-base %')}
+    ${row('SLG', A['SLG%'], B['SLG%'], 'Slugging %')}
+    ${row('OPS', A.OPS, B.OPS, 'On-base + slugging')}
+
+    <div class="cmp-section-title">Value & Production</div>
+    ${row('wOBA', A.wOBA, B.wOBA, 'Weighted on-base')}
+    ${row('wRAA', A.wRAA, B.wRAA, 'Runs above avg', true)}
+    ${row('OPS+', teamStatsOPSPlus(A), teamStatsOPSPlus(B), 'vs team avg')}
+    ${row('wRC+', teamStatsWRCPlus(A), teamStatsWRCPlus(B), '100 = team avg')}
+
+    <div class="cmp-section-title">Power</div>
+    ${bar('Home Runs', A.hr||0, B.hr||0)}
+    ${bar('Extra-Base Hits', (A['2b']||0)+(A['3b']||0)+(A.hr||0), (B['2b']||0)+(B['3b']||0)+(B.hr||0))}
+    ${bar('Total Bases', A.tb||0, B.tb||0)}
+    ${row('ISO', A.ISO, B.ISO, 'Isolated power')}
+
+    <div class="cmp-section-title">Plate Discipline</div>
+    ${bar('Walks', A.bb||0, B.bb||0)}
+    ${bar('Strikeouts', A.k||0, B.k||0, v=>v)}
+    ${row('BB/K', (A.bb||0)+(A.k||0)>0 ? ((A.bb||0)/((A.bb||0)+(A.k||0))).toFixed(2) : '—',
+                 (B.bb||0)+(B.k||0)>0 ? ((B.bb||0)/((B.bb||0)+(B.k||0))).toFixed(2) : '—',
+                 'Higher is better')}
+
+    <div class="cmp-section-title">Counting Stats</div>
+    ${bar('Hits', A.h||0, B.h||0)}
+    ${bar('RBIs', A.rbi||0, B.rbi||0)}
+    ${bar('Runs', A.r||0, B.r||0)}
+    ${bar('Stolen Bases', A.sb||0, B.sb||0)}
+
+    <div class="cmp-verdict">${verdict}</div>
+  `;
+}
+
+function teamStatsOPSPlus(s) {
+  const teamStats = allStats().filter(x => x.gp > 0);
+  if (!teamStats.length) return 100;
+  const teamAvgOPS = teamStats.reduce((a, x) => a + (parseFloat(x.OPS)||0), 0) / teamStats.length;
+  const ops = (parseFloat(s.OBP)||0) + (parseFloat(s['SLG%'])||0);
+  return teamAvgOPS > 0 ? Math.round((ops / teamAvgOPS) * 100) : 100;
+}
+function teamStatsWRCPlus(s) {
+  const teamStats = allStats().filter(x => x.gp > 0);
+  if (!teamStats.length) return 100;
+  const teamAvgWOBA = teamStats.reduce((a, x) => a + (parseFloat(x.wOBA)||0), 0) / teamStats.length;
+  const woba = parseFloat(s.wOBA)||0;
+  return teamAvgWOBA > 0 ? Math.round((woba / teamAvgWOBA) * 100) : 100;
+}
+
+// Re-populate pickers when players/games load
+const _origLoadAll = typeof loadAll === 'function' ? loadAll : null;
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
