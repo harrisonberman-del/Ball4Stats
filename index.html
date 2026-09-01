@@ -1883,38 +1883,60 @@ button:focus-visible {
   margin-top: 1px;
 }
 
-/* Bar-style comparison for percentage stats */
+/* Bar-style comparison — honest proportional side-by-side */
 .cmp-bar-row {
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--sand2);
 }
 .cmp-bar-row:last-child { border-bottom: none; }
-.cmp-bar-header {
-  display: flex; justify-content: space-between; align-items: baseline;
-  margin-bottom: 6px;
+
+.cmp-bar-label-top {
+  font-size: .62rem; font-weight: 700;
+  color: var(--ink3); text-transform: uppercase; letter-spacing: .09em;
+  margin-bottom: 8px;
 }
-.cmp-bar-label {
-  font-size: .68rem; font-weight: 700;
-  color: var(--ink3); text-transform: uppercase; letter-spacing: .08em;
+
+.cmp-bar-line {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 }
-.cmp-bar-track {
-  display: flex; height: 8px; border-radius: 4px;
-  background: var(--sand2); overflow: hidden;
-  position: relative;
+.cmp-bar-line:last-child { margin-bottom: 0; }
+
+.cmp-bar-val {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--ink3);
+  text-align: right;
+  transition: color .2s;
+}
+.cmp-bar-val.win { color: var(--ink); font-weight: 700; }
+
+.cmp-bar-track-outer {
+  height: 8px;
+  background: var(--sand2);
+  border-radius: 4px;
+  overflow: hidden;
 }
 .cmp-bar-fill-a {
-  background: #1a2b4a; transition: width .5s cubic-bezier(.16,1,.3,1);
+  height: 100%;
+  background: #6b7280;
+  border-radius: 4px;
+  transition: width .5s cubic-bezier(.16,1,.3,1), background .2s;
+  min-width: 2px;
 }
 .cmp-bar-fill-b {
-  background: #c8102e; transition: width .5s cubic-bezier(.16,1,.3,1);
+  height: 100%;
+  background: #6b7280;
+  border-radius: 4px;
+  transition: width .5s cubic-bezier(.16,1,.3,1), background .2s;
+  min-width: 2px;
 }
-.cmp-bar-values {
-  display: flex; justify-content: space-between;
-  font-family: var(--font-mono); font-size: .72rem;
-  font-weight: 600; margin-top: 4px;
-}
-.cmp-bar-values .a { color: #1a2b4a; }
-.cmp-bar-values .b { color: #c8102e; }
+.cmp-bar-fill-a.win { background: #1a2b4a; }
+.cmp-bar-fill-b.win { background: #c8102e; }
 
 .cmp-section-title {
   font-size: .62rem; font-weight: 700;
@@ -6609,23 +6631,33 @@ function renderCompare() {
     </div>`;
   };
 
-  // Helper: bar comparison — both bars sized relative to combined max
-  const bar = (label, valA, valB, format=(v)=>v) => {
+  // Helper: honest side-by-side bars — each bar's width is truthful to the max
+  const bar = (label, valA, valB, format=(v)=>v, lowerIsBetter=false) => {
     const nA = parseFloat(valA)||0, nB = parseFloat(valB)||0;
-    const max = Math.max(nA, nB, 0.001);
+    const max = Math.max(nA, nB, 1);
     const pctA = (nA/max)*100, pctB = (nB/max)*100;
+    let winA = false, winB = false;
+    if (nA !== nB) {
+      winA = lowerIsBetter ? nA < nB : nA > nB;
+      winB = !winA;
+    }
     return `<div class="cmp-bar-row">
-      <div class="cmp-bar-header">
-        <span class="cmp-bar-label">${label}</span>
+      <div class="cmp-bar-label-top">${label}</div>
+      <div class="cmp-bar-line">
+        <div class="cmp-bar-val ${winA?'win':''}">${format(valA)}</div>
+        <div class="cmp-bar-track-outer">
+          <div class="cmp-bar-track-a">
+            <div class="cmp-bar-fill-a ${winA?'win':''}" style="width:${pctA}%"></div>
+          </div>
+        </div>
       </div>
-      <div class="cmp-bar-track">
-        <div class="cmp-bar-fill-a" style="width:${pctA/2}%"></div>
-        <div style="width:1px;background:var(--sand3)"></div>
-        <div class="cmp-bar-fill-b" style="width:${pctB/2}%"></div>
-      </div>
-      <div class="cmp-bar-values">
-        <span class="a">${format(valA)}</span>
-        <span class="b">${format(valB)}</span>
+      <div class="cmp-bar-line">
+        <div class="cmp-bar-val ${winB?'win':''}">${format(valB)}</div>
+        <div class="cmp-bar-track-outer">
+          <div class="cmp-bar-track-b">
+            <div class="cmp-bar-fill-b ${winB?'win':''}" style="width:${pctB}%"></div>
+          </div>
+        </div>
       </div>
     </div>`;
   };
@@ -6674,7 +6706,7 @@ function renderCompare() {
 
     <div class="cmp-section-title">Plate Discipline</div>
     ${bar('Walks', A.bb||0, B.bb||0)}
-    ${bar('Strikeouts', A.k||0, B.k||0, v=>v)}
+    ${bar('Strikeouts', A.k||0, B.k||0, v=>v, true)}
     ${row('BB/K', (A.bb||0)+(A.k||0)>0 ? ((A.bb||0)/((A.bb||0)+(A.k||0))).toFixed(2) : '—',
                  (B.bb||0)+(B.k||0)>0 ? ((B.bb||0)/((B.bb||0)+(B.k||0))).toFixed(2) : '—',
                  'Higher is better')}
